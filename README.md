@@ -150,6 +150,16 @@ fast CI coverage check that proves expensive `vstr` paths still execute and emit
 expected labels. The formal `cargo bench` target is the stable benchmark entry
 point for local performance comparison and future historical reports.
 
+To generate release-grade benchmark artifacts locally, pass an output directory:
+
+```bash
+bash bin/check-vstr-bench.sh target/vstr-bench-report
+```
+
+That writes `vstr-bench.txt`, `vstr-bench.json`, and `vstr-bench.md`. The same
+entry point is used by the manual GitHub Actions benchmark workflow when
+`run_release_bench` is set to `true`.
+
 Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
 substring boundaries, escaping, Ant-style path matching, and replacement
 invariants without adding runtime dependencies to the main library.

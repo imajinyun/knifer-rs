@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+report_dir="${1:-}"
 output="$(cargo bench --bench vstr_bench --quiet)"
 json_output="$(cargo bench --bench vstr_bench --quiet -- --json)"
 markdown_output="$(cargo bench --bench vstr_bench --quiet -- --markdown)"
@@ -41,6 +42,13 @@ if ! grep -Fq '# vstr_bench Report' <<<"$markdown_output"; then
   echo "missing Markdown benchmark report heading" >&2
   echo "$markdown_output" >&2
   exit 1
+fi
+
+if [[ -n "$report_dir" ]]; then
+  mkdir -p "$report_dir"
+  printf '%s\n' "$output" > "$report_dir/vstr-bench.txt"
+  printf '%s\n' "$json_output" > "$report_dir/vstr-bench.json"
+  printf '%s\n' "$markdown_output" > "$report_dir/vstr-bench.md"
 fi
 
 echo "$output"

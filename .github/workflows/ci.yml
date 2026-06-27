@@ -2,6 +2,15 @@ name: CI
 
 on:
   workflow_dispatch:
+    inputs:
+      run_release_bench:
+        description: Generate release benchmark artifact
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
   pull_request:
   push:
     branches:
@@ -113,3 +122,28 @@ jobs:
 
       - name: Docs.rs readiness
         run: bash bin/check-docs-rs-ready.sh
+
+  release-benchmark:
+    name: Release Benchmark Report
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.run_release_bench == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Generate benchmark reports
+        run: bash bin/check-vstr-bench.sh target/vstr-bench-report
+
+      - name: Upload benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vstr-benchmark-report-${{ github.sha }}
+          path: target/vstr-bench-report/
+          retention-days: 30
