@@ -604,6 +604,162 @@ fn hamming_distance_counts_different_bits() {
     assert_eq!(hamming_distance64(u64::MAX, 0), 64);
 }
 
+#[test]
+fn property_style_substring_helpers_keep_scalar_boundaries() {
+    let mut rng = DeterministicRng::new(0x5eed_0001);
+
+    for _ in 0..256 {
+        let input = rng.string(24);
+        let len = input.chars().count();
+        let from = rng.index_around(len);
+        let to = rng.index_around(len);
+
+        let actual = sub(&input, from, to);
+        let expected = expected_sub(&input, from, to);
+        assert_eq!(actual, expected);
+
+        let take_count = rng.usize(len + 6);
+        let taken = take_chars(&input, take_count);
+        assert!(input.starts_with(taken));
+        assert_eq!(taken.chars().count(), take_count.min(len));
+
+        let drop_count = rng.usize(len + 6);
+        let dropped = drop_chars(&input, drop_count);
+        assert!(input.ends_with(dropped));
+        assert_eq!(dropped.chars().count(), len.saturating_sub(drop_count));
+    }
+}
+
+#[test]
+fn property_style_replacement_and_escaping_helpers_are_stable() {
+    let mut rng = DeterministicRng::new(0x5eed_0002);
+    let replacements = [("a", "A"), ("你", "N"), ("🚀", "R"), ("--", "-")];
+
+    for _ in 0..256 {
+        let input = rng.string(32);
+        let replaced = replace_many(&input, replacements);
+
+        assert!(!replaced.contains('a'));
+        assert!(!replaced.contains('你'));
+        assert!(!replaced.contains('🚀'));
+        assert_eq!(replace_many(&input, [("", "x")]), input);
+
+        let escaped = escape_regex(&input);
+        assert_eq!(escaped, quote_meta(&input));
+        assert!(escaped.chars().count() >= input.chars().count());
+        for ch in ".+*?^$()[]{}|\\".chars() {
+            if input.contains(ch) {
+                assert!(escaped.contains(&format!("\\{ch}")));
+            }
+        }
+    }
+}
+
+#[test]
+fn property_style_ant_path_literal_patterns_match_themselves() {
+    let mut rng = DeterministicRng::new(0x5eed_0003);
+
+    for _ in 0..256 {
+        let path = rng.path(5);
+
+        assert!(ant_path_match(&path, &path));
+        assert!(ant_path_match("/**", &path));
+        assert!(ant_path_match_with_separator(
+            &path.replace('/', "."),
+            &path.replace('/', "."),
+            "."
+        ));
+
+        if let Some((prefix, _)) = path.rsplit_once('/') {
+            let pattern = format!("{prefix}/**");
+            assert!(ant_path_match(&pattern, &path));
+        }
+    }
+}
+
 fn assert_approx_eq(left: f64, right: f64) {
     assert!((left - right).abs() < f64::EPSILON);
+}
+
+struct DeterministicRng {
+    state: u64,
+}
+
+impl DeterministicRng {
+    const fn new(seed: u64) -> Self {
+        Self { state: seed }
+    }
+
+    fn next(&mut self) -> u64 {
+        self.state = self
+            .state
+            .wrapping_mul(6_364_136_223_846_793_005)
+            .wrapping_add(1);
+        self.state
+    }
+
+    fn usize(&mut self, upper: usize) -> usize {
+        if upper == 0 {
+            0
+        } else {
+            let upper = u64::try_from(upper).expect("test upper bound must fit in u64");
+            usize::try_from(self.next() % upper).expect("bounded value must fit in usize")
+        }
+    }
+
+    fn index_around(&mut self, len: usize) -> isize {
+        let span = len.saturating_mul(2).saturating_add(9);
+        let sampled = isize::try_from(self.usize(span)).expect("test sample must fit in isize");
+        let len = isize::try_from(len).expect("test length must fit in isize");
+        sampled - len - 4
+    }
+
+    fn string(&mut self, max_chars: usize) -> String {
+        let len = self.usize(max_chars + 1);
+        let alphabet = [
+            'a', 'b', 'c', '-', '_', ' ', '.', '*', '你', '好', '🚀', 'e', '\u{301}',
+        ];
+        let mut output = String::new();
+        for _ in 0..len {
+            output.push(alphabet[self.usize(alphabet.len())]);
+        }
+        output
+    }
+
+    fn path(&mut self, max_segments: usize) -> String {
+        let segments = self.usize(max_segments).saturating_add(1);
+        let names = ["api", "v1", "users", "项目", "rust", "42"];
+        let mut path = String::new();
+        for _ in 0..segments {
+            path.push('/');
+            path.push_str(names[self.usize(names.len())]);
+        }
+        path
+    }
+}
+
+fn expected_sub(input: &str, from_index: isize, to_index: isize) -> String {
+    let chars: Vec<char> = input.chars().collect();
+    let len = chars.len();
+    if len == 0 {
+        return String::new();
+    }
+
+    let start = expected_normalize_index(from_index, len);
+    let end = expected_normalize_index(to_index, len);
+    let (start, end) = if start <= end {
+        (start, end)
+    } else {
+        (end, start)
+    };
+
+    chars[start..end].iter().collect()
+}
+
+fn expected_normalize_index(index: isize, len: usize) -> usize {
+    if index < 0 {
+        len.saturating_sub(index.unsigned_abs())
+    } else {
+        usize::try_from(index).map_or(len, |index| index.min(len))
+    }
 }
