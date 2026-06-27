@@ -166,6 +166,41 @@ fn case_helpers_handle_empty_and_unicode_words() {
 }
 
 #[test]
+fn case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode() {
+    assert_eq!(to_snake_case("XMLHttpRequest2"), "xml_http_request2");
+    assert_eq!(to_kebab_case("HTTPRequest2XX"), "http-request2-xx");
+    assert_eq!(to_train_case("userID2FA"), "User-Id2-Fa");
+    assert_eq!(to_screaming_snake_case("http2ServerID"), "HTTP2_SERVER_ID");
+
+    assert_eq!(to_camel_case("http_server-id 42"), "httpServerId42");
+    assert_eq!(to_pascal_case("http_server-id 42"), "HttpServerId42");
+    assert_eq!(to_dot_case("http_server-id 42"), "http.server.id.42");
+    assert_eq!(to_path_case("http_server-id 42"), "http/server/id/42");
+
+    assert_eq!(
+        to_snake_case("already__split--case  "),
+        "already__split__case__"
+    );
+    assert_eq!(
+        to_kebab_case("already__split--case  "),
+        "already--split--case--"
+    );
+    assert_eq!(
+        to_title_case("already__split--case  "),
+        "Already Split Case"
+    );
+    assert_eq!(
+        to_sentence_case("already__split--CASE  "),
+        "Already  split  case  "
+    );
+
+    assert_eq!(to_snake_case("StraßeHTTP"), "straße_http");
+    assert_eq!(to_screaming_snake_case("StraßeHTTP"), "STRASSE_HTTP");
+    assert_eq!(to_camel_case("你好_rust-world"), "你好RustWorld");
+    assert_eq!(to_pascal_case("你好_rust-world"), "你好RustWorld");
+}
+
+#[test]
 fn default_helpers_return_fallback_only_when_needed() {
     assert_eq!(default_if_empty("", "fallback"), "fallback");
     assert_eq!(default_if_empty(" ", "fallback"), " ");
