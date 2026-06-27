@@ -550,6 +550,41 @@ fn wrap_and_truncate_boundary_cases_follow_scalar_width_policy() {
 }
 
 #[test]
+fn knifer_go_vstr_golden_fixtures_cover_case_conversion() {
+    assert_eq!(to_camel_case("hello_world"), "helloWorld");
+    assert_eq!(to_pascal_case("hello_world"), "HelloWorld");
+    assert_eq!(to_underline_case("HelloWorld"), "hello_world");
+    assert_eq!(to_kebab_case("HelloWorld"), "hello-world");
+}
+
+#[test]
+fn knifer_go_vstr_golden_fixtures_cover_unicode_escape() {
+    assert_eq!(escape_unicode("中国"), "\\u4E2D\\u56FD");
+    assert_eq!(unescape_unicode("\\u4E2D\\u56FD"), "中国");
+}
+
+#[test]
+fn knifer_go_vstr_golden_fixtures_cover_ant_path_matching() {
+    assert!(ant_path_match("/api/**/users/?", "/api/v1/admin/users/a"));
+    assert!(!ant_path_match("/api/*/users", "/api/v1/admin/users"));
+    assert!(ant_path_match_with_separator(
+        "foo.**.bar",
+        "foo.a.b.bar",
+        "."
+    ));
+}
+
+#[test]
+fn knifer_go_vstr_golden_fixtures_cover_similarity() {
+    assert_approx_eq(jaccard_similarity("abc", "bcd"), 0.5);
+    assert_approx_eq(ngram_similarity("abcd", "abef", 2), 0.2);
+    assert_eq!(levenshtein_distance("kitten", "sitting"), 3);
+    assert_approx_eq(levenshtein_similarity("你好世界", "你好呀"), 0.5);
+    assert_eq!(hamming_distance64(0, u64::MAX), 64);
+    assert_ne!(sim_hash("go knifer"), 0);
+}
+
+#[test]
 fn jaccard_similarity_uses_non_whitespace_char_sets() {
     assert_approx_eq(jaccard_similarity("abc", "abc"), 1.0);
     assert_approx_eq(jaccard_similarity("ab", "bc"), 1.0 / 3.0);
