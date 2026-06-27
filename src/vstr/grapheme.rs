@@ -96,3 +96,102 @@ pub fn truncate_graphemes(input: &str, max_graphemes: usize, suffix: &str) -> St
     output.push_str(suffix);
     output
 }
+
+/// Returns Unicode words from `input` using UAX #29 word boundaries.
+///
+/// This helper is available only with the `unicode-segmentation` feature. It
+/// returns only word-like segments that contain alphabetic or numeric
+/// characters; punctuation and whitespace are skipped. This is boundary
+/// detection, not dictionary-based natural-language tokenization.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(
+///     vstr::unicode_words("The quick (\"brown\") fox can't jump 32.3 feet"),
+///     vec!["The", "quick", "brown", "fox", "can't", "jump", "32.3", "feet"]
+/// );
+/// # }
+/// ```
+#[must_use]
+pub fn unicode_words(input: &str) -> Vec<&str> {
+    input.unicode_words().collect()
+}
+
+/// Returns the number of Unicode words in `input` using UAX #29 word boundaries.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::unicode_word_len("hello 世界 32.3"), 4);
+/// # }
+/// ```
+#[must_use]
+pub fn unicode_word_len(input: &str) -> usize {
+    input.unicode_words().count()
+}
+
+/// Returns Unicode words and their byte offsets using UAX #29 word boundaries.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::unicode_word_indices("hi 世界"), vec![(0, "hi"), (3, "世"), (6, "界")]);
+/// # }
+/// ```
+#[must_use]
+pub fn unicode_word_indices(input: &str) -> Vec<(usize, &str)> {
+    input.unicode_word_indices().collect()
+}
+
+/// Splits `input` on Unicode word boundaries and keeps separators.
+///
+/// Unlike [`unicode_words`], this returns punctuation and whitespace segments so
+/// concatenating the output reconstructs the original input.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::split_word_bounds("Hi, 世界!"), vec!["Hi", ",", " ", "世", "界", "!"]);
+/// # }
+/// ```
+#[must_use]
+pub fn split_word_bounds(input: &str) -> Vec<&str> {
+    input.split_word_bounds().collect()
+}
+
+/// Splits `input` on Unicode word boundaries and returns byte offsets.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(
+///     vstr::split_word_bound_indices("Hi, 世界!"),
+///     vec![(0, "Hi"), (2, ","), (3, " "), (4, "世"), (7, "界"), (10, "!")]
+/// );
+/// # }
+/// ```
+#[must_use]
+pub fn split_word_bound_indices(input: &str) -> Vec<(usize, &str)> {
+    input.split_word_bound_indices().collect()
+}

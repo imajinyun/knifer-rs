@@ -60,7 +60,12 @@ UTF-8 byte sequence, but they can split user-perceived grapheme clusters such as
 combining marks, flags, and emoji ZWJ family sequences.
 
 The `unicode-segmentation` feature adds grapheme-aware helpers such as
-`graphemes`, `grapheme_len`, `take_graphemes`, and `truncate_graphemes`.
+`graphemes`, `grapheme_len`, `take_graphemes`, and `truncate_graphemes`, plus
+UAX #29 word-boundary helpers such as `unicode_words`,
+`unicode_word_indices`, `split_word_bounds`, and
+`split_word_bound_indices`. `unicode_words` filters punctuation and
+whitespace, while `split_word_bounds` keeps separators so concatenating the
+segments reconstructs the original input.
 
 The `unicode-width` feature adds terminal display-width helpers such as
 `display_width`, `take_width`, and `truncate_width`. These helpers follow the

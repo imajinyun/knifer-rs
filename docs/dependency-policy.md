@@ -44,9 +44,10 @@ standard library is intentionally lower level.
 - Grapheme, word, or sentence segmentation must be feature-gated.
 - Scalar-based helpers such as `take_chars` and `truncate_with_suffix` must keep
   their current semantics and documentation.
-- Grapheme helpers should use names such as `graphemes`, `grapheme_len`,
-  `take_graphemes`, and `truncate_graphemes` so callers can see the boundary
-  model at the call site.
+- Segmentation helpers should use names such as `graphemes`, `grapheme_len`,
+  `take_graphemes`, `truncate_graphemes`, `unicode_words`,
+  `unicode_word_indices`, and `split_word_bounds` so callers can see the
+  boundary model at the call site.
 
 `unicode-width` Admission Contract:
 

@@ -128,6 +128,8 @@ knifer_rs::vstr::split = pub fn split<'src>(input: &'src str, separator: &str) -
 knifer_rs::vstr::split_once = pub fn split_once<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)>
 knifer_rs::vstr::split_once_last = pub fn split_once_last<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)>
 knifer_rs::vstr::split_trim = pub fn split_trim<'src>(input: &'src str, separator: &str) -> Vec<&'src str>
+knifer_rs::vstr::split_word_bound_indices = pub fn split_word_bound_indices(input: &str) -> Vec<(usize, &str)>
+knifer_rs::vstr::split_word_bounds = pub fn split_word_bounds(input: &str) -> Vec<&str>
 knifer_rs::vstr::starts_with = pub fn starts_with(input: &str, prefix: &str) -> bool
 knifer_rs::vstr::starts_with_ignore_case = pub fn starts_with_ignore_case(input: &str, prefix: &str) -> bool
 knifer_rs::vstr::strip_prefix_ignore_case = pub fn strip_prefix_ignore_case<'src>(input: &'src str, prefix: &str) -> Option<&'src str>
@@ -167,6 +169,9 @@ knifer_rs::vstr::truncate_with_suffix = pub fn truncate_with_suffix(input: &str,
 knifer_rs::vstr::uncapitalize = pub fn uncapitalize(input: &str) -> String
 knifer_rs::vstr::unescape_html = pub fn unescape_html(input: &str) -> String
 knifer_rs::vstr::unescape_unicode = pub fn unescape_unicode(input: &str) -> String
+knifer_rs::vstr::unicode_word_indices = pub fn unicode_word_indices(input: &str) -> Vec<(usize, &str)>
+knifer_rs::vstr::unicode_word_len = pub fn unicode_word_len(input: &str) -> usize
+knifer_rs::vstr::unicode_words = pub fn unicode_words(input: &str) -> Vec<&str>
 knifer_rs::vstr::unsurround = pub fn unsurround<'src>(input: &'src str, left: &str, right: &str) -> Option<&'src str>
 knifer_rs::vstr::with_emoji_matcher = pub fn with_emoji_matcher<'src>(matcher: impl Fn(&str) -> bool + 'src) -> EmojiOptions<'src>
 knifer_rs::vstr::with_emoji_replacer = pub fn with_emoji_replacer<'src>(replacer: impl Fn(&str) -> String + 'src) -> EmojiOptions<'src>
@@ -210,7 +215,9 @@ Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
 `replace_pattern`, `graphemes`, `grapheme_len`, `take_graphemes`,
-`truncate_graphemes`, `display_width`, `take_width`, `truncate_width`,
+`truncate_graphemes`, `unicode_words`, `unicode_word_len`,
+`unicode_word_indices`, `split_word_bounds`, `split_word_bound_indices`,
+`display_width`, `take_width`, `truncate_width`,
 `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
 `swap_case`, `normalize_whitespace`, `remove_whitespace`, `between`,

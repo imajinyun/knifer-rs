@@ -86,6 +86,11 @@ assert_eq!(vstr::take_chars("你好Rust", 3), "你好R");
 assert_eq!(vstr::truncate_with_suffix("你好Rust", 5, "..."), "你好...");
 #[cfg(feature = "unicode-segmentation")]
 assert_eq!(vstr::take_graphemes("e\u{301}🇨🇳rust", 2), "e\u{301}🇨🇳");
+#[cfg(feature = "unicode-segmentation")]
+assert_eq!(
+    vstr::unicode_words("Rust can't stop 32.3 世界!"),
+    vec!["Rust", "can't", "stop", "32.3", "世", "界"]
+);
 #[cfg(feature = "unicode-width")]
 assert_eq!(vstr::display_width("abc你好"), 7);
 #[cfg(feature = "unicode-width")]
@@ -213,8 +218,9 @@ matching while keeping the default feature set at zero runtime dependencies:
 knifer-rs = { version = "0.1", features = ["pattern-regex"] }
 ```
 
-Optional `unicode-segmentation` helpers add grapheme-aware boundaries for UI and
-human-facing text without changing scalar-based helpers such as `take_chars`:
+Optional `unicode-segmentation` helpers add grapheme and word boundaries for UI
+and human-facing text without changing scalar-based helpers such as
+`take_chars`:
 
 ```toml
 [dependencies]

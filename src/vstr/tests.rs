@@ -562,6 +562,38 @@ fn unicode_segmentation_helpers_preserve_grapheme_boundaries() {
     assert_eq!(truncate_graphemes(mixed, 0, "..."), "");
 }
 
+#[cfg(feature = "unicode-segmentation")]
+#[test]
+fn unicode_segmentation_helpers_expose_word_boundaries() {
+    let sentence = "The quick (\"brown\") fox can't jump 32.3 feet, 世界!";
+    assert_eq!(
+        unicode_words(sentence),
+        vec![
+            "The", "quick", "brown", "fox", "can't", "jump", "32.3", "feet", "世", "界"
+        ]
+    );
+    assert_eq!(unicode_word_len(sentence), 10);
+    assert_eq!(
+        unicode_word_indices("hi 世界 32.3"),
+        vec![(0, "hi"), (3, "世"), (6, "界"), (10, "32.3")]
+    );
+
+    let bounds = split_word_bounds("Hi, 世界!");
+    assert_eq!(bounds.concat(), "Hi, 世界!");
+    assert_eq!(bounds, vec!["Hi", ",", " ", "世", "界", "!"]);
+    assert_eq!(
+        split_word_bound_indices("Hi, 世界!"),
+        vec![
+            (0, "Hi"),
+            (2, ","),
+            (3, " "),
+            (4, "世"),
+            (7, "界"),
+            (10, "!")
+        ]
+    );
+}
+
 #[cfg(feature = "unicode-width")]
 #[test]
 fn unicode_width_helpers_follow_display_cell_boundaries() {
