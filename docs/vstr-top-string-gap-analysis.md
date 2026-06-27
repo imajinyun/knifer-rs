@@ -38,6 +38,9 @@ testing, and release discipline while keeping the default crate lightweight.
 - `VSTR-GAP-001: Complete` - benchmark reports can be saved as plain text,
   JSON, and Markdown, then compared with a baseline JSON artifact or git ref
   using a regression threshold. The tracked formats are plain, JSON, and Markdown.
+- `VSTR-GAP-004: Complete` - wrap and truncation golden tests cover long words,
+  consecutive whitespace, CJK, emoji, indentation, and suffix or marker budget
+  behavior. Wrap and truncation boundaries are tracked as golden contract cases.
 
 ## Boundary Policy
 
@@ -54,7 +57,7 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 2. `VSTR-GAP-003: Complete` - Unicode boundary golden tests and optional
    grapheme helpers cover combining marks, emoji ZWJ sequences, flags, CJK, and
    mixed-width text.
-3. `VSTR-GAP-004`: keep expanding Wrap and truncation boundaries for long words,
+3. `VSTR-GAP-004: Complete` - wrap and truncation boundaries cover long words,
    indentation, suffix budget, and display-width candidates.
 4. `VSTR-GAP-009: Complete` - regex-backed optional pattern helpers are exposed
    behind the `pattern-regex` feature.

@@ -748,18 +748,30 @@ fn text_formatting_helpers_indent_dedent_wrap_and_count() {
 
 #[test]
 fn wrap_and_truncate_boundary_cases_follow_scalar_width_policy() {
+    assert_eq!(wrap("anything", 0), "");
     assert_eq!(
         wrap("supercalifragilistic", 6),
         "superc\nalifra\ngilist\nic"
     );
+    assert_eq!(wrap("abcdef", 3), "abc\ndef");
+    assert_eq!(wrap("abcdef", 10), "abcdef");
     assert_eq!(wrap("a   b\t\tc\n\nnext", 5), "a b c\n\nnext");
+    assert_eq!(wrap("  a   b  ", 4), "a b");
+    assert_eq!(wrap("one two three", 7), "one two\nthree");
     assert_eq!(wrap("你好世界 Rust", 4), "你好世界\nRust");
+    assert_eq!(wrap("你好世界", 2), "你好\n世界");
     assert_eq!(wrap("🚀🚀🚀go", 3), "🚀🚀🚀\ngo");
+    assert_eq!(wrap("👨‍👩‍👧‍👦", 4), "👨‍👩‍\n👧‍👦");
     assert_eq!(wrap("e\u{301}e\u{301}", 2), "e\u{301}\ne\u{301}");
 
+    assert_eq!(wrap_with_indent("anything", 0, "=> ", "   "), "");
     assert_eq!(
         wrap_with_indent("hello rust utility", 10, "=> ", "   "),
         "=> hello\n   rust\n   utility"
+    );
+    assert_eq!(
+        wrap_with_indent("alpha beta gamma", 9, "> ", "...."),
+        "> alpha\n....beta\n....gamma"
     );
     assert_eq!(
         wrap_with_indent("abcdefghij", 4, ">>>>", "--"),
@@ -767,10 +779,19 @@ fn wrap_and_truncate_boundary_cases_follow_scalar_width_policy() {
     );
 
     assert_eq!(truncate_with_suffix("abcdef", 0, "..."), "");
+    assert_eq!(truncate_with_suffix("abcdef", 3, ""), "abc");
     assert_eq!(truncate_with_suffix("abcdef", 2, "..."), "..");
+    assert_eq!(truncate_with_suffix("abcdef", 3, "..."), "...");
     assert_eq!(truncate_with_suffix("abcdef", 4, "…"), "abc…");
+    assert_eq!(truncate_with_suffix("你好世界", 3, "…"), "你好…");
+    assert_eq!(truncate_with_suffix("e\u{301}clair", 4, "..."), "e...");
     assert_eq!(truncate_with_suffix("👨‍👩‍👧‍👦 family", 5, "..."), "👨‍...");
+
+    assert_eq!(abbreviate_middle("abcdef", 0, "..."), "");
+    assert_eq!(abbreviate_middle("abcdef", 3, "..."), "...");
+    assert_eq!(abbreviate_middle("abcdef", 5, ""), "abcef");
     assert_eq!(abbreviate_middle("👨‍👩‍👧‍👦 family", 7, "..."), "👨‍...ly");
+    assert_eq!(abbreviate_middle("你好Rust世界", 7, "..."), "你好...世界");
 }
 
 #[test]

@@ -69,8 +69,18 @@ scalar-based helpers.
 ## Wrap and Truncation Boundaries
 
 `wrap` and `wrap_with_indent` use `split_whitespace` and scalar-count budgets.
-Long words may occupy their own line. `truncate_with_suffix` reserves suffix
-budget inside the requested scalar count.
+Consecutive whitespace inside a paragraph collapses to one ASCII space, while
+blank newline-separated paragraphs are preserved as blank lines. Long words are split by scalar value
+so wrapping always makes progress. CJK, emoji, combining
+marks, and ZWJ sequences are counted as Unicode scalar values, not terminal
+display cells.
+
+`wrap_with_indent` counts indentation inside the requested width. If an indent
+is equal to or wider than the width, content still progresses at one scalar per
+line. `truncate_with_suffix` reserves suffix budget inside the requested scalar
+count. If the suffix is longer than the budget, the suffix itself is truncated.
+`abbreviate_middle` applies the same marker-budget rule and splits the remaining
+budget between the front and back, favoring the front when the budget is odd.
 
 ## Future Multi-Pattern Matcher Contract
 
