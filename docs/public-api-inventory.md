@@ -12,9 +12,21 @@ knifer_rs::vstr::EmojiOptions = pub struct EmojiOptions<'src>
 knifer_rs::vstr::EmojiOptions::new = pub const fn new() -> Self
 knifer_rs::vstr::EmojiOptions::with_matcher = pub fn with_matcher(mut self, matcher: impl Fn(&str) -> bool + 'src) -> Self
 knifer_rs::vstr::EmojiOptions::with_replacer = pub fn with_replacer(mut self, replacer: impl Fn(&str) -> String + 'src) -> Self
+knifer_rs::vstr::MatchKind = pub enum MatchKind
 knifer_rs::vstr::PatternError = pub struct PatternError
 knifer_rs::vstr::PatternError::message = pub fn message(&self) -> &str
 knifer_rs::vstr::PatternError::pattern = pub fn pattern(&self) -> &str
+knifer_rs::vstr::VStrMatch = pub struct VStrMatch<'needle>
+knifer_rs::vstr::VStrMatcher = pub struct VStrMatcher<'needle>
+knifer_rs::vstr::VStrMatcher::find = pub fn find(&self, input: &str) -> Option<VStrMatch<'needle>>
+knifer_rs::vstr::VStrMatcher::find_all = pub fn find_all(&self, input: &str) -> Vec<VStrMatch<'needle>>
+knifer_rs::vstr::VStrMatcher::find_overlapping = pub fn find_overlapping(&self, input: &str) -> Vec<VStrMatch<'needle>>
+knifer_rs::vstr::VStrMatcher::is_empty = pub fn is_empty(&self) -> bool
+knifer_rs::vstr::VStrMatcher::kind = pub const fn kind(&self) -> MatchKind
+knifer_rs::vstr::VStrMatcher::len = pub fn len(&self) -> usize
+knifer_rs::vstr::VStrMatcher::new = pub fn new<I>(needles: I) -> Self where I: IntoIterator<Item = &'needle str>
+knifer_rs::vstr::VStrMatcher::replace_all = pub fn replace_all<'replacement, I>(&self, input: &str, replacements: I) -> String where I: IntoIterator<Item = &'replacement str>
+knifer_rs::vstr::VStrMatcher::with_kind = pub fn with_kind<I>(needles: I, kind: MatchKind) -> Self where I: IntoIterator<Item = &'needle str>
 knifer_rs::vstr::abbreviate_middle = pub fn abbreviate_middle(input: &str, max_chars: usize, marker: &str) -> String
 knifer_rs::vstr::add_prefix_if_not = pub fn add_prefix_if_not(input: &str, prefix: &str) -> String
 knifer_rs::vstr::add_suffix_if_not = pub fn add_suffix_if_not(input: &str, suffix: &str) -> String
@@ -188,6 +200,7 @@ invalid UTF-8 as `&str`.
 ## Current Function Groups
 
 Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
+`MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
 `replace_pattern`, `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,

@@ -98,6 +98,8 @@ assert!(vstr::contains_ignore_case("Knifer-RS", "rs"));
 assert_eq!(vstr::find_any("hello rust", ["go", "rust"]), Some(("rust", 6, 10)));
 assert_eq!(vstr::find_all("aaaa", "aa"), vec![(0, 2), (2, 4)]);
 assert_eq!(vstr::find_all_ignore_case("Go go Rust", "go"), vec![(0, 2), (3, 5)]);
+let matcher = vstr::VStrMatcher::with_kind(["a", "aa"], vstr::MatchKind::LeftmostLongest);
+assert_eq!(matcher.find_overlapping("aaaa").len(), 4);
 assert_eq!(vstr::strip_suffix_ignore_case("Knifer-RS", "rs"), Some("Knifer-"));
 assert_eq!(vstr::count_matches("aaaa", "aa"), 2);
 assert_eq!(vstr::replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");

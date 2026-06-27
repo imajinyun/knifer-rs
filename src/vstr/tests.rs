@@ -247,6 +247,139 @@ fn contains_helpers_support_single_any_and_all() {
 }
 
 #[test]
+fn reusable_matcher_finds_and_replaces_left_to_right() {
+    let matcher = VStrMatcher::new(["go", "rust"]);
+    assert_eq!(matcher.kind(), MatchKind::LeftmostFirst);
+    assert_eq!(matcher.len(), 2);
+    assert!(!matcher.is_empty());
+    assert_eq!(
+        matcher.find("hello rust go"),
+        Some(VStrMatch {
+            needle: "rust",
+            pattern_index: 1,
+            start: 6,
+            end: 10,
+        })
+    );
+    assert_eq!(
+        matcher.find_all("go rust go"),
+        vec![
+            VStrMatch {
+                needle: "go",
+                pattern_index: 0,
+                start: 0,
+                end: 2,
+            },
+            VStrMatch {
+                needle: "rust",
+                pattern_index: 1,
+                start: 3,
+                end: 7,
+            },
+            VStrMatch {
+                needle: "go",
+                pattern_index: 0,
+                start: 8,
+                end: 10,
+            },
+        ]
+    );
+    assert_eq!(
+        matcher.replace_all("go rust go", ["rs", "RUST"]),
+        "rs RUST rs"
+    );
+    assert_eq!(VStrMatcher::new([""]).find("rust"), None);
+}
+
+#[test]
+fn reusable_matcher_uses_leftmost_first_by_default() {
+    let leftmost_first = VStrMatcher::new(["a", "aa"]);
+    assert_eq!(leftmost_first.find("aaaa").unwrap().needle, "a");
+    assert_eq!(
+        leftmost_first.find_all("aaaa"),
+        vec![
+            VStrMatch {
+                needle: "a",
+                pattern_index: 0,
+                start: 0,
+                end: 1,
+            },
+            VStrMatch {
+                needle: "a",
+                pattern_index: 0,
+                start: 1,
+                end: 2,
+            },
+            VStrMatch {
+                needle: "a",
+                pattern_index: 0,
+                start: 2,
+                end: 3,
+            },
+            VStrMatch {
+                needle: "a",
+                pattern_index: 0,
+                start: 3,
+                end: 4,
+            },
+        ]
+    );
+}
+
+#[test]
+fn reusable_matcher_supports_leftmost_longest_and_overlap() {
+    let leftmost_longest = VStrMatcher::with_kind(["a", "aa"], MatchKind::LeftmostLongest);
+    assert_eq!(leftmost_longest.find("aaaa").unwrap().needle, "aa");
+    assert_eq!(
+        leftmost_longest.find_all("aaaa"),
+        vec![
+            VStrMatch {
+                needle: "aa",
+                pattern_index: 1,
+                start: 0,
+                end: 2,
+            },
+            VStrMatch {
+                needle: "aa",
+                pattern_index: 1,
+                start: 2,
+                end: 4,
+            },
+        ]
+    );
+    assert_eq!(
+        leftmost_longest.find_overlapping("aaaa"),
+        vec![
+            VStrMatch {
+                needle: "aa",
+                pattern_index: 1,
+                start: 0,
+                end: 2,
+            },
+            VStrMatch {
+                needle: "aa",
+                pattern_index: 1,
+                start: 1,
+                end: 3,
+            },
+            VStrMatch {
+                needle: "aa",
+                pattern_index: 1,
+                start: 2,
+                end: 4,
+            },
+            VStrMatch {
+                needle: "a",
+                pattern_index: 0,
+                start: 3,
+                end: 4,
+            },
+        ]
+    );
+    assert_eq!(leftmost_longest.replace_all("aaaa", ["x"]), "aaaa");
+}
+
+#[test]
 fn equality_and_reverse_helpers_are_unicode_aware() {
     assert!(equals_ignore_case("Knifer-RS", "knifer-rs"));
     assert!(equals_ignore_case("Straße", "straße"));

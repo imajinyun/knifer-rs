@@ -54,7 +54,7 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
    indentation, suffix budget, and display-width candidates.
 4. `VSTR-GAP-009: Complete` - regex-backed optional pattern helpers are exposed
    behind the `pattern-regex` feature.
-5. Design a reusable matcher that can support leftmost-first,
+5. `VSTR-GAP-016: Complete` - reusable `VStrMatcher` supports leftmost-first,
    leftmost-longest, and `find_overlapping` semantics without making the simple
    facade heavy.
 

@@ -5,6 +5,7 @@ mod case;
 mod classify;
 mod emoji;
 mod encoding;
+mod matcher;
 mod path;
 #[cfg(feature = "pattern-regex")]
 mod pattern;
@@ -16,6 +17,7 @@ pub use case::*;
 pub use classify::*;
 pub use emoji::*;
 pub use encoding::*;
+pub use matcher::*;
 pub use path::*;
 #[cfg(feature = "pattern-regex")]
 pub use pattern::*;

@@ -57,10 +57,11 @@ budget inside the requested scalar count.
 
 ## Future Multi-Pattern Matcher Contract
 
-The future matcher should document overlap and tie-break behavior explicitly.
-The default business-friendly policy should be leftmost-first. A dedicated
-`find_overlapping` style API can expose overlap-aware behavior without changing
-current non-overlapping helpers.
+`VStrMatcher` is the current Safe Rust MVP for this contract. It documents
+overlap and tie-break behavior explicitly. The default business-friendly policy
+is leftmost-first. `MatchKind::LeftmostLongest` can be selected when the longest
+match at the same byte offset should win. `find_overlapping` exposes
+overlap-aware behavior without changing current non-overlapping helpers.
 
 ## Optional Regex Pattern Helpers
 
