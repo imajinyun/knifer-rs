@@ -15,6 +15,7 @@ cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
+bash bin/check-api-semver.sh
 bash bin/check-docs-rs-ready.sh
 ```
 
@@ -36,6 +37,9 @@ bash bin/check-docs-rs-ready.sh
 The minimum supported Rust version is declared in `Cargo.toml` as
 `rust-version`. CI must keep checking that version. Public API changes should be
 reflected in `CHANGELOG.md` and, for `vstr`, in `docs/vstr-api-parity.md`.
+Run `bin/check-api-semver.sh` before refreshing `docs/public-api-inventory.md`;
+it reports removed or changed signatures as breaking and new signatures as
+additive API work.
 
 ## Commit Shape
 

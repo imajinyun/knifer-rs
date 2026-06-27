@@ -145,6 +145,7 @@ cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
+bash bin/check-api-semver.sh
 bash bin/check-vstr-benchmark-smoke.sh
 bash bin/check-vstr-bench.sh
 bash bin/check-vstr-fuzz-smoke.sh
@@ -190,6 +191,11 @@ regression threshold.
 Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
 substring boundaries, escaping, Ant-style path matching, and replacement
 invariants without adding runtime dependencies to the main library.
+
+Public API checks are intentionally split. `check-public-api-inventory.sh`
+ensures the generated signature snapshot is in sync, while
+`check-api-semver.sh` classifies removed or changed signatures as breaking and
+new signatures as additive inventory work.
 
 Optional `pattern-regex` helpers are available for callers that want regex-backed
 matching while keeping the default feature set at zero runtime dependencies:

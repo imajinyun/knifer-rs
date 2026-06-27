@@ -67,6 +67,9 @@ jobs:
       - name: Public API inventory
         run: bash bin/check-public-api-inventory.sh
 
+      - name: Public API semver check
+        run: bash bin/check-api-semver.sh
+
       - name: Vstr benchmark smoke
         run: bash bin/check-vstr-benchmark-smoke.sh
 

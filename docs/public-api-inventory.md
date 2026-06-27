@@ -1,8 +1,8 @@
 # Public API Inventory
 
 This file tracks the public surface of `knifer_rs::vstr`. It is checked by
-`bin/check-public-api-inventory.sh`; update the signature snapshot only after
-reviewing semver impact.
+`bin/check-public-api-inventory.sh` and `bin/check-api-semver.sh`; update the
+signature snapshot only after reviewing semver impact.
 
 ## Public API Signature Snapshot
 
@@ -225,5 +225,7 @@ Generic iterator APIs use forms such as `where I: IntoIterator`.
 
 ## Open Inventory Work
 
-Move from this generated snapshot toward semver-aware checking with
-`cargo-semver-checks` or rustdoc JSON once the crate approaches 1.0.
+The local semver-aware check classifies removed APIs and changed signatures as
+breaking, while newly exported APIs are additive inventory work. A future
+release-readiness pass can still add `cargo-semver-checks` or rustdoc JSON for
+cross-release compatibility against published crate versions.
