@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -40,6 +41,30 @@ jobs:
       - name: Project contract
         run: bash bin/check-project-contract.sh
 
+  platform-test:
+    name: ${{ matrix.os }} Stable Test
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Test
+        run: cargo test --locked
+
   msrv:
     name: MSRV Rust 1.85
     runs-on: ubuntu-latest
@@ -59,3 +84,17 @@ jobs:
 
       - name: Test
         run: cargo test --locked
+
+  package:
+    name: Package List
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Package list
+        run: cargo package --list --allow-dirty

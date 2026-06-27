@@ -5,6 +5,8 @@ edition = "2024"
 rust-version = "1.85"
 description = "A Safe Rust utility toolkit for everyday business development."
 license = "MIT"
+repository = "https://github.com/imajinyun/knifer-rs"
+documentation = "https://docs.rs/knifer-rs"
 
 [dependencies]
 

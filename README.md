@@ -79,6 +79,7 @@ cargo test --locked
 cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
+cargo package --list --allow-dirty
 ```
 
 The crate forbids unsafe code through Cargo lints.
