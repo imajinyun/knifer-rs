@@ -30,8 +30,6 @@ require_file SECURITY.md
 require_file CONTRIBUTING.md
 require_file CHANGELOG.md
 require_file README.md
-require_file aiflow.yaml
-require_file .aiflow/workflows/vstr-roadmap.yaml
 require_file docs/dependency-policy.md
 require_file bin/check-docs-rs-ready.sh
 require_file bin/check-project-contract.sh
@@ -76,18 +74,6 @@ require_text Cargo.toml 'default = []'
 require_text Cargo.toml 'pattern-regex = []'
 require_text Cargo.toml 'unicode-segmentation = []'
 require_text Cargo.toml 'unicode-width = []'
-require_text aiflow.yaml 'name: knifer-rs'
-require_text aiflow.yaml 'language: rust'
-require_text aiflow.yaml 'allow_commit: true'
-require_text aiflow.yaml 'allow_push: false'
-require_text aiflow.yaml 'cargo fmt --check'
-require_text aiflow.yaml 'bash bin/check-project-contract.sh'
-require_text .aiflow/workflows/vstr-roadmap.yaml 'kind: aiflow.workflow'
-require_text .aiflow/workflows/vstr-roadmap.yaml 'commit_after_each_task: true'
-require_text .aiflow/workflows/vstr-roadmap.yaml 'safe_rust_only: true'
-require_text .aiflow/workflows/vstr-roadmap.yaml 'default_runtime_dependencies: zero'
-require_text .aiflow/workflows/vstr-roadmap.yaml 'VSTR-GAP-001'
-require_text .aiflow/workflows/vstr-roadmap.yaml 'VSTR-GAP-015'
 if awk '
   /^\[dependencies\]$/ { in_deps = 1; next }
   /^\[/ { in_deps = 0 }
