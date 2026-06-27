@@ -16,6 +16,8 @@ Current targets:
 - `fuzz_escaping`: regex and Unicode escaping helpers.
 - `fuzz_path_matching`: Ant-style path matching helpers.
 - `fuzz_replacement`: deterministic literal replacement helpers.
+- `fuzz_text_boundaries`: wrap, truncation, abbreviation, masking, centering,
+  and whitespace boundary helpers.
 
 These are deterministic smoke targets today. If libFuzzer coverage is added
 later, keep the same target boundaries and reuse the invariant checks here.

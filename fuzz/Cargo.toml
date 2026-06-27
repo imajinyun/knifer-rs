@@ -22,3 +22,7 @@ path = "fuzz_targets/path_matching.rs"
 [[bin]]
 name = "fuzz_replacement"
 path = "fuzz_targets/replacement.rs"
+
+[[bin]]
+name = "fuzz_text_boundaries"
+path = "fuzz_targets/text_boundaries.rs"

@@ -190,7 +190,9 @@ regression threshold.
 
 Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
 substring boundaries, escaping, Ant-style path matching, and replacement
-invariants without adding runtime dependencies to the main library.
+invariants without adding runtime dependencies to the main library. The
+text-boundary target also covers wrap, truncation, abbreviation, masking,
+centering, and whitespace invariants.
 
 Public API checks are intentionally split. `check-public-api-inventory.sh`
 ensures the generated signature snapshot is in sync, while

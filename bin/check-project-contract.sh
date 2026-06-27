@@ -53,6 +53,7 @@ require_file fuzz/fuzz_targets/substring.rs
 require_file fuzz/fuzz_targets/escaping.rs
 require_file fuzz/fuzz_targets/path_matching.rs
 require_file fuzz/fuzz_targets/replacement.rs
+require_file fuzz/fuzz_targets/text_boundaries.rs
 
 require_text Cargo.toml 'edition = "2024"'
 require_text Cargo.toml 'rust-version = "1.85"'
@@ -184,6 +185,7 @@ require_text README.md 'fast CI coverage check'
 require_text README.md 'formal `cargo bench` target'
 require_text README.md 'docs.rs readiness check'
 require_text README.md 'cargo package --locked --allow-dirty'
+require_text README.md 'text-boundary target'
 require_text CONTRIBUTING.md 'bash bin/check-project-contract.sh'
 require_text CONTRIBUTING.md 'bash bin/check-public-api-inventory.sh'
 require_text CONTRIBUTING.md 'bash bin/check-api-semver.sh'
@@ -420,6 +422,7 @@ require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_substring'
 require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_escaping'
 require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_path_matching'
 require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_replacement'
+require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_text_boundaries'
 require_text bin/check-docs-rs-ready.sh 'RUSTDOCFLAGS="-Dwarnings --cfg docsrs" cargo doc --locked --all-features --no-deps'
 require_text bin/check-docs-rs-ready.sh 'cargo package --locked --allow-dirty'
 require_text bench/vstr_bench.rs 'bench_find_all'
@@ -435,6 +438,7 @@ require_text fuzz/Cargo.toml 'name = "knifer-rs-fuzz"'
 require_text fuzz/Cargo.toml 'publish = false'
 require_text fuzz/Cargo.toml 'knifer_rs = { package = "knifer-rs", path = ".." }'
 require_text fuzz/README.md 'fuzz_substring'
+require_text fuzz/README.md 'fuzz_text_boundaries'
 require_text fuzz/README.md 'bash bin/check-vstr-fuzz-smoke.sh'
 require_text fuzz/fuzz_targets/substring.rs 'take_chars'
 require_text fuzz/fuzz_targets/substring.rs 'drop_chars'
@@ -443,6 +447,10 @@ require_text fuzz/fuzz_targets/escaping.rs 'escape_regex'
 require_text fuzz/fuzz_targets/escaping.rs 'escape_unicode'
 require_text fuzz/fuzz_targets/path_matching.rs 'ant_path_match'
 require_text fuzz/fuzz_targets/replacement.rs 'replace_many'
+require_text fuzz/fuzz_targets/text_boundaries.rs 'truncate_with_suffix'
+require_text fuzz/fuzz_targets/text_boundaries.rs 'abbreviate_middle'
+require_text fuzz/fuzz_targets/text_boundaries.rs 'wrap_with_indent'
+require_text fuzz/fuzz_targets/text_boundaries.rs 'mask'
 
 if grep -R --include='*.rs' -n '\bunsafe\b' src; then
   echo "unsafe Rust is not allowed in src/" >&2
