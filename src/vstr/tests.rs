@@ -362,6 +362,12 @@ fn text_helpers_normalize_truncate_and_slugify() {
     assert_eq!(normalize_whitespace("你好\u{3000}Rust"), "你好 Rust");
     assert_eq!(remove_whitespace(" a\n b\t "), "ab");
     assert_eq!(remove_whitespace("你 好\u{3000}Rust"), "你好Rust");
+    assert_eq!(normalize_newlines("a\r\nb\rc"), "a\nb\nc");
+    assert_eq!(normalize_newlines("a\nb"), "a\nb");
+    assert_eq!(trim_lines("  a  \n\tb\t\n"), "a\nb\n");
+    assert_eq!(trim_blank_lines("\n  \nhello\n\n"), "hello");
+    assert_eq!(trim_blank_lines("\r\n  \r\nhello\r\n\r\n"), "hello");
+    assert_eq!(trim_blank_lines(" \n\t"), "");
     assert_eq!(truncate("你好Rust", 3), "你好R");
     assert_eq!(truncate("你好Rust", 0), "");
     assert_eq!(truncate("short", 10), "short");
@@ -373,6 +379,26 @@ fn text_helpers_normalize_truncate_and_slugify() {
     assert_eq!(truncate_with_suffix("你好Rust", 5, "..."), "你好...");
     assert_eq!(truncate_with_suffix("short", 10, "..."), "short");
     assert_eq!(truncate_with_suffix("abcdef", 2, "..."), "..");
+    assert_eq!(
+        abbreviate_middle("abcdefghijklmnopqrstuvwxyz", 10, "..."),
+        "abcd...xyz"
+    );
+    assert_eq!(abbreviate_middle("short", 10, "..."), "short");
+    assert_eq!(abbreviate_middle("abcdef", 2, "..."), "..");
+    assert_eq!(
+        limit_words("hello rust utility toolkit", 2, "..."),
+        "hello rust..."
+    );
+    assert_eq!(limit_words("hello rust", 3, "..."), "hello rust");
+    assert_eq!(
+        excerpt("hello rust utility toolkit", "utility", 14, "..."),
+        "...st utility too..."
+    );
+    assert_eq!(excerpt("hello rust", "go", 8, "..."), "hello...");
+    assert_eq!(mask("13800138000", 3, 4, '*'), "138****8000");
+    assert_eq!(mask("short", 10, 10, '*'), "short");
+    assert_eq!(collapse_repeated_char("a---b----c", '-'), "a-b-c");
+    assert_eq!(collapse_repeated_char("aaab", 'a'), "ab");
     assert_eq!(slugify("Hello, Rust World!"), "hello-rust-world");
     assert_eq!(slugify("你好 Rust"), "你好-rust");
     assert_eq!(
@@ -387,12 +413,25 @@ fn text_helpers_normalize_truncate_and_slugify() {
 fn text_formatting_helpers_indent_dedent_wrap_and_count() {
     assert_eq!(indent("a\nb", "  "), "  a\n  b");
     assert_eq!(indent("", "> "), "> ");
+    assert_eq!(center("rust", 8, '-'), "--rust--");
+    assert_eq!(center("rust", 9, '-'), "--rust---");
+    assert_eq!(center("你好", 5, '*'), "*你好**");
+    assert_eq!(center("ready", 3, '*'), "ready");
     assert_eq!(dedent("    a\n      b"), "a\n  b");
     assert_eq!(dedent("  a\n\n    b"), "a\n\n  b");
     assert_eq!(wrap("hello rust world", 10), "hello rust\nworld");
     assert_eq!(wrap("superlongword", 5), "super\nlongw\nord");
     assert_eq!(wrap("你好 Rust 世界", 7), "你好 Rust\n世界");
     assert_eq!(wrap("ignored", 0), "");
+    assert_eq!(
+        wrap_with_indent("hello rust world", 12, "* ", "  "),
+        "* hello rust\n  world"
+    );
+    assert_eq!(
+        wrap_with_indent("superlongword", 8, "> ", "  "),
+        "> superl\n  ongwor\n  d"
+    );
+    assert_eq!(wrap_with_indent("ignored", 0, "> ", "  "), "");
     assert_eq!(lines("a\nb\n"), vec!["a", "b"]);
     assert!(lines("").is_empty());
     assert_eq!(non_blank_lines(" a \n\n b "), vec!["a", "b"]);
@@ -409,6 +448,9 @@ fn text_formatting_helpers_indent_dedent_wrap_and_count() {
         remove_ascii_punctuation("Hello, Rust! 你好，世界！"),
         "Hello Rust 你好，世界！"
     );
+    assert_eq!(surround("value", "[", "]"), "[value]");
+    assert_eq!(unsurround("[value]", "[", "]"), Some("value"));
+    assert_eq!(unsurround("value]", "[", "]"), None);
     assert_eq!(word_count("hello  Rust\n世界"), 3);
     assert_eq!(word_count(" \n\t"), 0);
     assert_eq!(line_count("a\nb\n"), 2);
