@@ -305,6 +305,40 @@ fn length_helpers_make_byte_and_char_counts_explicit() {
 }
 
 #[test]
+fn unicode_boundary_golden_cases_document_scalar_semantics() {
+    let combining = "e\u{301}";
+    assert_eq!(byte_len(combining), 3);
+    assert_eq!(char_len(combining), 2);
+    assert_eq!(chars(combining), vec!['e', '\u{301}']);
+    assert_eq!(truncate(combining, 1), "e");
+    assert_eq!(take_chars(combining, 2), combining);
+    assert_eq!(drop_chars(combining, 1), "\u{301}");
+
+    let emoji_zwj = "👨‍👩‍👧‍👦";
+    assert_eq!(char_len(emoji_zwj), 7);
+    assert_eq!(take_chars(emoji_zwj, 2), "👨‍");
+    assert_eq!(drop_chars(emoji_zwj, 6), "👦");
+    assert!(contains_emoji(emoji_zwj));
+
+    let flag = "🇨🇳";
+    assert_eq!(byte_len(flag), 8);
+    assert_eq!(char_len(flag), 2);
+    assert_eq!(take_chars(flag, 1), "🇨");
+    assert!(contains_emoji(flag));
+
+    let cjk = "你好世界";
+    assert_eq!(byte_len(cjk), 12);
+    assert_eq!(char_len(cjk), 4);
+    assert_eq!(sub(cjk, 1, -1), "好世");
+    assert_eq!(find_all(cjk, "世界"), vec![(6, 12)]);
+
+    let mixed_width = "A你🚀e\u{301}";
+    assert_eq!(char_len(mixed_width), 5);
+    assert_eq!(truncate_with_suffix(mixed_width, 4, "..."), "A...");
+    assert_eq!(wrap(mixed_width, 3), "A你🚀\ne\u{301}");
+}
+
+#[test]
 fn emoji_helpers_detect_and_remove_common_sequences() {
     assert!(contains_emoji("ship it 🚀"));
     assert!(contains_emoji("go ✅"));
