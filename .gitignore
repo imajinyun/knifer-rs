@@ -38,8 +38,6 @@ perf.data
 perf.data.old
 flamegraph.svg
 .aiflow/
-docs/*
-!docs/api
 
 # Local benchmark output
 /criterion/

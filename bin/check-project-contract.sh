@@ -111,7 +111,7 @@ require_text .gitignore 'flamegraph.svg'
 require_text .gitignore '/criterion/'
 require_text .gitignore '/fuzz/artifacts/'
 require_text .gitignore '/tmp/'
-if grep -Fq '/docs/' .gitignore; then
+if grep -Eq '(^|/|\*)docs(/|\*|$)' .gitignore; then
   echo "docs/ contains source documentation and must not be ignored" >&2
   exit 1
 fi

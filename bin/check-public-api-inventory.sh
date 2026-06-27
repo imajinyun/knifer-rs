@@ -142,7 +142,9 @@ if [[ "${1:-}" == "--print-signatures" ]]; then
 fi
 
 while IFS= read -r api; do
-  if ! grep -Fq "\`$api\`" "$inventory" && ! grep -Fq "::$api\`" "$inventory"; then
+  if ! grep -Fq "\`$api\`" "$inventory" &&
+    ! grep -Fq "::$api\`" "$inventory" &&
+    ! grep -Eq "(^|::)$api( = |::)" "$inventory"; then
     echo "public API missing from $inventory: $api" >&2
     exit 1
   fi
