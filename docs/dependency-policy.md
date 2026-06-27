@@ -51,6 +51,9 @@ standard library is intentionally lower level.
 `unicode-width` Admission Contract:
 
 - Terminal/display-width helpers must be separate from scalar-count helpers.
+- The default build must not depend on `unicode-width`.
+- Display-width helpers are exposed as `display_width`, `take_width`, and
+  `truncate_width` only when the `unicode-width` feature is enabled.
 - Width-based wrapping and truncation must document CJK, emoji, and combining
   mark behavior.
 

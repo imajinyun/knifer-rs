@@ -562,6 +562,32 @@ fn unicode_segmentation_helpers_preserve_grapheme_boundaries() {
     assert_eq!(truncate_graphemes(mixed, 0, "..."), "");
 }
 
+#[cfg(feature = "unicode-width")]
+#[test]
+fn unicode_width_helpers_follow_display_cell_boundaries() {
+    assert_eq!(display_width("abc"), 3);
+    assert_eq!(display_width("你好"), 4);
+    assert_eq!(display_width("e\u{301}"), 1);
+    assert_eq!(display_width("👨\u{200d}👩\u{200d}👧\u{200d}👦"), 2);
+    assert_eq!(char_len("你好"), 2);
+
+    assert_eq!(take_width("a你好", 0), "");
+    assert_eq!(take_width("a你好", 1), "a");
+    assert_eq!(take_width("a你好", 2), "a");
+    assert_eq!(take_width("a你好", 3), "a你");
+    assert_eq!(take_width("e\u{301}clair", 1), "e\u{301}");
+    assert_eq!(
+        take_width("👨\u{200d}👩\u{200d}👧\u{200d}👦 family", 2),
+        "👨\u{200d}👩\u{200d}👧\u{200d}👦"
+    );
+
+    assert_eq!(truncate_width("abcdef", 0, "..."), "");
+    assert_eq!(truncate_width("abcdef", 2, "..."), "..");
+    assert_eq!(truncate_width("你好Rust", 6, "..."), "你...");
+    assert_eq!(truncate_width("short", 10, "..."), "short");
+    assert_eq!(truncate_width("e\u{301}clair", 4, "..."), "e\u{301}...");
+}
+
 #[test]
 fn emoji_helpers_detect_and_remove_common_sequences() {
     assert!(contains_emoji("ship it 🚀"));

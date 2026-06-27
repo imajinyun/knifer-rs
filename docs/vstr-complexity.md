@@ -61,10 +61,14 @@ combining marks, flags, and emoji ZWJ family sequences.
 
 The `unicode-segmentation` feature adds grapheme-aware helpers such as
 `graphemes`, `grapheme_len`, `take_graphemes`, and `truncate_graphemes`.
-Terminal display width remains future optional feature work. The project
-contract tracks `terminal display width remain candidates for optional` as the
-scope marker for that boundary. Optional helpers must not silently change
-scalar-based helpers.
+
+The `unicode-width` feature adds terminal display-width helpers such as
+`display_width`, `take_width`, and `truncate_width`. These helpers follow the
+`unicode-width` crate's rules, including CJK full-width characters, combining
+marks, and emoji ZWJ sequences. `take_width` measures each candidate prefix as a
+complete string so its behavior stays aligned with `display_width`.
+`truncate_width` reserves suffix budget in display cells. Optional helpers must
+not silently change scalar-based helpers.
 
 ## Wrap and Truncation Boundaries
 

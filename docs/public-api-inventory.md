@@ -57,6 +57,7 @@ knifer_rs::vstr::count_matches = pub fn count_matches(input: &str, needle: &str)
 knifer_rs::vstr::dedent = pub fn dedent(input: &str) -> String
 knifer_rs::vstr::default_if_blank = pub fn default_if_blank<'src>(input: &'src str, default: &'src str) -> &'src str
 knifer_rs::vstr::default_if_empty = pub fn default_if_empty<'src>(input: &'src str, default: &'src str) -> &'src str
+knifer_rs::vstr::display_width = pub fn display_width(input: &str) -> usize
 knifer_rs::vstr::drop_chars = pub fn drop_chars(input: &str, count: usize) -> &str
 knifer_rs::vstr::ends_with = pub fn ends_with(input: &str, suffix: &str) -> bool
 knifer_rs::vstr::ends_with_ignore_case = pub fn ends_with_ignore_case(input: &str, suffix: &str) -> bool
@@ -138,6 +139,7 @@ knifer_rs::vstr::surround = pub fn surround(input: &str, left: &str, right: &str
 knifer_rs::vstr::swap_case = pub fn swap_case(input: &str) -> String
 knifer_rs::vstr::take_chars = pub fn take_chars(input: &str, count: usize) -> &str
 knifer_rs::vstr::take_graphemes = pub fn take_graphemes(input: &str, count: usize) -> &str
+knifer_rs::vstr::take_width = pub fn take_width(input: &str, max_width: usize) -> &str
 knifer_rs::vstr::to_camel_case = pub fn to_camel_case(input: &str) -> String
 knifer_rs::vstr::to_cobol_case = pub fn to_cobol_case(input: &str) -> String
 knifer_rs::vstr::to_dot_case = pub fn to_dot_case(input: &str) -> String
@@ -160,6 +162,7 @@ knifer_rs::vstr::trim_to_empty = pub fn trim_to_empty(input: &str) -> &str
 knifer_rs::vstr::trim_to_string = pub fn trim_to_string(input: &str) -> String
 knifer_rs::vstr::truncate = pub fn truncate(input: &str, max_chars: usize) -> &str
 knifer_rs::vstr::truncate_graphemes = pub fn truncate_graphemes(input: &str, max_graphemes: usize, suffix: &str) -> String
+knifer_rs::vstr::truncate_width = pub fn truncate_width(input: &str, max_width: usize, suffix: &str) -> String
 knifer_rs::vstr::truncate_with_suffix = pub fn truncate_with_suffix(input: &str, max_chars: usize, suffix: &str) -> String
 knifer_rs::vstr::uncapitalize = pub fn uncapitalize(input: &str) -> String
 knifer_rs::vstr::unescape_html = pub fn unescape_html(input: &str) -> String
@@ -207,7 +210,8 @@ Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
 `replace_pattern`, `graphemes`, `grapheme_len`, `take_graphemes`,
-`truncate_graphemes`, `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
+`truncate_graphemes`, `display_width`, `take_width`, `truncate_width`,
+`to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
 `swap_case`, `normalize_whitespace`, `remove_whitespace`, `between`,
 `contains_none`, `contains_any_ignore_case`, `find_any`, `count_matches`,

@@ -13,6 +13,8 @@ mod path;
 mod pattern;
 mod similarity;
 mod text;
+#[cfg(feature = "unicode-width")]
+mod width;
 
 pub use basic::*;
 pub use case::*;
@@ -27,6 +29,8 @@ pub use path::*;
 pub use pattern::*;
 pub use similarity::*;
 pub use text::*;
+#[cfg(feature = "unicode-width")]
+pub use width::*;
 
 #[cfg(test)]
 mod tests;

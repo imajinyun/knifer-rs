@@ -86,6 +86,12 @@ assert_eq!(vstr::take_chars("你好Rust", 3), "你好R");
 assert_eq!(vstr::truncate_with_suffix("你好Rust", 5, "..."), "你好...");
 #[cfg(feature = "unicode-segmentation")]
 assert_eq!(vstr::take_graphemes("e\u{301}🇨🇳rust", 2), "e\u{301}🇨🇳");
+#[cfg(feature = "unicode-width")]
+assert_eq!(vstr::display_width("abc你好"), 7);
+#[cfg(feature = "unicode-width")]
+assert_eq!(vstr::take_width("👨‍👩‍👧‍👦 family", 2), "👨‍👩‍👧‍👦");
+#[cfg(feature = "unicode-width")]
+assert_eq!(vstr::truncate_width("你好Rust", 6, "..."), "你...");
 assert_eq!(vstr::abbreviate_middle("abcdefghijklmnopqrstuvwxyz", 10, "..."), "abcd...xyz");
 assert_eq!(vstr::mask("13800138000", 3, 4, '*'), "138****8000");
 assert_eq!(vstr::collapse_repeated_char("a---b----c", '-'), "a-b-c");
@@ -215,6 +221,14 @@ human-facing text without changing scalar-based helpers such as `take_chars`:
 knifer-rs = { version = "0.1", features = ["unicode-segmentation"] }
 ```
 
+Optional `unicode-width` helpers add terminal display-cell measurement and
+truncation for CJK, combining marks, and emoji ZWJ text:
+
+```toml
+[dependencies]
+knifer-rs = { version = "0.1", features = ["unicode-width"] }
+```
+
 The docs.rs readiness check is the local publish gate. It verifies crate
 metadata, builds rustdoc with the docs.rs configuration and all features, and
 runs `cargo package --locked --allow-dirty`.
@@ -226,4 +240,5 @@ runs `cargo package --locked --allow-dirty`.
 - Safety: unsafe code is forbidden by Cargo lints and checked by the project
   contract script.
 - Dependencies: zero runtime dependencies in the default feature set; optional
-  features add focused crates such as `regex` and `unicode-segmentation`.
+  features add focused crates such as `regex`, `unicode-segmentation`, and
+  `unicode-width`.
