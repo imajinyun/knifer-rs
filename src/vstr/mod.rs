@@ -7,6 +7,7 @@ mod emoji;
 mod encoding;
 mod path;
 mod similarity;
+mod text;
 
 pub use basic::*;
 pub use case::*;
@@ -15,6 +16,7 @@ pub use emoji::*;
 pub use encoding::*;
 pub use path::*;
 pub use similarity::*;
+pub use text::*;
 
 #[cfg(test)]
 mod tests;

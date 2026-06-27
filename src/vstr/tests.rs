@@ -98,6 +98,21 @@ fn separator_substrings_use_first_or_last_match() {
 }
 
 #[test]
+fn concise_substring_aliases_and_between_borrow_original_input() {
+    assert_eq!(before("a/b/c", "/"), "a");
+    assert_eq!(before("a/b/c", "|"), "a/b/c");
+    assert_eq!(before_last("a/b/c", "/"), "a/b");
+    assert_eq!(after("a/b/c", "/"), "b/c");
+    assert_eq!(after("a/b/c", "|"), "");
+    assert_eq!(after_last("a/b/c", "/"), "c");
+    assert_eq!(between("id=[42]", "[", "]"), Some("42"));
+    assert_eq!(between("a<你好>b", "<", ">"), Some("你好"));
+    assert_eq!(between("id=42", "[", "]"), None);
+    assert_eq!(between("id=[]", "[", "]"), Some(""));
+    assert_eq!(between("id=[42]", "", "]"), None);
+}
+
+#[test]
 fn repeat_and_pad_helpers_return_owned_strings() {
     assert_eq!(repeat("ab", 3), "ababab");
     assert_eq!(repeat("ab", 0), "");
@@ -116,7 +131,17 @@ fn case_helpers_normalize_common_word_boundaries() {
     assert_eq!(to_kebab_case("helloWorld ID"), "hello-world-id");
     assert_eq!(to_camel_case("hello_world-id"), "helloWorldId");
     assert_eq!(to_pascal_case("hello_world-id"), "HelloWorldId");
-    assert_eq!(to_snake_case("  hello--rust_world  "), "hello_rust_world");
+    assert_eq!(to_camel_case("HelloWorld"), "helloWorld");
+    assert_eq!(to_pascal_case("helloWorld"), "HelloWorld");
+    assert_eq!(to_snake_case("HTTPServerID"), "http_server_id");
+    assert_eq!(to_kebab_case("HTTPServerID"), "http-server-id");
+    assert_eq!(to_screaming_snake_case("HTTPServerID"), "HTTP_SERVER_ID");
+    assert_eq!(to_screaming_kebab_case("HTTPServerID"), "HTTP-SERVER-ID");
+    assert_eq!(to_title_case("hello_world-id"), "Hello World Id");
+    assert_eq!(
+        to_snake_case("  hello--rust_world  "),
+        "__hello__rust_world__"
+    );
 }
 
 #[test]
@@ -144,8 +169,17 @@ fn contains_helpers_support_single_any_and_all() {
     assert!(!contains_any("knifer-rs", ["java", "py"]));
     assert!(contains_all("knifer-rs", ["knife", "rs"]));
     assert!(!contains_all("knifer-rs", ["knife", "go"]));
+    assert!(contains_none("knifer-rs", ["go", "java"]));
+    assert!(!contains_none("knifer-rs", ["go", "rs"]));
     assert!(contains_ignore_case("Knifer-RS", "rs"));
     assert!(!contains_ignore_case("Knifer-RS", "go"));
+    assert!(contains_any_ignore_case("Knifer-RS", ["go", "RS"]));
+    assert!(!contains_any_ignore_case("Knifer-RS", ["go", "java"]));
+    assert!(contains_all_ignore_case("Knifer-RS", ["knife", "RS"]));
+    assert!(!contains_all_ignore_case("Knifer-RS", ["knife", "go"]));
+    assert_eq!(count_matches("aaaa", "aa"), 2);
+    assert_eq!(count_matches("你好你好", "你好"), 2);
+    assert_eq!(count_matches("abc", ""), 0);
 }
 
 #[test]
@@ -172,13 +206,46 @@ fn format_replaces_placeholders_in_order() {
 }
 
 #[test]
+fn replace_helpers_support_first_last_and_case_insensitive_rewrites() {
+    assert_eq!(replace_first("go go rust", "go", "rs"), "rs go rust");
+    assert_eq!(replace_first("rust", "go", "rs"), "rust");
+    assert_eq!(replace_first("rust", "", "rs"), "rust");
+    assert_eq!(replace_last("go go rust", "go", "rs"), "go rs rust");
+    assert_eq!(replace_last("rust", "go", "rs"), "rust");
+    assert_eq!(replace_last("rust", "", "rs"), "rust");
+    assert_eq!(replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");
+    assert_eq!(replace_ignore_case("abc\u{212A}", "k", "K"), "abcK");
+    assert_eq!(replace_ignore_case("rust", "", "rs"), "rust");
+}
+
+#[test]
 fn prefix_and_suffix_helpers_handle_existing_markers() {
     assert!(starts_with("knifer-rs", "knife"));
     assert!(ends_with("knifer-rs", "rs"));
+    assert!(starts_with_ignore_case("Knifer-RS", "knife"));
+    assert!(starts_with_ignore_case("\u{212A}nifer", "k"));
+    assert!(!starts_with_ignore_case("Knifer-RS", "go"));
+    assert!(starts_with_ignore_case("Knifer-RS", ""));
+    assert!(ends_with_ignore_case("Knifer-RS", "RS"));
+    assert!(ends_with_ignore_case("abc\u{212A}", "k"));
+    assert!(!ends_with_ignore_case("Knifer-RS", "go"));
+    assert!(ends_with_ignore_case("Knifer-RS", ""));
     assert_eq!(remove_prefix("knifer-rs", "knifer-"), "rs");
     assert_eq!(remove_prefix("knifer-rs", "go-"), "knifer-rs");
     assert_eq!(remove_suffix("knifer-rs", "-rs"), "knifer");
     assert_eq!(remove_suffix("knifer-rs", "-go"), "knifer-rs");
+    assert_eq!(split_once("a=b=c", "="), Some(("a", "b=c")));
+    assert_eq!(split_once("abc", "="), None);
+    assert_eq!(split_once("abc", ""), None);
+    assert_eq!(split_once_last("a=b=c", "="), Some(("a=b", "c")));
+    assert_eq!(split_once_last("abc", "="), None);
+    assert_eq!(split_once_last("abc", ""), None);
+    assert_eq!(strip_prefix_ignore_case("Knifer-RS", "knife"), Some("r-RS"));
+    assert_eq!(strip_prefix_ignore_case("Knifer-RS", "go"), None);
+    assert_eq!(strip_prefix_ignore_case("Knifer-RS", ""), Some("Knifer-RS"));
+    assert_eq!(strip_suffix_ignore_case("Knifer-RS", "rs"), Some("Knifer-"));
+    assert_eq!(strip_suffix_ignore_case("Knifer-RS", "go"), None);
+    assert_eq!(strip_suffix_ignore_case("Knifer-RS", ""), Some("Knifer-RS"));
     assert_eq!(add_prefix_if_not("path", "/"), "/path");
     assert_eq!(add_prefix_if_not("/path", "/"), "/path");
     assert_eq!(add_suffix_if_not("path", "/"), "path/");
@@ -276,6 +343,54 @@ fn character_classification_helpers_follow_unicode_semantics() {
     assert!(is_letter_or_digit('七'));
     assert!(!is_letter_or_digit('Ⅷ'));
     assert!(!is_letter_or_digit('-'));
+}
+
+#[test]
+fn text_helpers_normalize_truncate_and_slugify() {
+    assert_eq!(normalize_whitespace("  hello\n\tRust  "), "hello Rust");
+    assert_eq!(normalize_whitespace("你好\u{3000}Rust"), "你好 Rust");
+    assert_eq!(remove_whitespace(" a\n b\t "), "ab");
+    assert_eq!(remove_whitespace("你 好\u{3000}Rust"), "你好Rust");
+    assert_eq!(truncate("你好Rust", 3), "你好R");
+    assert_eq!(truncate("你好Rust", 0), "");
+    assert_eq!(truncate("short", 10), "short");
+    assert_eq!(take_chars("你好Rust", 3), "你好R");
+    assert_eq!(take_chars("你好Rust", 0), "");
+    assert_eq!(drop_chars("你好Rust", 2), "Rust");
+    assert_eq!(drop_chars("你好Rust", 0), "你好Rust");
+    assert_eq!(drop_chars("你好Rust", 20), "");
+    assert_eq!(truncate_with_suffix("你好Rust", 5, "..."), "你好...");
+    assert_eq!(truncate_with_suffix("short", 10, "..."), "short");
+    assert_eq!(truncate_with_suffix("abcdef", 2, "..."), "..");
+    assert_eq!(slugify("Hello, Rust World!"), "hello-rust-world");
+    assert_eq!(slugify("你好 Rust"), "你好-rust");
+    assert_eq!(
+        slugify_with_separator("Hello, Rust World!", '_'),
+        "hello_rust_world"
+    );
+    assert_eq!(slugify("---Hello---"), "hello");
+    assert_eq!(slugify_with_separator("Hello Rust", 'x'), "hello-rust");
+}
+
+#[test]
+fn text_formatting_helpers_indent_dedent_wrap_and_count() {
+    assert_eq!(indent("a\nb", "  "), "  a\n  b");
+    assert_eq!(indent("", "> "), "> ");
+    assert_eq!(dedent("    a\n      b"), "a\n  b");
+    assert_eq!(dedent("  a\n\n    b"), "a\n\n  b");
+    assert_eq!(wrap("hello rust world", 10), "hello rust\nworld");
+    assert_eq!(wrap("superlongword", 5), "super\nlongw\nord");
+    assert_eq!(wrap("你好 Rust 世界", 7), "你好 Rust\n世界");
+    assert_eq!(wrap("ignored", 0), "");
+    assert_eq!(lines("a\nb\n"), vec!["a", "b"]);
+    assert!(lines("").is_empty());
+    assert_eq!(non_blank_lines(" a \n\n b "), vec!["a", "b"]);
+    assert_eq!(non_blank_lines(" \n\t"), Vec::<&str>::new());
+    assert_eq!(chars("a你"), vec!['a', '你']);
+    assert_eq!(word_count("hello  Rust\n世界"), 3);
+    assert_eq!(word_count(" \n\t"), 0);
+    assert_eq!(line_count("a\nb\n"), 2);
+    assert_eq!(line_count(""), 0);
 }
 
 #[test]

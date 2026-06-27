@@ -351,6 +351,93 @@ pub fn sub_after<'src>(input: &'src str, separator: &str, use_last_separator: bo
     index.map_or("", |index| &input[index + separator.len()..])
 }
 
+/// Returns text before the first `separator`.
+///
+/// This is a concise alias for `sub_before(input, separator, false)`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::before("a/b/c", "/"), "a");
+/// assert_eq!(vstr::before("a/b/c", "|"), "a/b/c");
+/// ```
+#[must_use]
+pub fn before<'src>(input: &'src str, separator: &str) -> &'src str {
+    sub_before(input, separator, false)
+}
+
+/// Returns text before the last `separator`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::before_last("a/b/c", "/"), "a/b");
+/// ```
+#[must_use]
+pub fn before_last<'src>(input: &'src str, separator: &str) -> &'src str {
+    sub_before(input, separator, true)
+}
+
+/// Returns text after the first `separator`.
+///
+/// This is a concise alias for `sub_after(input, separator, false)`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::after("a/b/c", "/"), "b/c");
+/// assert_eq!(vstr::after("a/b/c", "|"), "");
+/// ```
+#[must_use]
+pub fn after<'src>(input: &'src str, separator: &str) -> &'src str {
+    sub_after(input, separator, false)
+}
+
+/// Returns text after the last `separator`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::after_last("a/b/c", "/"), "c");
+/// ```
+#[must_use]
+pub fn after_last<'src>(input: &'src str, separator: &str) -> &'src str {
+    sub_after(input, separator, true)
+}
+
+/// Returns text between the first `start` and the following `end` marker.
+///
+/// `None` is returned when either marker is empty or missing. The returned
+/// slice borrows from `input`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::between("id=[42]", "[", "]"), Some("42"));
+/// assert_eq!(vstr::between("id=42", "[", "]"), None);
+/// ```
+#[must_use]
+pub fn between<'src>(input: &'src str, start: &str, end: &str) -> Option<&'src str> {
+    if start.is_empty() || end.is_empty() {
+        return None;
+    }
+
+    let content_start = input.find(start)? + start.len();
+    let rest = &input[content_start..];
+    let content_end = rest.find(end)?;
+    Some(&rest[..content_end])
+}
+
 /// Repeats `input` `count` times.
 ///
 /// # Examples
@@ -496,6 +583,26 @@ where
     needles.into_iter().all(|needle| contains(input, needle))
 }
 
+/// Returns `true` when `input` contains none of the values in `needles`.
+///
+/// Empty iterators return `true`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert!(vstr::contains_none("knifer-rs", ["go", "java"]));
+/// assert!(!vstr::contains_none("knifer-rs", ["go", "rs"]));
+/// ```
+#[must_use]
+pub fn contains_none<'src, I>(input: &str, needles: I) -> bool
+where
+    I: IntoIterator<Item = &'src str>,
+{
+    needles.into_iter().all(|needle| !contains(input, needle))
+}
+
 /// Returns `true` when `input` contains `needle`, ignoring Unicode case.
 ///
 /// # Examples
@@ -508,6 +615,71 @@ where
 #[must_use]
 pub fn contains_ignore_case(input: &str, needle: &str) -> bool {
     input.to_lowercase().contains(&needle.to_lowercase())
+}
+
+/// Returns `true` when `input` contains any needle, ignoring Unicode case.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert!(vstr::contains_any_ignore_case("Knifer-RS", ["go", "RS"]));
+/// assert!(!vstr::contains_any_ignore_case("Knifer-RS", ["go", "java"]));
+/// ```
+#[must_use]
+pub fn contains_any_ignore_case<'src, I>(input: &str, needles: I) -> bool
+where
+    I: IntoIterator<Item = &'src str>,
+{
+    let input = input.to_lowercase();
+    needles
+        .into_iter()
+        .any(|needle| input.contains(&needle.to_lowercase()))
+}
+
+/// Returns `true` when `input` contains every needle, ignoring Unicode case.
+///
+/// Empty iterators return `true`, matching [`Iterator::all`].
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert!(vstr::contains_all_ignore_case("Knifer-RS", ["knife", "RS"]));
+/// assert!(!vstr::contains_all_ignore_case("Knifer-RS", ["knife", "go"]));
+/// ```
+#[must_use]
+pub fn contains_all_ignore_case<'src, I>(input: &str, needles: I) -> bool
+where
+    I: IntoIterator<Item = &'src str>,
+{
+    let input = input.to_lowercase();
+    needles
+        .into_iter()
+        .all(|needle| input.contains(&needle.to_lowercase()))
+}
+
+/// Counts non-overlapping matches of `needle` in `input`.
+///
+/// Empty needles return zero to avoid surprising infinite-match semantics.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::count_matches("aaaa", "aa"), 2);
+/// assert_eq!(vstr::count_matches("你好你好", "你好"), 2);
+/// ```
+#[must_use]
+pub fn count_matches(input: &str, needle: &str) -> usize {
+    if needle.is_empty() {
+        return 0;
+    }
+
+    input.matches(needle).count()
 }
 
 /// Returns `true` when `input` starts with `prefix`.
@@ -536,6 +708,42 @@ pub fn starts_with(input: &str, prefix: &str) -> bool {
 #[must_use]
 pub fn ends_with(input: &str, suffix: &str) -> bool {
     input.ends_with(suffix)
+}
+
+/// Returns `true` when `input` starts with `prefix`, ignoring Unicode case.
+///
+/// This uses the same simple scalar-by-scalar case folding as
+/// [`equals_ignore_case`].
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert!(vstr::starts_with_ignore_case("Knifer-RS", "knife"));
+/// assert!(vstr::starts_with_ignore_case("\u{212A}nife", "k"));
+/// ```
+#[must_use]
+pub fn starts_with_ignore_case(input: &str, prefix: &str) -> bool {
+    prefix_end_ignore_case(input, prefix).is_some()
+}
+
+/// Returns `true` when `input` ends with `suffix`, ignoring Unicode case.
+///
+/// This uses the same simple scalar-by-scalar case folding as
+/// [`equals_ignore_case`].
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert!(vstr::ends_with_ignore_case("Knifer-RS", "RS"));
+/// assert!(vstr::ends_with_ignore_case("abc\u{212A}", "k"));
+/// ```
+#[must_use]
+pub fn ends_with_ignore_case(input: &str, suffix: &str) -> bool {
+    suffix_start_ignore_case(input, suffix).is_some()
 }
 
 /// Returns `true` when both strings are equal, ignoring Unicode case.
@@ -639,6 +847,75 @@ pub fn format(template: &str, args: &[&dyn std::fmt::Display]) -> String {
     output
 }
 
+/// Replaces the first occurrence of `from` with `to`.
+///
+/// If `from` is empty or missing, `input` is returned unchanged.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::replace_first("go go rust", "go", "rs"), "rs go rust");
+/// assert_eq!(vstr::replace_first("rust", "go", "rs"), "rust");
+/// ```
+#[must_use]
+pub fn replace_first(input: &str, from: &str, to: &str) -> String {
+    replace_at(input, from, to, input.find(from))
+}
+
+/// Replaces the last occurrence of `from` with `to`.
+///
+/// If `from` is empty or missing, `input` is returned unchanged.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::replace_last("go go rust", "go", "rs"), "go rs rust");
+/// assert_eq!(vstr::replace_last("rust", "go", "rs"), "rust");
+/// ```
+#[must_use]
+pub fn replace_last(input: &str, from: &str, to: &str) -> String {
+    replace_at(input, from, to, input.rfind(from))
+}
+
+/// Replaces all non-overlapping occurrences of `from`, ignoring Unicode case.
+///
+/// Matching uses simple scalar-by-scalar case folding, the same compatibility
+/// boundary as [`equals_ignore_case`]. Replaced text is not searched again.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");
+/// assert_eq!(vstr::replace_ignore_case("abc\u{212A}", "k", "K"), "abcK");
+/// ```
+#[must_use]
+pub fn replace_ignore_case(input: &str, from: &str, to: &str) -> String {
+    if from.is_empty() {
+        return input.to_owned();
+    }
+
+    let mut output = String::with_capacity(input.len());
+    let mut remaining = input;
+
+    while !remaining.is_empty() {
+        if let Some(match_end) = prefix_end_ignore_case(remaining, from) {
+            output.push_str(to);
+            remaining = &remaining[match_end..];
+        } else if let Some(ch) = remaining.chars().next() {
+            output.push(ch);
+            remaining = &remaining[ch.len_utf8()..];
+        }
+    }
+
+    output
+}
+
 /// Returns `input` without `prefix` when it is present.
 ///
 /// This function borrows from the original string and does not allocate.
@@ -671,6 +948,90 @@ pub fn remove_prefix<'src>(input: &'src str, prefix: &str) -> &'src str {
 #[must_use]
 pub fn remove_suffix<'src>(input: &'src str, suffix: &str) -> &'src str {
     input.strip_suffix(suffix).unwrap_or(input)
+}
+
+/// Splits `input` once at the first `separator`.
+///
+/// `None` is returned when the separator is empty or missing. The returned
+/// slices borrow from `input`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::split_once("a=b=c", "="), Some(("a", "b=c")));
+/// assert_eq!(vstr::split_once("abc", "="), None);
+/// ```
+#[must_use]
+pub fn split_once<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)> {
+    if separator.is_empty() {
+        return None;
+    }
+
+    input
+        .find(separator)
+        .map(|index| (&input[..index], &input[index + separator.len()..]))
+}
+
+/// Splits `input` once at the last `separator`.
+///
+/// `None` is returned when the separator is empty or missing. The returned
+/// slices borrow from `input`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::split_once_last("a=b=c", "="), Some(("a=b", "c")));
+/// assert_eq!(vstr::split_once_last("abc", "="), None);
+/// ```
+#[must_use]
+pub fn split_once_last<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)> {
+    if separator.is_empty() {
+        return None;
+    }
+
+    input
+        .rfind(separator)
+        .map(|index| (&input[..index], &input[index + separator.len()..]))
+}
+
+/// Strips `prefix` from `input`, ignoring Unicode case.
+///
+/// The returned slice preserves the original input casing. `None` is returned
+/// when the prefix is not present.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::strip_prefix_ignore_case("Knifer-RS", "knife"), Some("r-RS"));
+/// assert_eq!(vstr::strip_prefix_ignore_case("Knifer-RS", "go"), None);
+/// ```
+#[must_use]
+pub fn strip_prefix_ignore_case<'src>(input: &'src str, prefix: &str) -> Option<&'src str> {
+    prefix_end_ignore_case(input, prefix).map(|end| &input[end..])
+}
+
+/// Strips `suffix` from `input`, ignoring Unicode case.
+///
+/// The returned slice preserves the original input casing. `None` is returned
+/// when the suffix is not present.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::strip_suffix_ignore_case("Knifer-RS", "rs"), Some("Knifer-"));
+/// assert_eq!(vstr::strip_suffix_ignore_case("Knifer-RS", "go"), None);
+/// ```
+#[must_use]
+pub fn strip_suffix_ignore_case<'src>(input: &'src str, suffix: &str) -> Option<&'src str> {
+    suffix_start_ignore_case(input, suffix).map(|start| &input[..start])
 }
 
 /// Adds `prefix` when `input` does not already start with it.
@@ -785,4 +1146,54 @@ fn normalize_index(index: isize, len: usize) -> usize {
     let len = isize::try_from(len).unwrap_or(isize::MAX);
     let normalized = if index < 0 { len + index } else { index };
     usize::try_from(normalized.clamp(0, len)).unwrap_or(usize::MAX)
+}
+
+fn replace_at(input: &str, from: &str, to: &str, index: Option<usize>) -> String {
+    if from.is_empty() {
+        return input.to_owned();
+    }
+
+    let Some(index) = index else {
+        return input.to_owned();
+    };
+
+    let mut output = String::with_capacity(input.len() - from.len() + to.len());
+    output.push_str(&input[..index]);
+    output.push_str(to);
+    output.push_str(&input[index + from.len()..]);
+    output
+}
+
+fn prefix_end_ignore_case(input: &str, prefix: &str) -> Option<usize> {
+    if prefix.is_empty() {
+        return Some(0);
+    }
+
+    let mut input_chars = input.char_indices();
+    for prefix_ch in prefix.chars() {
+        let (_, input_ch) = input_chars.next()?;
+        if !chars_equal_ignore_case(input_ch, prefix_ch) {
+            return None;
+        }
+    }
+
+    Some(input_chars.next().map_or(input.len(), |(index, _)| index))
+}
+
+fn suffix_start_ignore_case(input: &str, suffix: &str) -> Option<usize> {
+    if suffix.is_empty() {
+        return Some(input.len());
+    }
+
+    let mut input_chars = input.char_indices().rev();
+    let mut start = None;
+    for suffix_ch in suffix.chars().rev() {
+        let (index, input_ch) = input_chars.next()?;
+        if !chars_equal_ignore_case(input_ch, suffix_ch) {
+            return None;
+        }
+        start = Some(index);
+    }
+
+    start
 }

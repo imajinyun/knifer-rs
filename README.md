@@ -65,9 +65,21 @@ assert!(vstr::contains_emoji_with_options("ship :rocket:", &emoji_opts));
 assert_eq!(vstr::split_trim(" a, ,b ", ","), vec!["a", "b"]);
 assert_eq!(vstr::sub("你好世界", 1, -1), "好世");
 assert_eq!(vstr::sub_after("a/b/c", "/", true), "c");
+assert_eq!(vstr::between("id=[42]", "[", "]"), Some("42"));
+assert_eq!(vstr::split_once_last("a=b=c", "="), Some(("a=b", "c")));
 assert_eq!(vstr::pad_left("42", 5, '0'), "00042");
 assert_eq!(vstr::to_snake_case("helloWorld ID"), "hello_world_id");
+assert_eq!(vstr::to_screaming_snake_case("HTTPServerID"), "HTTP_SERVER_ID");
+assert_eq!(vstr::remove_whitespace(" a\n b\t "), "ab");
+assert_eq!(vstr::slugify("Hello, Rust World!"), "hello-rust-world");
+assert_eq!(vstr::take_chars("你好Rust", 3), "你好R");
+assert_eq!(vstr::truncate_with_suffix("你好Rust", 5, "..."), "你好...");
+assert_eq!(vstr::wrap("hello rust world", 10), "hello rust\nworld");
+assert_eq!(vstr::non_blank_lines(" a \n\n b "), vec!["a", "b"]);
 assert!(vstr::contains_ignore_case("Knifer-RS", "rs"));
+assert_eq!(vstr::strip_suffix_ignore_case("Knifer-RS", "rs"), Some("Knifer-"));
+assert_eq!(vstr::count_matches("aaaa", "aa"), 2);
+assert_eq!(vstr::replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");
 assert_eq!(vstr::format("name={}, age={}", &[&"tom", &12]), "name=tom, age=12");
 assert_eq!(vstr::add_prefix_if_not("path", "/"), "/path");
 assert!(vstr::ant_path_match("/api/**", "/api/v1/users"));
@@ -91,6 +103,7 @@ src/
     encoding.rs HTML and Unicode escaping helpers
     path.rs    Ant-style path matching helpers
     similarity.rs text similarity and fingerprint helpers
+    text.rs    whitespace normalization, truncation, and slug helpers
 ```
 
 ## Development Checks
