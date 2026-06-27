@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+require_file() {
+  local path="$1"
+
+  if [[ ! -f "$path" ]]; then
+    echo "missing required file: $path" >&2
+    exit 1
+  fi
+}
+
+require_text() {
+  local path="$1"
+  local text="$2"
+
+  if ! grep -Fq "$text" "$path"; then
+    echo "missing required text in $path: $text" >&2
+    exit 1
+  fi
+}
+
+require_file Cargo.toml
+require_file Cargo.lock
+require_file .editorconfig
+require_file .gitattributes
+require_file .gitignore
+require_file LICENSE
+require_file SECURITY.md
+require_file CONTRIBUTING.md
+require_file CHANGELOG.md
+require_file README.md
+require_file docs/vstr-api-parity.md
+require_file docs/top-rust-utility-gap-analysis.md
+
+require_text Cargo.toml 'rust-version = "1.85"'
+require_text Cargo.toml 'unsafe_code = "forbid"'
+require_text Cargo.toml 'missing_docs = "warn"'
+require_text Cargo.toml 'pedantic = "warn"'
+require_text .editorconfig 'end_of_line = lf'
+require_text .editorconfig '[*.rs]'
+require_text .gitattributes '* text=auto eol=lf'
+require_text .gitignore '/target/'
+require_text .gitignore '.env.*'
+require_text .gitignore '*.profraw'
+require_text README.md 'knifer_rs::vstr'
+require_text README.md 'cargo clippy --all-targets -- -D warnings'
+require_text docs/vstr-api-parity.md 'Open Compatibility Work'
+require_text docs/top-rust-utility-gap-analysis.md 'RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items'
+require_text docs/top-rust-utility-gap-analysis.md '.gitignore'
+require_text docs/top-rust-utility-gap-analysis.md '.gitattributes'
+
+if grep -R --include='*.rs' -n '\bunsafe\b' src; then
+  echo "unsafe Rust is not allowed in src/" >&2
+  exit 1
+fi

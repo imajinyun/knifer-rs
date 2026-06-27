@@ -1,0 +1,25 @@
+# Rust build artifacts
+/docs/
+/target/
+
+# Local editor and OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Local coverage and profiling artifacts
+/coverage/
+/tarpaulin-report.html
+*.profraw
+*.profdata
+
+# Local benchmark output
+/criterion/

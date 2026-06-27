@@ -1,0 +1,17 @@
+[package]
+name = "knifer-rs"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "A Safe Rust utility toolkit for everyday business development."
+license = "MIT"
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
