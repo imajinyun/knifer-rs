@@ -188,9 +188,27 @@ fn contains_helpers_support_single_any_and_all() {
     assert!(!contains_any_ignore_case("Knifer-RS", ["go", "java"]));
     assert!(contains_all_ignore_case("Knifer-RS", ["knife", "RS"]));
     assert!(!contains_all_ignore_case("Knifer-RS", ["knife", "go"]));
+    assert_eq!(
+        find_any("hello rust", ["go", "rust"]),
+        Some(("rust", 6, 10))
+    );
+    assert_eq!(
+        find_any("abc rust go", ["go", "rust"]),
+        Some(("rust", 4, 8))
+    );
+    assert_eq!(find_any("hello rust", ["", "go"]), None);
     assert_eq!(count_matches("aaaa", "aa"), 2);
     assert_eq!(count_matches("你好你好", "你好"), 2);
     assert_eq!(count_matches("abc", ""), 0);
+    assert_eq!(find_all("aaaa", "aa"), vec![(0, 2), (2, 4)]);
+    assert_eq!(find_all("你好你好", "你好"), vec![(0, 6), (6, 12)]);
+    assert!(find_all("abc", "").is_empty());
+    assert_eq!(
+        find_all_ignore_case("Go go Rust", "go"),
+        vec![(0, 2), (3, 5)]
+    );
+    assert_eq!(find_all_ignore_case("abc\u{212A}", "k"), vec![(3, 6)]);
+    assert!(find_all_ignore_case("abc", "").is_empty());
 }
 
 #[test]
@@ -227,6 +245,19 @@ fn replace_helpers_support_first_last_and_case_insensitive_rewrites() {
     assert_eq!(replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");
     assert_eq!(replace_ignore_case("abc\u{212A}", "k", "K"), "abcK");
     assert_eq!(replace_ignore_case("rust", "", "rs"), "rust");
+    assert_eq!(
+        replace_many("hello rust world", [("hello", "hi"), ("world", "team")]),
+        "hi rust team"
+    );
+    assert_eq!(replace_many("aaaa", [("aa", "b"), ("a", "c")]), "bb");
+    assert_eq!(replace_many("aaaa", [("a", "c"), ("aa", "b")]), "cccc");
+    assert_eq!(replace_many("rust", [("", "x")]), "rust");
+    assert_eq!(escape_regex("a+b*(c)"), r"a\+b\*\(c\)");
+    assert_eq!(
+        escape_regex(r".*?^$#&-~\[]{}|"),
+        r"\.\*\?\^\$\#\&\-\~\\\[\]\{\}\|"
+    );
+    assert_eq!(quote_meta("[rust]"), r"\[rust\]");
 }
 
 #[test]

@@ -22,7 +22,9 @@ but to match their engineering discipline:
 - low repository noise through `.gitignore`, `.editorconfig`, and
   `.gitattributes`
 
-See `docs/top-rust-utility-gap-analysis.md` for the current gap analysis.
+See `docs/top-rust-utility-gap-analysis.md` for the general utility-crate gap
+analysis and `docs/vstr-top-string-gap-analysis.md` for the focused string and
+text-processing benchmark set.
 
 ## Status
 
@@ -91,9 +93,15 @@ assert_eq!(vstr::initials("rust string toolkit"), "RST");
 assert!(vstr::is_palindrome("A man, a plan, a canal: Panama"));
 assert_eq!(vstr::extract_digits("id=42, رقم=٣"), "42٣");
 assert!(vstr::contains_ignore_case("Knifer-RS", "rs"));
+assert_eq!(vstr::find_any("hello rust", ["go", "rust"]), Some(("rust", 6, 10)));
+assert_eq!(vstr::find_all("aaaa", "aa"), vec![(0, 2), (2, 4)]);
+assert_eq!(vstr::find_all_ignore_case("Go go Rust", "go"), vec![(0, 2), (3, 5)]);
 assert_eq!(vstr::strip_suffix_ignore_case("Knifer-RS", "rs"), Some("Knifer-"));
 assert_eq!(vstr::count_matches("aaaa", "aa"), 2);
 assert_eq!(vstr::replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");
+assert_eq!(vstr::replace_many("hello rust world", [("hello", "hi"), ("world", "team")]), "hi rust team");
+assert_eq!(vstr::escape_regex("a+b*(c)"), r"a\+b\*\(c\)");
+assert_eq!(vstr::quote_meta("[rust]"), r"\[rust\]");
 assert_eq!(vstr::format("name={}, age={}", &[&"tom", &12]), "name=tom, age=12");
 assert_eq!(vstr::add_prefix_if_not("path", "/"), "/path");
 assert!(vstr::ant_path_match("/api/**", "/api/v1/users"));
@@ -129,6 +137,7 @@ cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
+bash bin/check-vstr-benchmark-smoke.sh
 cargo package --list --allow-dirty
 ```
 

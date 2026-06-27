@@ -661,6 +661,43 @@ where
         .all(|needle| input.contains(&needle.to_lowercase()))
 }
 
+/// Returns the first non-empty needle found in `input`.
+///
+/// The returned tuple is `(needle, start, end)`, where `start` and `end` are
+/// byte indexes into `input`. If multiple needles start at the same byte index,
+/// the first needle from the iterator wins. Empty needles are ignored.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::find_any("hello rust", ["go", "rust"]), Some(("rust", 6, 10)));
+/// assert_eq!(vstr::find_any("hello rust", ["", "go"]), None);
+/// ```
+#[must_use]
+pub fn find_any<'needle, I>(input: &str, needles: I) -> Option<(&'needle str, usize, usize)>
+where
+    I: IntoIterator<Item = &'needle str>,
+{
+    let mut best = None;
+
+    for needle in needles {
+        if needle.is_empty() {
+            continue;
+        }
+        let Some(start) = input.find(needle) else {
+            continue;
+        };
+
+        if best.is_none_or(|(_, best_start, _)| start < best_start) {
+            best = Some((needle, start, start + needle.len()));
+        }
+    }
+
+    best
+}
+
 /// Counts non-overlapping matches of `needle` in `input`.
 ///
 /// Empty needles return zero to avoid surprising infinite-match semantics.
@@ -680,6 +717,67 @@ pub fn count_matches(input: &str, needle: &str) -> usize {
     }
 
     input.matches(needle).count()
+}
+
+/// Returns byte ranges for all non-overlapping matches of `needle`.
+///
+/// Empty needles return no ranges to avoid surprising infinite-match semantics.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::find_all("aaaa", "aa"), vec![(0, 2), (2, 4)]);
+/// assert_eq!(vstr::find_all("你好你好", "你好"), vec![(0, 6), (6, 12)]);
+/// ```
+#[must_use]
+pub fn find_all(input: &str, needle: &str) -> Vec<(usize, usize)> {
+    if needle.is_empty() {
+        return Vec::new();
+    }
+
+    input
+        .match_indices(needle)
+        .map(|(start, matched)| (start, start + matched.len()))
+        .collect()
+}
+
+/// Returns byte ranges for all non-overlapping case-insensitive matches.
+///
+/// Matching uses simple scalar-by-scalar case folding, the same compatibility
+/// boundary as [`equals_ignore_case`].
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::find_all_ignore_case("Go go Rust", "go"), vec![(0, 2), (3, 5)]);
+/// assert_eq!(vstr::find_all_ignore_case("abc\u{212A}", "k"), vec![(3, 6)]);
+/// ```
+#[must_use]
+pub fn find_all_ignore_case(input: &str, needle: &str) -> Vec<(usize, usize)> {
+    if needle.is_empty() {
+        return Vec::new();
+    }
+
+    let mut ranges = Vec::new();
+    let mut remaining = input;
+    let mut offset = 0;
+
+    while !remaining.is_empty() {
+        if let Some(match_end) = prefix_end_ignore_case(remaining, needle) {
+            ranges.push((offset, offset + match_end));
+            remaining = &remaining[match_end..];
+            offset += match_end;
+        } else if let Some(ch) = remaining.chars().next() {
+            remaining = &remaining[ch.len_utf8()..];
+            offset += ch.len_utf8();
+        }
+    }
+
+    ranges
 }
 
 /// Returns `true` when `input` starts with `prefix`.
@@ -914,6 +1012,94 @@ pub fn replace_ignore_case(input: &str, from: &str, to: &str) -> String {
     }
 
     output
+}
+
+/// Replaces multiple literal needles in a single left-to-right pass.
+///
+/// Empty needles are ignored. When several needles match at the same position,
+/// the first replacement from the iterator wins. Replaced text is not searched
+/// again, so the result is deterministic and independent of chained
+/// replacement side effects.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(
+///     vstr::replace_many("hello rust world", [("hello", "hi"), ("world", "team")]),
+///     "hi rust team"
+/// );
+/// assert_eq!(vstr::replace_many("aaaa", [("aa", "b"), ("a", "c")]), "bb");
+/// ```
+#[must_use]
+pub fn replace_many<'src, I>(input: &str, replacements: I) -> String
+where
+    I: IntoIterator<Item = (&'src str, &'src str)>,
+{
+    let replacements: Vec<(&str, &str)> = replacements
+        .into_iter()
+        .filter(|(from, _)| !from.is_empty())
+        .collect();
+    if replacements.is_empty() {
+        return input.to_owned();
+    }
+
+    let mut output = String::with_capacity(input.len());
+    let mut remaining = input;
+
+    while !remaining.is_empty() {
+        if let Some((from, to)) = replacements
+            .iter()
+            .find(|(from, _)| remaining.starts_with(*from))
+        {
+            output.push_str(to);
+            remaining = &remaining[from.len()..];
+        } else if let Some(ch) = remaining.chars().next() {
+            output.push(ch);
+            remaining = &remaining[ch.len_utf8()..];
+        }
+    }
+
+    output
+}
+
+/// Escapes Rust regex metacharacters so `input` can be used as a literal pattern.
+///
+/// This helper is dependency-free and follows the metacharacter set used by the
+/// Rust `regex` crate for literal escaping.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::escape_regex("a+b*(c)"), r"a\+b\*\(c\)");
+/// ```
+#[must_use]
+pub fn escape_regex(input: &str) -> String {
+    let mut output = String::with_capacity(input.len());
+    for ch in input.chars() {
+        if is_regex_meta(ch) {
+            output.push('\\');
+        }
+        output.push(ch);
+    }
+    output
+}
+
+/// Alias for [`escape_regex`] using a common regex-library name.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::quote_meta("[rust]"), r"\[rust\]");
+/// ```
+#[must_use]
+pub fn quote_meta(input: &str) -> String {
+    escape_regex(input)
 }
 
 /// Returns `input` without `prefix` when it is present.
@@ -1162,6 +1348,29 @@ fn replace_at(input: &str, from: &str, to: &str, index: Option<usize>) -> String
     output.push_str(to);
     output.push_str(&input[index + from.len()..]);
     output
+}
+
+fn is_regex_meta(ch: char) -> bool {
+    matches!(
+        ch,
+        '\\' | '.'
+            | '+'
+            | '*'
+            | '?'
+            | '('
+            | ')'
+            | '|'
+            | '['
+            | ']'
+            | '{'
+            | '}'
+            | '^'
+            | '$'
+            | '#'
+            | '&'
+            | '-'
+            | '~'
+    )
 }
 
 fn prefix_end_ignore_case(input: &str, prefix: &str) -> Option<usize> {

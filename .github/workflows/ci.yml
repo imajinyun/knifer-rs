@@ -44,6 +44,9 @@ jobs:
       - name: Public API inventory
         run: bash bin/check-public-api-inventory.sh
 
+      - name: Vstr benchmark smoke
+        run: bash bin/check-vstr-benchmark-smoke.sh
+
   platform-test:
     name: ${{ matrix.os }} Stable Test
     runs-on: ${{ matrix.os }}
