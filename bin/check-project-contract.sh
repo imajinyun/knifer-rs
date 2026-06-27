@@ -37,6 +37,7 @@ require_file bin/check-vstr-benchmark-smoke.sh
 require_file .github/workflows/ci.yml
 require_file docs/public-api-inventory.md
 require_file docs/vstr-api-parity.md
+require_file docs/vstr-complexity.md
 require_file docs/top-rust-utility-gap-analysis.md
 require_file docs/vstr-top-string-gap-analysis.md
 require_file benches/vstr_bench.rs
@@ -70,6 +71,7 @@ require_text README.md 'knifer_rs::vstr'
 require_text README.md 'Benchmark Direction'
 require_text README.md 'docs/public-api-inventory.md'
 require_text README.md 'docs/vstr-top-string-gap-analysis.md'
+require_text README.md 'docs/vstr-complexity.md'
 require_text README.md 'MSRV: Rust 1.85'
 require_text README.md 'zero runtime dependencies'
 require_text README.md 'anyhow'
@@ -169,6 +171,12 @@ require_text docs/public-api-inventory.md 'ant_path_match_with_separator'
 require_text docs/public-api-inventory.md 'levenshtein_distance'
 require_text docs/public-api-inventory.md 'Open Inventory Work'
 require_text docs/vstr-api-parity.md 'Open Compatibility Work'
+require_text docs/vstr-complexity.md '`vstr` Complexity and Allocation Notes'
+require_text docs/vstr-complexity.md 'replace_many'
+require_text docs/vstr-complexity.md 'find_all_ignore_case'
+require_text docs/vstr-complexity.md 'levenshtein_distance'
+require_text docs/vstr-complexity.md 'ant_path_match'
+require_text docs/vstr-complexity.md 'bash bin/check-vstr-bench.sh'
 require_text docs/top-rust-utility-gap-analysis.md 'Top Rust Helper Utility Gap Analysis'
 require_text docs/top-rust-utility-gap-analysis.md 'dtolnay/anyhow'
 require_text docs/top-rust-utility-gap-analysis.md 'dtolnay/thiserror'
@@ -191,6 +199,7 @@ require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/memchr'
 require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/aho-corasick'
 require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/bstr'
 require_text docs/vstr-top-string-gap-analysis.md 'unicode-rs/unicode-segmentation'
+require_text docs/vstr-top-string-gap-analysis.md 'docs/vstr-complexity.md'
 require_text benches/vstr_bench.rs 'bench_find_all'
 require_text benches/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
