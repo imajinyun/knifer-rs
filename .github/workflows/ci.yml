@@ -38,7 +38,7 @@ jobs:
         run: RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 
       - name: Project contract
-        run: bash scripts/check-project-contract.sh
+        run: bash bin/check-project-contract.sh
 
   msrv:
     name: MSRV Rust 1.85

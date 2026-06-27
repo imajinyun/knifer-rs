@@ -30,6 +30,7 @@ require_file SECURITY.md
 require_file CONTRIBUTING.md
 require_file CHANGELOG.md
 require_file README.md
+require_file bin/check-project-contract.sh
 require_file docs/vstr-api-parity.md
 require_file docs/top-rust-utility-gap-analysis.md
 
@@ -43,10 +44,24 @@ require_text .gitattributes '* text=auto eol=lf'
 require_text .gitignore '/target/'
 require_text .gitignore '.env.*'
 require_text .gitignore '*.profraw'
+if grep -Fq '/docs/' .gitignore; then
+  echo "docs/ contains source documentation and must not be ignored" >&2
+  exit 1
+fi
 require_text README.md 'knifer_rs::vstr'
+require_text README.md 'Benchmark Direction'
+require_text README.md 'anyhow'
+require_text README.md 'cargo test --locked'
 require_text README.md 'cargo clippy --all-targets -- -D warnings'
+require_text README.md 'bash bin/check-project-contract.sh'
+require_text CONTRIBUTING.md 'bash bin/check-project-contract.sh'
 require_text docs/vstr-api-parity.md 'Open Compatibility Work'
+require_text docs/top-rust-utility-gap-analysis.md 'Top Rust Helper Utility Gap Analysis'
+require_text docs/top-rust-utility-gap-analysis.md 'dtolnay/anyhow'
+require_text docs/top-rust-utility-gap-analysis.md 'dtolnay/thiserror'
+require_text docs/top-rust-utility-gap-analysis.md 'serde-rs/json'
 require_text docs/top-rust-utility-gap-analysis.md 'RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items'
+require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-project-contract.sh'
 require_text docs/top-rust-utility-gap-analysis.md '.gitignore'
 require_text docs/top-rust-utility-gap-analysis.md '.gitattributes'
 

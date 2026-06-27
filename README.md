@@ -7,6 +7,23 @@ APIs grouped by focused `v*` facade modules, prefer standard-library behavior
 where it is already clear, and add reusable helpers only when they make common
 business code easier to read and test.
 
+## Benchmark Direction
+
+`knifer-rs` is benchmarked against Rust helper and utility-function crates such
+as `anyhow`, `thiserror`, `serde_json`, `regex`, and `chrono`: small crates that
+ordinary business code can call directly. The goal is not to clone their APIs,
+but to match their engineering discipline:
+
+- clear first-screen README examples
+- stable and small public APIs
+- documented edge-case behavior
+- strict fmt/test/clippy/rustdoc CI
+- explicit MSRV and Safe Rust policy
+- low repository noise through `.gitignore`, `.editorconfig`, and
+  `.gitattributes`
+
+See `docs/top-rust-utility-gap-analysis.md` for the current gap analysis.
+
 ## Current MVP
 
 The first facade is `vstr`, covering small string helpers:
@@ -58,10 +75,10 @@ src/
 
 ```bash
 cargo fmt --check
-cargo test
+cargo test --locked
 cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
-bash scripts/check-project-contract.sh
+bash bin/check-project-contract.sh
 ```
 
 The crate forbids unsafe code through Cargo lints.

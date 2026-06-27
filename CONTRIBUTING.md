@@ -13,7 +13,7 @@ cargo fmt --check
 cargo test --locked
 cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
-bash scripts/check-project-contract.sh
+bash bin/check-project-contract.sh
 ```
 
 ## API Rules

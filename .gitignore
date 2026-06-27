@@ -1,5 +1,4 @@
 # Rust build artifacts
-/docs/
 /target/
 
 # Local editor and OS noise
