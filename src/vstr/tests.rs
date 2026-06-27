@@ -594,6 +594,33 @@ fn unicode_segmentation_helpers_expose_word_boundaries() {
     );
 }
 
+#[cfg(feature = "unicode-segmentation")]
+#[test]
+fn unicode_segmentation_helpers_expose_sentence_boundaries() {
+    let text = "Mr. Fox jumped. [...] The dog was too lazy.";
+    assert_eq!(
+        unicode_sentences(text),
+        vec!["Mr. ", "Fox jumped. ", "The dog was too lazy."]
+    );
+    assert_eq!(unicode_sentence_len(text), 3);
+
+    let bounds = split_sentence_bounds(text);
+    assert_eq!(bounds.concat(), text);
+    assert_eq!(
+        bounds,
+        vec!["Mr. ", "Fox jumped. ", "[...] ", "The dog was too lazy."]
+    );
+    assert_eq!(
+        split_sentence_bound_indices(text),
+        vec![
+            (0, "Mr. "),
+            (4, "Fox jumped. "),
+            (16, "[...] "),
+            (22, "The dog was too lazy.")
+        ]
+    );
+}
+
 #[cfg(feature = "unicode-width")]
 #[test]
 fn unicode_width_helpers_follow_display_cell_boundaries() {

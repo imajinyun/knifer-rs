@@ -65,7 +65,9 @@ UAX #29 word-boundary helpers such as `unicode_words`,
 `unicode_word_indices`, `split_word_bounds`, and
 `split_word_bound_indices`. `unicode_words` filters punctuation and
 whitespace, while `split_word_bounds` keeps separators so concatenating the
-segments reconstructs the original input.
+segments reconstructs the original input. Sentence-boundary helpers follow the
+same pattern: `unicode_sentences` filters separator-only spans, while
+`split_sentence_bounds` and `split_sentence_bound_indices` preserve them.
 
 The `unicode-width` feature adds terminal display-width helpers such as
 `display_width`, `take_width`, and `truncate_width`. These helpers follow the

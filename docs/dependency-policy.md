@@ -46,8 +46,9 @@ standard library is intentionally lower level.
   their current semantics and documentation.
 - Segmentation helpers should use names such as `graphemes`, `grapheme_len`,
   `take_graphemes`, `truncate_graphemes`, `unicode_words`,
-  `unicode_word_indices`, and `split_word_bounds` so callers can see the
-  boundary model at the call site.
+  `unicode_word_indices`, `split_word_bounds`, `unicode_sentences`, and
+  `split_sentence_bounds` so callers can see the boundary model at the call
+  site.
 
 `unicode-width` Admission Contract:
 

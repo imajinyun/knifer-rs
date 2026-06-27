@@ -91,6 +91,11 @@ assert_eq!(
     vstr::unicode_words("Rust can't stop 32.3 世界!"),
     vec!["Rust", "can't", "stop", "32.3", "世", "界"]
 );
+#[cfg(feature = "unicode-segmentation")]
+assert_eq!(
+    vstr::unicode_sentences("Mr. Fox jumped. [...] The dog was too lazy."),
+    vec!["Mr. ", "Fox jumped. ", "The dog was too lazy."]
+);
 #[cfg(feature = "unicode-width")]
 assert_eq!(vstr::display_width("abc你好"), 7);
 #[cfg(feature = "unicode-width")]

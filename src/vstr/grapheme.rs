@@ -195,3 +195,92 @@ pub fn split_word_bounds(input: &str) -> Vec<&str> {
 pub fn split_word_bound_indices(input: &str) -> Vec<(usize, &str)> {
     input.split_word_bound_indices().collect()
 }
+
+/// Returns Unicode sentences from `input` using UAX #29 sentence boundaries.
+///
+/// This helper is available only with the `unicode-segmentation` feature. It
+/// returns only sentence-like segments that contain alphabetic or numeric
+/// characters; separator-only segments are skipped.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(
+///     vstr::unicode_sentences("Mr. Fox jumped. [...] The dog was too lazy."),
+///     vec!["Mr. ", "Fox jumped. ", "The dog was too lazy."]
+/// );
+/// # }
+/// ```
+#[must_use]
+pub fn unicode_sentences(input: &str) -> Vec<&str> {
+    input.unicode_sentences().collect()
+}
+
+/// Returns the number of Unicode sentences in `input` using UAX #29 boundaries.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::unicode_sentence_len("One. Two? Three!"), 3);
+/// # }
+/// ```
+#[must_use]
+pub fn unicode_sentence_len(input: &str) -> usize {
+    input.unicode_sentences().count()
+}
+
+/// Splits `input` on Unicode sentence boundaries and keeps separator segments.
+///
+/// Unlike [`unicode_sentences`], this returns separator-only segments so
+/// concatenating the output reconstructs the original input.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(
+///     vstr::split_sentence_bounds("Mr. Fox jumped. [...] The dog was too lazy."),
+///     vec!["Mr. ", "Fox jumped. ", "[...] ", "The dog was too lazy."]
+/// );
+/// # }
+/// ```
+#[must_use]
+pub fn split_sentence_bounds(input: &str) -> Vec<&str> {
+    input.split_sentence_bounds().collect()
+}
+
+/// Splits `input` on Unicode sentence boundaries and returns byte offsets.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(
+///     vstr::split_sentence_bound_indices("Mr. Fox jumped. [...] The dog was too lazy."),
+///     vec![
+///         (0, "Mr. "),
+///         (4, "Fox jumped. "),
+///         (16, "[...] "),
+///         (22, "The dog was too lazy.")
+///     ]
+/// );
+/// # }
+/// ```
+#[must_use]
+pub fn split_sentence_bound_indices(input: &str) -> Vec<(usize, &str)> {
+    input.split_sentence_bound_indices().collect()
+}

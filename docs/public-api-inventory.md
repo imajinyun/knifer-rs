@@ -127,6 +127,8 @@ knifer_rs::vstr::slugify_with_separator = pub fn slugify_with_separator(input: &
 knifer_rs::vstr::split = pub fn split<'src>(input: &'src str, separator: &str) -> Vec<&'src str>
 knifer_rs::vstr::split_once = pub fn split_once<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)>
 knifer_rs::vstr::split_once_last = pub fn split_once_last<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)>
+knifer_rs::vstr::split_sentence_bound_indices = pub fn split_sentence_bound_indices(input: &str) -> Vec<(usize, &str)>
+knifer_rs::vstr::split_sentence_bounds = pub fn split_sentence_bounds(input: &str) -> Vec<&str>
 knifer_rs::vstr::split_trim = pub fn split_trim<'src>(input: &'src str, separator: &str) -> Vec<&'src str>
 knifer_rs::vstr::split_word_bound_indices = pub fn split_word_bound_indices(input: &str) -> Vec<(usize, &str)>
 knifer_rs::vstr::split_word_bounds = pub fn split_word_bounds(input: &str) -> Vec<&str>
@@ -169,6 +171,8 @@ knifer_rs::vstr::truncate_with_suffix = pub fn truncate_with_suffix(input: &str,
 knifer_rs::vstr::uncapitalize = pub fn uncapitalize(input: &str) -> String
 knifer_rs::vstr::unescape_html = pub fn unescape_html(input: &str) -> String
 knifer_rs::vstr::unescape_unicode = pub fn unescape_unicode(input: &str) -> String
+knifer_rs::vstr::unicode_sentence_len = pub fn unicode_sentence_len(input: &str) -> usize
+knifer_rs::vstr::unicode_sentences = pub fn unicode_sentences(input: &str) -> Vec<&str>
 knifer_rs::vstr::unicode_word_indices = pub fn unicode_word_indices(input: &str) -> Vec<(usize, &str)>
 knifer_rs::vstr::unicode_word_len = pub fn unicode_word_len(input: &str) -> usize
 knifer_rs::vstr::unicode_words = pub fn unicode_words(input: &str) -> Vec<&str>
@@ -217,6 +221,8 @@ Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
 `replace_pattern`, `graphemes`, `grapheme_len`, `take_graphemes`,
 `truncate_graphemes`, `unicode_words`, `unicode_word_len`,
 `unicode_word_indices`, `split_word_bounds`, `split_word_bound_indices`,
+`unicode_sentences`, `unicode_sentence_len`, `split_sentence_bounds`,
+`split_sentence_bound_indices`,
 `display_width`, `take_width`, `truncate_width`,
 `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
