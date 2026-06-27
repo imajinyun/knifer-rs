@@ -144,6 +144,11 @@ bash bin/check-vstr-bench.sh
 cargo package --list --allow-dirty
 ```
 
+Benchmark smoke and benchmark suite have different jobs. The smoke command is a
+fast CI coverage check that proves expensive `vstr` paths still execute and emit
+expected labels. The formal `cargo bench` target is the stable benchmark entry
+point for local performance comparison and future historical reports.
+
 ## Compatibility
 
 - MSRV: Rust 1.85.
