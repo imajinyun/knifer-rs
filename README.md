@@ -1,4 +1,4 @@
-# knifer-rs
+# knifer-rs ✨
 
 `knifer-rs` is a Safe Rust utility toolkit for everyday business development.
 
@@ -7,7 +7,7 @@ APIs grouped by focused `v*` facade modules, prefer standard-library behavior
 where it is already clear, and add reusable helpers only when they make common
 business code easier to read and test.
 
-## Benchmark Direction
+## Benchmark Direction 📊
 
 `knifer-rs` is benchmarked against Rust helper and utility-function crates such
 as `anyhow`, `thiserror`, `serde_json`, `regex`, and `chrono`: small crates that
@@ -28,14 +28,14 @@ text-processing benchmark set. Complexity and allocation notes for `vstr` live
 in `docs/vstr-complexity.md`. Dependency admission rules live in
 `docs/dependency-policy.md`.
 
-## Status
+## Status 🚦
 
 The crate is pre-1.0 and currently exposes one MVP-stable facade:
 `knifer_rs::vstr`. Public API changes are tracked in
 `docs/public-api-inventory.md`; `vstr` compatibility notes are tracked in
 `docs/vstr-api-parity.md`.
 
-## Install
+## Install 📦
 
 ```toml
 [dependencies]
@@ -50,7 +50,7 @@ MVP builds:
 knifer-rs = { git = "https://github.com/imajinyun/knifer-rs" }
 ```
 
-## Current MVP
+## Current MVP 🧰
 
 The first facade is `vstr`, covering small string helpers:
 
@@ -113,7 +113,7 @@ assert_eq!(vstr::levenshtein_distance("kitten", "sitting"), 3);
 assert_eq!(vstr::hamming_distance64(0b1010, 0b0011), 2);
 ```
 
-## Project Layout
+## Project Layout 🧭
 
 ```text
 src/
@@ -130,7 +130,7 @@ src/
     text.rs    whitespace normalization, truncation, and slug helpers
 ```
 
-## Development Checks
+## Development Checks ✅
 
 ```bash
 cargo fmt --check
@@ -168,7 +168,7 @@ The docs.rs readiness check is the local publish gate. It verifies crate
 metadata, builds rustdoc with the docs.rs configuration and all features, and
 runs `cargo package --locked --allow-dirty`.
 
-## Compatibility
+## Compatibility 🔒
 
 - MSRV: Rust 1.85.
 - Edition: Rust 2024.
