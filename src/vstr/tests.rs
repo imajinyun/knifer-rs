@@ -152,6 +152,9 @@ fn contains_helpers_support_single_any_and_all() {
 fn equality_and_reverse_helpers_are_unicode_aware() {
     assert!(equals_ignore_case("Knifer-RS", "knifer-rs"));
     assert!(equals_ignore_case("Straße", "straße"));
+    assert!(equals_ignore_case("Σ", "ς"));
+    assert!(equals_ignore_case("\u{212A}", "k"));
+    assert!(!equals_ignore_case("Straße", "strasse"));
     assert_eq!(reverse("ab你好"), "好你ba");
 }
 
@@ -259,12 +262,19 @@ fn character_classification_helpers_follow_unicode_semantics() {
     assert!(is_blank_char('\u{3000}'));
     assert!(is_letter('你'));
     assert!(is_letter('A'));
+    assert!(!is_letter('Ⅷ'));
     assert!(is_digit('9'));
     assert!(is_digit('٣'));
+    assert!(is_digit('９'));
+    assert!(!is_digit('Ⅷ'));
+    assert!(!is_digit('七'));
     assert!(is_ascii('A'));
     assert!(!is_ascii('你'));
     assert!(is_letter_or_digit('A'));
     assert!(is_letter_or_digit('9'));
+    assert!(is_letter_or_digit('٣'));
+    assert!(is_letter_or_digit('七'));
+    assert!(!is_letter_or_digit('Ⅷ'));
     assert!(!is_letter_or_digit('-'));
 }
 

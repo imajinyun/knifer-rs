@@ -540,16 +540,39 @@ pub fn ends_with(input: &str, suffix: &str) -> bool {
 
 /// Returns `true` when both strings are equal, ignoring Unicode case.
 ///
+/// This follows Rust's standard Unicode case mappings without expanding a
+/// single scalar into multiple comparison characters. It covers common
+/// `strings.EqualFold`-style simple folds such as final sigma and Kelvin sign,
+/// while keeping German `ß` distinct from `ss`.
+///
 /// # Examples
 ///
 /// ```
 /// use knifer_rs::vstr;
 ///
 /// assert!(vstr::equals_ignore_case("Knifer-RS", "knifer-rs"));
+/// assert!(vstr::equals_ignore_case("Σ", "ς"));
 /// ```
 #[must_use]
 pub fn equals_ignore_case(left: &str, right: &str) -> bool {
-    left.to_lowercase() == right.to_lowercase()
+    left.chars().eq(right.chars()) || {
+        let mut left = left.chars();
+        let mut right = right.chars();
+
+        loop {
+            match (left.next(), right.next()) {
+                (Some(left), Some(right)) if chars_equal_ignore_case(left, right) => {}
+                (None, None) => return true,
+                _ => return false,
+            }
+        }
+    }
+}
+
+fn chars_equal_ignore_case(left: char, right: char) -> bool {
+    left == right
+        || left.to_lowercase().eq(right.to_lowercase())
+        || left.to_uppercase().eq(right.to_uppercase())
 }
 
 /// Reverses `input` by Unicode scalar values.
