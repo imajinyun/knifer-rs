@@ -25,7 +25,8 @@ but to match their engineering discipline:
 See `docs/top-rust-utility-gap-analysis.md` for the general utility-crate gap
 analysis and `docs/vstr-top-string-gap-analysis.md` for the focused string and
 text-processing benchmark set. Complexity and allocation notes for `vstr` live
-in `docs/vstr-complexity.md`.
+in `docs/vstr-complexity.md`. Dependency admission rules live in
+`docs/dependency-policy.md`.
 
 ## Status
 

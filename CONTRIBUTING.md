@@ -28,6 +28,8 @@ cargo package --list --allow-dirty
   libraries.
 - Avoid new dependencies unless they remove real complexity or improve
   correctness in a way the standard library cannot reasonably cover.
+- Keep the default crate zero-runtime-dependency; any new dependency must follow
+  `docs/dependency-policy.md`.
 
 ## Compatibility
 

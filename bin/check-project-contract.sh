@@ -30,6 +30,7 @@ require_file SECURITY.md
 require_file CONTRIBUTING.md
 require_file CHANGELOG.md
 require_file README.md
+require_file docs/dependency-policy.md
 require_file bin/check-project-contract.sh
 require_file bin/check-public-api-inventory.sh
 require_file bin/check-vstr-bench.sh
@@ -52,6 +53,15 @@ require_text Cargo.toml 'repository = "https://github.com/imajinyun/knifer-rs"'
 require_text Cargo.toml 'documentation = "https://docs.rs/knifer-rs"'
 require_text Cargo.toml 'name = "vstr_bench"'
 require_text Cargo.toml 'harness = false'
+if awk '
+  /^\[dependencies\]$/ { in_deps = 1; next }
+  /^\[/ { in_deps = 0 }
+  in_deps && $0 !~ /^[[:space:]]*$/ && $0 !~ /^[[:space:]]*#/ { found = 1 }
+  END { exit found ? 0 : 1 }
+' Cargo.toml; then
+  echo "default runtime dependencies are not allowed without updating docs/dependency-policy.md" >&2
+  exit 1
+fi
 require_text .github/workflows/ci.yml 'workflow_dispatch:'
 require_text .github/workflows/ci.yml 'macos-latest'
 require_text .github/workflows/ci.yml 'bash bin/check-public-api-inventory.sh'
@@ -72,6 +82,7 @@ require_text README.md 'Benchmark Direction'
 require_text README.md 'docs/public-api-inventory.md'
 require_text README.md 'docs/vstr-top-string-gap-analysis.md'
 require_text README.md 'docs/vstr-complexity.md'
+require_text README.md 'docs/dependency-policy.md'
 require_text README.md 'MSRV: Rust 1.85'
 require_text README.md 'zero runtime dependencies'
 require_text README.md 'anyhow'
@@ -116,6 +127,14 @@ require_text README.md 'cargo package --list --allow-dirty'
 require_text CONTRIBUTING.md 'bash bin/check-project-contract.sh'
 require_text CONTRIBUTING.md 'bash bin/check-public-api-inventory.sh'
 require_text CONTRIBUTING.md 'cargo package --list --allow-dirty'
+require_text CONTRIBUTING.md 'docs/dependency-policy.md'
+require_text docs/dependency-policy.md 'Dependency Policy'
+require_text docs/dependency-policy.md 'zero-runtime-dependency core'
+require_text docs/dependency-policy.md 'Do not add runtime dependencies to the default feature set.'
+require_text docs/dependency-policy.md 'optional'
+require_text docs/dependency-policy.md 'MSRV'
+require_text docs/dependency-policy.md 'pattern-regex'
+require_text docs/dependency-policy.md 'unicode-segmentation'
 require_text docs/public-api-inventory.md 'Public API Inventory'
 require_text docs/public-api-inventory.md 'knifer_rs::vstr'
 require_text docs/public-api-inventory.md 'EmojiOptions'
@@ -200,6 +219,7 @@ require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/aho-corasick'
 require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/bstr'
 require_text docs/vstr-top-string-gap-analysis.md 'unicode-rs/unicode-segmentation'
 require_text docs/vstr-top-string-gap-analysis.md 'docs/vstr-complexity.md'
+require_text docs/vstr-top-string-gap-analysis.md 'docs/dependency-policy.md'
 require_text benches/vstr_bench.rs 'bench_find_all'
 require_text benches/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
