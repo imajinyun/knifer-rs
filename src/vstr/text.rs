@@ -165,7 +165,8 @@ pub fn drop_chars(input: &str, count: usize) -> &str {
 /// Truncates text to at most `max_chars` Unicode scalar values and appends a suffix.
 ///
 /// The returned string never exceeds `max_chars` scalar values. If `suffix` is
-/// longer than the budget, the suffix itself is truncated.
+/// longer than the budget, the suffix itself is truncated. This helper is not
+/// grapheme-aware: a multi-scalar user-perceived character can be split.
 ///
 /// # Examples
 ///
@@ -526,7 +527,10 @@ pub fn dedent(input: &str) -> String {
 /// Wraps text into lines of at most `width` Unicode scalar values when possible.
 ///
 /// Wrapping happens at Unicode whitespace boundaries. Words longer than `width`
-/// are split by scalar value so the function always makes progress.
+/// are split by scalar value so the function always makes progress. Consecutive
+/// whitespace inside a paragraph is normalized to one ASCII space because words
+/// are collected with [`str::split_whitespace`]. This helper does not measure
+/// grapheme clusters or terminal display width.
 ///
 /// # Examples
 ///
@@ -552,7 +556,8 @@ pub fn wrap(input: &str, width: usize) -> String {
 ///
 /// `width` is the target total line width including indentation. If an indent
 /// is wider than `width`, that line still keeps its indent and wraps content at
-/// one scalar value per line.
+/// one scalar value per line. Content width is measured in Unicode scalar
+/// values, not grapheme clusters or terminal display cells.
 ///
 /// # Examples
 ///

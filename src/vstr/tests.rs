@@ -523,6 +523,33 @@ fn text_formatting_helpers_indent_dedent_wrap_and_count() {
 }
 
 #[test]
+fn wrap_and_truncate_boundary_cases_follow_scalar_width_policy() {
+    assert_eq!(
+        wrap("supercalifragilistic", 6),
+        "superc\nalifra\ngilist\nic"
+    );
+    assert_eq!(wrap("a   b\t\tc\n\nnext", 5), "a b c\n\nnext");
+    assert_eq!(wrap("你好世界 Rust", 4), "你好世界\nRust");
+    assert_eq!(wrap("🚀🚀🚀go", 3), "🚀🚀🚀\ngo");
+    assert_eq!(wrap("e\u{301}e\u{301}", 2), "e\u{301}\ne\u{301}");
+
+    assert_eq!(
+        wrap_with_indent("hello rust utility", 10, "=> ", "   "),
+        "=> hello\n   rust\n   utility"
+    );
+    assert_eq!(
+        wrap_with_indent("abcdefghij", 4, ">>>>", "--"),
+        ">>>>a\n--b\n--c\n--d\n--e\n--f\n--g\n--h\n--i\n--j"
+    );
+
+    assert_eq!(truncate_with_suffix("abcdef", 0, "..."), "");
+    assert_eq!(truncate_with_suffix("abcdef", 2, "..."), "..");
+    assert_eq!(truncate_with_suffix("abcdef", 4, "…"), "abc…");
+    assert_eq!(truncate_with_suffix("👨‍👩‍👧‍👦 family", 5, "..."), "👨‍...");
+    assert_eq!(abbreviate_middle("👨‍👩‍👧‍👦 family", 7, "..."), "👨‍...ly");
+}
+
+#[test]
 fn jaccard_similarity_uses_non_whitespace_char_sets() {
     assert_approx_eq(jaccard_similarity("abc", "abc"), 1.0);
     assert_approx_eq(jaccard_similarity("ab", "bc"), 1.0 / 3.0);
