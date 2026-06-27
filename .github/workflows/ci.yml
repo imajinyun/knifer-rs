@@ -101,7 +101,7 @@ jobs:
         run: cargo test --locked
 
   package:
-    name: Package List
+    name: Docs.rs Publish Gate
     runs-on: ubuntu-latest
 
     steps:
@@ -111,5 +111,5 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Package list
-        run: cargo package --list --allow-dirty
+      - name: Docs.rs readiness
+        run: bash bin/check-docs-rs-ready.sh

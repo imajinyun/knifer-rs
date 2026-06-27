@@ -15,7 +15,7 @@ cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
-cargo package --list --allow-dirty
+bash bin/check-docs-rs-ready.sh
 ```
 
 ## API Rules

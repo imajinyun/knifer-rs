@@ -7,6 +7,9 @@ description = "A Safe Rust utility toolkit for everyday business development."
 license = "MIT"
 repository = "https://github.com/imajinyun/knifer-rs"
 documentation = "https://docs.rs/knifer-rs"
+readme = "README.md"
+keywords = ["utility", "string", "safe-rust", "business"]
+categories = ["development-tools", "text-processing"]
 
 [dependencies]
 
@@ -23,7 +26,12 @@ harness = false
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "warn"
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(docsrs)'] }
 
 [lints.clippy]
 all = "warn"
 pedantic = "warn"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

@@ -142,7 +142,7 @@ bash bin/check-public-api-inventory.sh
 bash bin/check-vstr-benchmark-smoke.sh
 bash bin/check-vstr-bench.sh
 bash bin/check-vstr-fuzz-smoke.sh
-cargo package --list --allow-dirty
+bash bin/check-docs-rs-ready.sh
 ```
 
 Benchmark smoke and benchmark suite have different jobs. The smoke command is a
@@ -153,6 +153,10 @@ point for local performance comparison and future historical reports.
 Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
 substring boundaries, escaping, Ant-style path matching, and replacement
 invariants without adding runtime dependencies to the main library.
+
+The docs.rs readiness check is the local publish gate. It verifies crate
+metadata, builds rustdoc with the docs.rs configuration and all features, and
+runs `cargo package --locked --allow-dirty`.
 
 ## Compatibility
 
