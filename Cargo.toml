@@ -21,6 +21,7 @@ unicode-width = []
 
 [[bench]]
 name = "vstr_bench"
+path = "bench/vstr_bench.rs"
 harness = false
 
 [lints.rust]

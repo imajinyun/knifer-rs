@@ -45,7 +45,7 @@ require_file docs/vstr-api-parity.md
 require_file docs/vstr-complexity.md
 require_file docs/top-rust-utility-gap-analysis.md
 require_file docs/vstr-top-string-gap-analysis.md
-require_file benches/vstr_bench.rs
+require_file bench/vstr_bench.rs
 require_file examples/vstr_benchmark_smoke.rs
 require_file fuzz/Cargo.toml
 require_file fuzz/Cargo.lock
@@ -69,6 +69,7 @@ require_text Cargo.toml '[package.metadata.docs.rs]'
 require_text Cargo.toml 'all-features = true'
 require_text Cargo.toml 'rustdoc-args = ["--cfg", "docsrs"]'
 require_text Cargo.toml 'name = "vstr_bench"'
+require_text Cargo.toml 'path = "bench/vstr_bench.rs"'
 require_text Cargo.toml 'harness = false'
 require_text Cargo.toml '[features]'
 require_text Cargo.toml 'default = []'
@@ -373,9 +374,9 @@ require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_unicode_esc
 require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_ant_path_matching'
 require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_similarity'
 require_text src/vstr/tests.rs 'case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode'
-require_text benches/vstr_bench.rs 'ReportFormat'
-require_text benches/vstr_bench.rs 'print_json'
-require_text benches/vstr_bench.rs 'print_markdown'
+require_text bench/vstr_bench.rs 'ReportFormat'
+require_text bench/vstr_bench.rs 'print_json'
+require_text bench/vstr_bench.rs 'print_markdown'
 require_text bin/check-vstr-bench.sh '-- --json'
 require_text bin/check-vstr-bench.sh '-- --markdown'
 require_text bin/check-vstr-bench.sh 'report_dir'
@@ -386,8 +387,8 @@ require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_path_matching'
 require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_replacement'
 require_text bin/check-docs-rs-ready.sh 'RUSTDOCFLAGS="-Dwarnings --cfg docsrs" cargo doc --locked --all-features --no-deps'
 require_text bin/check-docs-rs-ready.sh 'cargo package --locked --allow-dirty'
-require_text benches/vstr_bench.rs 'bench_find_all'
-require_text benches/vstr_bench.rs 'bench_levenshtein'
+require_text bench/vstr_bench.rs 'bench_find_all'
+require_text bench/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
 require_text examples/vstr_benchmark_smoke.rs 'levenshtein_distance'
 require_text fuzz/Cargo.toml 'name = "knifer-rs-fuzz"'
