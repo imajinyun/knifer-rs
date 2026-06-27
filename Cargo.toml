@@ -13,11 +13,12 @@ categories = ["development-tools", "text-processing"]
 
 [dependencies]
 regex = { version = "1", optional = true }
+unicode-segmentation = { version = "1", optional = true }
 
 [features]
 default = []
 pattern-regex = ["dep:regex"]
-unicode-segmentation = []
+unicode-segmentation = ["dep:unicode-segmentation"]
 unicode-width = []
 
 [[bench]]

@@ -532,6 +532,36 @@ fn unicode_boundary_golden_cases_document_scalar_semantics() {
     assert_eq!(wrap(mixed_width, 3), "A你🚀\ne\u{301}");
 }
 
+#[cfg(feature = "unicode-segmentation")]
+#[test]
+fn unicode_segmentation_helpers_preserve_grapheme_boundaries() {
+    let combining = "e\u{301}";
+    assert_eq!(char_len(combining), 2);
+    assert_eq!(grapheme_len(combining), 1);
+    assert_eq!(graphemes(combining), vec![combining]);
+    assert_eq!(take_chars(combining, 1), "e");
+    assert_eq!(take_graphemes(combining, 1), combining);
+
+    let flag = "🇨🇳";
+    assert_eq!(char_len(flag), 2);
+    assert_eq!(grapheme_len(flag), 1);
+    assert_eq!(take_chars(flag, 1), "🇨");
+    assert_eq!(take_graphemes(flag, 1), flag);
+
+    let family = "👨‍👩‍👧‍👦";
+    assert_eq!(char_len(family), 7);
+    assert_eq!(grapheme_len(family), 1);
+    assert_eq!(take_graphemes(family, 1), family);
+
+    let mixed = "e\u{301}🇨🇳rust";
+    assert_eq!(graphemes(mixed), vec!["e\u{301}", "🇨🇳", "r", "u", "s", "t"]);
+    assert_eq!(take_graphemes(mixed, 2), "e\u{301}🇨🇳");
+    assert_eq!(truncate_graphemes(mixed, 4, "..."), "e\u{301}...");
+    assert_eq!(truncate_graphemes("short", 10, "..."), "short");
+    assert_eq!(truncate_graphemes(mixed, 2, "..."), "..");
+    assert_eq!(truncate_graphemes(mixed, 0, "..."), "");
+}
+
 #[test]
 fn emoji_helpers_detect_and_remove_common_sequences() {
     assert!(contains_emoji("ship it 🚀"));

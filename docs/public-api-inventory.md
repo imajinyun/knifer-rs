@@ -72,6 +72,8 @@ knifer_rs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, patte
 knifer_rs::vstr::find_any = pub fn find_any<'needle, I>(input: &str, needles: I) -> Option<(&'needle str, usize, usize)> where I: IntoIterator<Item = &'needle str>
 knifer_rs::vstr::find_pattern = pub fn find_pattern(input: &str, pattern: &str) -> Result<Option<(usize, usize)>, PatternError>
 knifer_rs::vstr::format = pub fn format(template: &str, args: &[&dyn std::fmt::Display]) -> String
+knifer_rs::vstr::grapheme_len = pub fn grapheme_len(input: &str) -> usize
+knifer_rs::vstr::graphemes = pub fn graphemes(input: &str) -> Vec<&str>
 knifer_rs::vstr::hamming_distance64 = pub const fn hamming_distance64(left: u64, right: u64) -> u32
 knifer_rs::vstr::has_blank = pub fn has_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 knifer_rs::vstr::has_empty = pub fn has_empty<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
@@ -135,6 +137,7 @@ knifer_rs::vstr::sub_before = pub fn sub_before<'src>(input: &'src str, separato
 knifer_rs::vstr::surround = pub fn surround(input: &str, left: &str, right: &str) -> String
 knifer_rs::vstr::swap_case = pub fn swap_case(input: &str) -> String
 knifer_rs::vstr::take_chars = pub fn take_chars(input: &str, count: usize) -> &str
+knifer_rs::vstr::take_graphemes = pub fn take_graphemes(input: &str, count: usize) -> &str
 knifer_rs::vstr::to_camel_case = pub fn to_camel_case(input: &str) -> String
 knifer_rs::vstr::to_cobol_case = pub fn to_cobol_case(input: &str) -> String
 knifer_rs::vstr::to_dot_case = pub fn to_dot_case(input: &str) -> String
@@ -156,6 +159,7 @@ knifer_rs::vstr::trim_start = pub fn trim_start(input: &str) -> &str
 knifer_rs::vstr::trim_to_empty = pub fn trim_to_empty(input: &str) -> &str
 knifer_rs::vstr::trim_to_string = pub fn trim_to_string(input: &str) -> String
 knifer_rs::vstr::truncate = pub fn truncate(input: &str, max_chars: usize) -> &str
+knifer_rs::vstr::truncate_graphemes = pub fn truncate_graphemes(input: &str, max_graphemes: usize, suffix: &str) -> String
 knifer_rs::vstr::truncate_with_suffix = pub fn truncate_with_suffix(input: &str, max_chars: usize, suffix: &str) -> String
 knifer_rs::vstr::uncapitalize = pub fn uncapitalize(input: &str) -> String
 knifer_rs::vstr::unescape_html = pub fn unescape_html(input: &str) -> String
@@ -202,7 +206,8 @@ invalid UTF-8 as `&str`.
 Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
-`replace_pattern`, `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
+`replace_pattern`, `graphemes`, `grapheme_len`, `take_graphemes`,
+`truncate_graphemes`, `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
 `swap_case`, `normalize_whitespace`, `remove_whitespace`, `between`,
 `contains_none`, `contains_any_ignore_case`, `find_any`, `count_matches`,

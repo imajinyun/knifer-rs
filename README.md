@@ -84,6 +84,8 @@ assert_eq!(vstr::trim_blank_lines("\n  \nhello\n\n"), "hello");
 assert_eq!(vstr::slugify("Hello, Rust World!"), "hello-rust-world");
 assert_eq!(vstr::take_chars("你好Rust", 3), "你好R");
 assert_eq!(vstr::truncate_with_suffix("你好Rust", 5, "..."), "你好...");
+#[cfg(feature = "unicode-segmentation")]
+assert_eq!(vstr::take_graphemes("e\u{301}🇨🇳rust", 2), "e\u{301}🇨🇳");
 assert_eq!(vstr::abbreviate_middle("abcdefghijklmnopqrstuvwxyz", 10, "..."), "abcd...xyz");
 assert_eq!(vstr::mask("13800138000", 3, 4, '*'), "138****8000");
 assert_eq!(vstr::collapse_repeated_char("a---b----c", '-'), "a-b-c");
@@ -176,6 +178,14 @@ matching while keeping the default feature set at zero runtime dependencies:
 knifer-rs = { version = "0.1", features = ["pattern-regex"] }
 ```
 
+Optional `unicode-segmentation` helpers add grapheme-aware boundaries for UI and
+human-facing text without changing scalar-based helpers such as `take_chars`:
+
+```toml
+[dependencies]
+knifer-rs = { version = "0.1", features = ["unicode-segmentation"] }
+```
+
 The docs.rs readiness check is the local publish gate. It verifies crate
 metadata, builds rustdoc with the docs.rs configuration and all features, and
 runs `cargo package --locked --allow-dirty`.
@@ -186,5 +196,5 @@ runs `cargo package --locked --allow-dirty`.
 - Edition: Rust 2024.
 - Safety: unsafe code is forbidden by Cargo lints and checked by the project
   contract script.
-- Dependencies: zero runtime dependencies in the default feature set; the
-  optional `pattern-regex` feature adds `regex`.
+- Dependencies: zero runtime dependencies in the default feature set; optional
+  features add focused crates such as `regex` and `unicode-segmentation`.

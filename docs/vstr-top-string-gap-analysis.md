@@ -48,8 +48,9 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 
 1. `VSTR-GAP-001`: keep benchmark reports in plain, JSON, and Markdown formats,
    then add baseline comparison and threshold checks.
-2. `VSTR-GAP-003`: keep expanding Unicode boundary golden tests for combining
-   marks, emoji ZWJ sequences, flags, CJK, and mixed-width text.
+2. `VSTR-GAP-003: Complete` - Unicode boundary golden tests and optional
+   grapheme helpers cover combining marks, emoji ZWJ sequences, flags, CJK, and
+   mixed-width text.
 3. `VSTR-GAP-004`: keep expanding Wrap and truncation boundaries for long words,
    indentation, suffix budget, and display-width candidates.
 4. `VSTR-GAP-009: Complete` - regex-backed optional pattern helpers are exposed

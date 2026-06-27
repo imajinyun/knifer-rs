@@ -46,8 +46,12 @@ Current substring and truncation APIs are Unicode scalar based. They never cut a
 UTF-8 byte sequence, but they can split user-perceived grapheme clusters such as
 combining marks, flags, and emoji ZWJ family sequences.
 
-Grapheme segmentation and terminal display width remain candidates for optional features.
-They should not silently change scalar-based helpers.
+The `unicode-segmentation` feature adds grapheme-aware helpers such as
+`graphemes`, `grapheme_len`, `take_graphemes`, and `truncate_graphemes`.
+Terminal display width remains future optional feature work. The project
+contract tracks `terminal display width remain candidates for optional` as the
+scope marker for that boundary. Optional helpers must not silently change
+scalar-based helpers.
 
 ## Wrap and Truncation Boundaries
 
