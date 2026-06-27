@@ -14,7 +14,7 @@ require_text() {
   local path="$1"
   local text="$2"
 
-  if ! grep -Fq "$text" "$path"; then
+  if ! grep -Fq -- "$text" "$path"; then
     echo "missing required text in $path: $text" >&2
     exit 1
   fi
@@ -215,6 +215,9 @@ require_text docs/vstr-complexity.md 'bash bin/check-vstr-bench.sh'
 require_text docs/vstr-complexity.md 'bash bin/check-vstr-benchmark-smoke.sh'
 require_text docs/vstr-complexity.md 'coverage smoke check, not as a performance report'
 require_text docs/vstr-complexity.md 'formal benchmark entry point'
+require_text docs/vstr-complexity.md 'cargo bench --bench vstr_bench --quiet -- --json'
+require_text docs/vstr-complexity.md 'cargo bench --bench vstr_bench --quiet -- --markdown'
+require_text docs/vstr-complexity.md 'machine-readable historical report format'
 require_text docs/top-rust-utility-gap-analysis.md 'Top Rust Helper Utility Gap Analysis'
 require_text docs/top-rust-utility-gap-analysis.md 'dtolnay/anyhow'
 require_text docs/top-rust-utility-gap-analysis.md 'dtolnay/thiserror'
@@ -243,6 +246,12 @@ require_text docs/vstr-top-string-gap-analysis.md 'docs/vstr-complexity.md'
 require_text docs/vstr-top-string-gap-analysis.md 'docs/dependency-policy.md'
 require_text docs/vstr-top-string-gap-analysis.md 'VSTR-GAP-001'
 require_text docs/vstr-top-string-gap-analysis.md 'VSTR-GAP-008'
+require_text docs/vstr-top-string-gap-analysis.md 'plain, JSON, and Markdown'
+require_text benches/vstr_bench.rs 'ReportFormat'
+require_text benches/vstr_bench.rs 'print_json'
+require_text benches/vstr_bench.rs 'print_markdown'
+require_text bin/check-vstr-bench.sh '-- --json'
+require_text bin/check-vstr-bench.sh '-- --markdown'
 require_text benches/vstr_bench.rs 'bench_find_all'
 require_text benches/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
