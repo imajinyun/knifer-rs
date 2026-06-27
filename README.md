@@ -104,6 +104,8 @@ assert_eq!(vstr::replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");
 assert_eq!(vstr::replace_many("hello rust world", [("hello", "hi"), ("world", "team")]), "hi rust team");
 assert_eq!(vstr::escape_regex("a+b*(c)"), r"a\+b\*\(c\)");
 assert_eq!(vstr::quote_meta("[rust]"), r"\[rust\]");
+#[cfg(feature = "pattern-regex")]
+assert_eq!(vstr::find_pattern("ticket-42", r"\d+").unwrap(), Some((7, 9)));
 assert_eq!(vstr::format("name={}, age={}", &[&"tom", &12]), "name=tom, age=12");
 assert_eq!(vstr::add_prefix_if_not("path", "/"), "/path");
 assert!(vstr::ant_path_match("/api/**", "/api/v1/users"));
@@ -164,6 +166,14 @@ Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
 substring boundaries, escaping, Ant-style path matching, and replacement
 invariants without adding runtime dependencies to the main library.
 
+Optional `pattern-regex` helpers are available for callers that want regex-backed
+matching while keeping the default feature set at zero runtime dependencies:
+
+```toml
+[dependencies]
+knifer-rs = { version = "0.1", features = ["pattern-regex"] }
+```
+
 The docs.rs readiness check is the local publish gate. It verifies crate
 metadata, builds rustdoc with the docs.rs configuration and all features, and
 runs `cargo package --locked --allow-dirty`.
@@ -174,4 +184,5 @@ runs `cargo package --locked --allow-dirty`.
 - Edition: Rust 2024.
 - Safety: unsafe code is forbidden by Cargo lints and checked by the project
   contract script.
-- Dependencies: zero runtime dependencies in the current MVP.
+- Dependencies: zero runtime dependencies in the default feature set; the
+  optional `pattern-regex` feature adds `regex`.

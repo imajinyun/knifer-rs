@@ -52,8 +52,8 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
    marks, emoji ZWJ sequences, flags, CJK, and mixed-width text.
 3. `VSTR-GAP-004`: keep expanding Wrap and truncation boundaries for long words,
    indentation, suffix budget, and display-width candidates.
-4. `VSTR-GAP-009`: add regex-backed optional pattern helpers after the
-   dependency policy is accepted.
+4. `VSTR-GAP-009: Complete` - regex-backed optional pattern helpers are exposed
+   behind the `pattern-regex` feature.
 5. Design a reusable matcher that can support leftmost-first,
    leftmost-longest, and `find_overlapping` semantics without making the simple
    facade heavy.

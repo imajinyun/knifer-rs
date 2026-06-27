@@ -61,3 +61,11 @@ The future matcher should document overlap and tie-break behavior explicitly.
 The default business-friendly policy should be leftmost-first. A dedicated
 `find_overlapping` style API can expose overlap-aware behavior without changing
 current non-overlapping helpers.
+
+## Optional Regex Pattern Helpers
+
+The `pattern-regex` feature enables regex-backed helpers such as
+`contains_pattern`, `find_pattern`, `find_all_patterns`, and `replace_pattern`.
+They compile the caller-provided pattern for each call and return `PatternError`
+when the pattern is invalid. Matching complexity follows the Rust `regex`
+crate's documented guarantees.

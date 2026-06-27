@@ -6,7 +6,7 @@ utility crate without pulling in a dependency graph.
 
 ## Rules
 
-- Do not add runtime dependencies to the default feature set.
+- Do not add non-optional runtime dependencies to the default feature set.
 - Prefer the Rust standard library when behavior is clear and maintainable.
 - Use optional dependencies only when they materially improve correctness,
   performance, or standards compliance.
@@ -32,7 +32,8 @@ standard library is intentionally lower level.
 
 - The default build must not depend on `regex`.
 - Regex-backed helpers should expose business-friendly APIs such as
-  `contains_pattern`, `find_pattern`, and `replace_pattern`.
+  `contains_pattern`, `find_pattern`, `find_all_patterns`, and
+  `replace_pattern`.
 - Invalid pattern handling must use a crate-local error type such as
   `PatternError`; APIs that compile a user pattern should return `Result`.
 - Complexity notes must state that regex-backed matching follows the selected

@@ -12,6 +12,9 @@ knifer_rs::vstr::EmojiOptions = pub struct EmojiOptions<'src>
 knifer_rs::vstr::EmojiOptions::new = pub const fn new() -> Self
 knifer_rs::vstr::EmojiOptions::with_matcher = pub fn with_matcher(mut self, matcher: impl Fn(&str) -> bool + 'src) -> Self
 knifer_rs::vstr::EmojiOptions::with_replacer = pub fn with_replacer(mut self, replacer: impl Fn(&str) -> String + 'src) -> Self
+knifer_rs::vstr::PatternError = pub struct PatternError
+knifer_rs::vstr::PatternError::message = pub fn message(&self) -> &str
+knifer_rs::vstr::PatternError::pattern = pub fn pattern(&self) -> &str
 knifer_rs::vstr::abbreviate_middle = pub fn abbreviate_middle(input: &str, max_chars: usize, marker: &str) -> String
 knifer_rs::vstr::add_prefix_if_not = pub fn add_prefix_if_not(input: &str, prefix: &str) -> String
 knifer_rs::vstr::add_suffix_if_not = pub fn add_suffix_if_not(input: &str, suffix: &str) -> String
@@ -37,6 +40,7 @@ knifer_rs::vstr::contains_emoji = pub fn contains_emoji(input: &str) -> bool
 knifer_rs::vstr::contains_emoji_with_options = pub fn contains_emoji_with_options(input: &str, options: &EmojiOptions<'_>) -> bool
 knifer_rs::vstr::contains_ignore_case = pub fn contains_ignore_case(input: &str, needle: &str) -> bool
 knifer_rs::vstr::contains_none = pub fn contains_none<'src, I>(input: &str, needles: I) -> bool where I: IntoIterator<Item = &'src str>
+knifer_rs::vstr::contains_pattern = pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError>
 knifer_rs::vstr::count_matches = pub fn count_matches(input: &str, needle: &str) -> usize
 knifer_rs::vstr::dedent = pub fn dedent(input: &str) -> String
 knifer_rs::vstr::default_if_blank = pub fn default_if_blank<'src>(input: &'src str, default: &'src str) -> &'src str
@@ -52,7 +56,9 @@ knifer_rs::vstr::excerpt = pub fn excerpt(input: &str, needle: &str, max_chars: 
 knifer_rs::vstr::extract_digits = pub fn extract_digits(input: &str) -> String
 knifer_rs::vstr::find_all = pub fn find_all(input: &str, needle: &str) -> Vec<(usize, usize)>
 knifer_rs::vstr::find_all_ignore_case = pub fn find_all_ignore_case(input: &str, needle: &str) -> Vec<(usize, usize)>
+knifer_rs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, pattern: &str) -> Result<Vec<(usize, usize)>, PatternError>
 knifer_rs::vstr::find_any = pub fn find_any<'needle, I>(input: &str, needles: I) -> Option<(&'needle str, usize, usize)> where I: IntoIterator<Item = &'needle str>
+knifer_rs::vstr::find_pattern = pub fn find_pattern(input: &str, pattern: &str) -> Result<Option<(usize, usize)>, PatternError>
 knifer_rs::vstr::format = pub fn format(template: &str, args: &[&dyn std::fmt::Display]) -> String
 knifer_rs::vstr::hamming_distance64 = pub const fn hamming_distance64(left: u64, right: u64) -> u32
 knifer_rs::vstr::has_blank = pub fn has_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
@@ -97,6 +103,7 @@ knifer_rs::vstr::replace_first = pub fn replace_first(input: &str, from: &str, t
 knifer_rs::vstr::replace_ignore_case = pub fn replace_ignore_case(input: &str, from: &str, to: &str) -> String
 knifer_rs::vstr::replace_last = pub fn replace_last(input: &str, from: &str, to: &str) -> String
 knifer_rs::vstr::replace_many = pub fn replace_many<'src, I>(input: &str, replacements: I) -> String where I: IntoIterator<Item = (&'src str, &'src str)>
+knifer_rs::vstr::replace_pattern = pub fn replace_pattern(input: &str, pattern: &str, replacement: &str) -> Result<String, PatternError>
 knifer_rs::vstr::reverse = pub fn reverse(input: &str) -> String
 knifer_rs::vstr::rune_len = pub fn rune_len(input: &str) -> usize
 knifer_rs::vstr::sim_hash = pub fn sim_hash(input: &str) -> u64
@@ -181,7 +188,8 @@ invalid UTF-8 as `&str`.
 ## Current Function Groups
 
 Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
-`to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
+`PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
+`replace_pattern`, `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
 `swap_case`, `normalize_whitespace`, `remove_whitespace`, `between`,
 `contains_none`, `contains_any_ignore_case`, `find_any`, `count_matches`,

@@ -71,16 +71,17 @@ require_text Cargo.toml 'path = "bench/vstr_bench.rs"'
 require_text Cargo.toml 'harness = false'
 require_text Cargo.toml '[features]'
 require_text Cargo.toml 'default = []'
-require_text Cargo.toml 'pattern-regex = []'
+require_text Cargo.toml 'regex = { version = "1", optional = true }'
+require_text Cargo.toml 'pattern-regex = ["dep:regex"]'
 require_text Cargo.toml 'unicode-segmentation = []'
 require_text Cargo.toml 'unicode-width = []'
 if awk '
   /^\[dependencies\]$/ { in_deps = 1; next }
   /^\[/ { in_deps = 0 }
-  in_deps && $0 !~ /^[[:space:]]*$/ && $0 !~ /^[[:space:]]*#/ { found = 1 }
+  in_deps && $0 !~ /^[[:space:]]*$/ && $0 !~ /^[[:space:]]*#/ && $0 !~ /optional[[:space:]]*=[[:space:]]*true/ { found = 1 }
   END { exit found ? 0 : 1 }
 ' Cargo.toml; then
-  echo "default runtime dependencies are not allowed without updating docs/dependency-policy.md" >&2
+  echo "non-optional runtime dependencies are not allowed without updating docs/dependency-policy.md" >&2
   exit 1
 fi
 require_text .github/workflows/ci.yml 'workflow_dispatch:'
@@ -175,7 +176,7 @@ require_text CONTRIBUTING.md 'bash bin/check-docs-rs-ready.sh'
 require_text CONTRIBUTING.md 'docs/dependency-policy.md'
 require_text docs/dependency-policy.md 'Dependency Policy'
 require_text docs/dependency-policy.md 'zero-runtime-dependency core'
-require_text docs/dependency-policy.md 'Do not add runtime dependencies to the default feature set.'
+require_text docs/dependency-policy.md 'Do not add non-optional runtime dependencies to the default feature set.'
 require_text docs/dependency-policy.md 'optional'
 require_text docs/dependency-policy.md 'MSRV'
 require_text docs/dependency-policy.md 'pattern-regex'
