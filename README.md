@@ -24,6 +24,28 @@ but to match their engineering discipline:
 
 See `docs/top-rust-utility-gap-analysis.md` for the current gap analysis.
 
+## Status
+
+The crate is pre-1.0 and currently exposes one MVP-stable facade:
+`knifer_rs::vstr`. Public API changes are tracked in
+`docs/public-api-inventory.md`; `vstr` compatibility notes are tracked in
+`docs/vstr-api-parity.md`.
+
+## Install
+
+```toml
+[dependencies]
+knifer-rs = "0.1"
+```
+
+The package is not published yet. Use a Git dependency while evaluating local
+MVP builds:
+
+```toml
+[dependencies]
+knifer-rs = { git = "https://github.com/imajinyun/knifer-rs" }
+```
+
 ## Current MVP
 
 The first facade is `vstr`, covering small string helpers:
@@ -79,7 +101,14 @@ cargo test --locked
 cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
+bash bin/check-public-api-inventory.sh
 cargo package --list --allow-dirty
 ```
 
-The crate forbids unsafe code through Cargo lints.
+## Compatibility
+
+- MSRV: Rust 1.85.
+- Edition: Rust 2024.
+- Safety: unsafe code is forbidden by Cargo lints and checked by the project
+  contract script.
+- Dependencies: zero runtime dependencies in the current MVP.

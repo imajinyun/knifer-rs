@@ -41,6 +41,9 @@ jobs:
       - name: Project contract
         run: bash bin/check-project-contract.sh
 
+      - name: Public API inventory
+        run: bash bin/check-public-api-inventory.sh
+
   platform-test:
     name: ${{ matrix.os }} Stable Test
     runs-on: ${{ matrix.os }}
