@@ -21,6 +21,9 @@ pattern-regex = ["dep:regex"]
 unicode-segmentation = ["dep:unicode-segmentation"]
 unicode-width = []
 
+[dev-dependencies]
+serde_json = "1"
+
 [[bench]]
 name = "vstr_bench"
 path = "bench/vstr_bench.rs"

@@ -166,6 +166,27 @@ That writes `vstr-bench.txt`, `vstr-bench.json`, and `vstr-bench.md`. The same
 entry point is used by the manual GitHub Actions benchmark workflow when
 `run_release_bench` is set to `true`.
 
+To compare a run against a saved baseline report, point the script at a previous
+`vstr-bench.json` artifact:
+
+```bash
+VSTR_BENCH_BASELINE_JSON=target/vstr-bench-report/vstr-bench.json \
+VSTR_BENCH_MAX_REGRESSION_PCT=20.00 \
+bash bin/check-vstr-bench.sh target/vstr-bench-report
+```
+
+For commit-to-commit comparison, set `VSTR_BENCH_BASE_REF` instead:
+
+```bash
+VSTR_BENCH_BASE_REF=main \
+VSTR_BENCH_MAX_REGRESSION_PCT=20.00 \
+bash bin/check-vstr-bench.sh target/vstr-bench-report
+```
+
+When a baseline is present, the script also writes `vstr-bench-compare.json` and
+`vstr-bench-compare.md`, and fails if any benchmark exceeds the configured
+regression threshold.
+
 Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
 substring boundaries, escaping, Ant-style path matching, and replacement
 invariants without adding runtime dependencies to the main library.

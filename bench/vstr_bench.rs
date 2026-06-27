@@ -2,8 +2,12 @@
 
 use std::env;
 use std::fmt::Write as _;
+use std::fs;
 use std::hint::black_box;
+use std::process;
 use std::time::{Duration, Instant};
+
+use serde_json::{Value, json};
 
 const ITERATIONS: usize = 1_024;
 const REPORT_VERSION: &str = "v1";
@@ -24,10 +28,49 @@ enum ReportFormat {
     Markdown,
 }
 
+enum Command {
+    Report(ReportFormat),
+    Compare {
+        baseline_path: String,
+        max_regression_bps: u128,
+        format: CompareFormat,
+    },
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum CompareFormat {
+    Json,
+    Markdown,
+}
+
+#[derive(Clone, Copy)]
+struct Comparison {
+    name: &'static str,
+    baseline_elapsed_ns: u128,
+    current_elapsed_ns: u128,
+    direction: ChangeDirection,
+    change_bps: u128,
+    failed: bool,
+}
+
+#[derive(Clone, Copy)]
+enum ChangeDirection {
+    Improvement,
+    Regression,
+    Unchanged,
+}
+
 fn main() {
+    if let Err(error) = run() {
+        eprintln!("{error}");
+        process::exit(2);
+    }
+}
+
+fn run() -> Result<(), String> {
     let sample = "Knifer-RS hello rust world 你好 ".repeat(512);
     let path = "/api/v1/projects/knifer-rs/users/42";
-    let format = report_format();
+    let command = command()?;
 
     let results = [
         run_case("contains", &sample, bench_contains),
@@ -39,19 +82,61 @@ fn main() {
         run_case("ant_path_match", path, bench_ant_path),
     ];
 
-    match format {
-        ReportFormat::Plain => print_plain(&results),
-        ReportFormat::Json => print_json(&results),
-        ReportFormat::Markdown => print_markdown(&results),
+    match command {
+        Command::Report(ReportFormat::Plain) => print_plain(&results),
+        Command::Report(ReportFormat::Json) => print_json(&results),
+        Command::Report(ReportFormat::Markdown) => print_markdown(&results),
+        Command::Compare {
+            baseline_path,
+            max_regression_bps,
+            format,
+        } => {
+            let comparisons = compare_results(&results, &baseline_path, max_regression_bps)?;
+            match format {
+                CompareFormat::Json => {
+                    print_compare_json(&baseline_path, max_regression_bps, &comparisons);
+                }
+                CompareFormat::Markdown => {
+                    print_compare_markdown(&baseline_path, max_regression_bps, &comparisons);
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn command() -> Result<Command, String> {
+    let args: Vec<String> = env::args().skip(1).filter(|arg| arg != "--bench").collect();
+    match args.first().map(String::as_str) {
+        Some("--json") => Ok(Command::Report(ReportFormat::Json)),
+        Some("--markdown") => Ok(Command::Report(ReportFormat::Markdown)),
+        Some("--compare-json") => compare_command(&args, CompareFormat::Json),
+        Some("--compare-markdown") => compare_command(&args, CompareFormat::Markdown),
+        Some(unknown) => Err(format!("unknown benchmark argument: {unknown}")),
+        None => Ok(Command::Report(ReportFormat::Plain)),
     }
 }
 
-fn report_format() -> ReportFormat {
-    match env::args().nth(1).as_deref() {
-        Some("--json") => ReportFormat::Json,
-        Some("--markdown") => ReportFormat::Markdown,
-        _ => ReportFormat::Plain,
-    }
+fn compare_command(args: &[String], format: CompareFormat) -> Result<Command, String> {
+    let baseline_path = args
+        .get(1)
+        .ok_or_else(|| "missing baseline JSON path".to_owned())?
+        .to_owned();
+    let max_regression_pct = option_value(args, "--max-regression-pct").unwrap_or("20.00");
+    let max_regression_bps = parse_percent_to_bps(max_regression_pct)?;
+
+    Ok(Command::Compare {
+        baseline_path,
+        max_regression_bps,
+        format,
+    })
+}
+
+fn option_value<'arg>(args: &'arg [String], name: &str) -> Option<&'arg str> {
+    args.windows(2)
+        .find(|window| window[0] == name)
+        .map(|window| window[1].as_str())
 }
 
 fn run_case(name: &'static str, input: &str, case: fn(&str) -> usize) -> BenchResult {
@@ -104,6 +189,209 @@ fn print_json(results: &[BenchResult]) {
 
     output.push_str("]}");
     println!("{output}");
+}
+
+fn compare_results(
+    current_results: &[BenchResult],
+    baseline_path: &str,
+    max_regression_bps: u128,
+) -> Result<Vec<Comparison>, String> {
+    let baseline = fs::read_to_string(baseline_path)
+        .map_err(|error| format!("failed to read baseline JSON {baseline_path}: {error}"))?;
+    let baseline_report: Value = serde_json::from_str(&baseline)
+        .map_err(|error| format!("failed to parse baseline JSON {baseline_path}: {error}"))?;
+
+    current_results
+        .iter()
+        .map(|result| {
+            let baseline_elapsed_ns = baseline_elapsed_ns(&baseline_report, result.name)?;
+            let (direction, change_bps) =
+                change_from_baseline(result.elapsed_ns, baseline_elapsed_ns)?;
+            let failed =
+                matches!(direction, ChangeDirection::Regression) && change_bps > max_regression_bps;
+
+            Ok(Comparison {
+                name: result.name,
+                baseline_elapsed_ns,
+                current_elapsed_ns: result.elapsed_ns,
+                direction,
+                change_bps,
+                failed,
+            })
+        })
+        .collect()
+}
+
+fn baseline_elapsed_ns(report: &Value, bench_name: &str) -> Result<u128, String> {
+    let results = report
+        .get("results")
+        .and_then(Value::as_array)
+        .ok_or_else(|| "baseline JSON is missing results array".to_owned())?;
+
+    let result = results
+        .iter()
+        .find(|entry| entry.get("bench").and_then(Value::as_str) == Some(bench_name))
+        .ok_or_else(|| format!("baseline JSON is missing benchmark: {bench_name}"))?;
+
+    result
+        .get("elapsed_ns")
+        .and_then(Value::as_u64)
+        .map(u128::from)
+        .ok_or_else(|| format!("baseline JSON has invalid elapsed_ns for: {bench_name}"))
+}
+
+fn change_from_baseline(
+    current_elapsed_ns: u128,
+    baseline_elapsed_ns: u128,
+) -> Result<(ChangeDirection, u128), String> {
+    if baseline_elapsed_ns == 0 {
+        return Err("baseline elapsed_ns must be greater than zero".to_owned());
+    }
+
+    if current_elapsed_ns == baseline_elapsed_ns {
+        return Ok((ChangeDirection::Unchanged, 0));
+    }
+
+    let (direction, delta) = if current_elapsed_ns > baseline_elapsed_ns {
+        (
+            ChangeDirection::Regression,
+            current_elapsed_ns - baseline_elapsed_ns,
+        )
+    } else {
+        (
+            ChangeDirection::Improvement,
+            baseline_elapsed_ns - current_elapsed_ns,
+        )
+    };
+
+    Ok((
+        direction,
+        delta.saturating_mul(10_000) / baseline_elapsed_ns,
+    ))
+}
+
+fn print_compare_json(baseline_path: &str, max_regression_bps: u128, comparisons: &[Comparison]) {
+    let status = comparison_status(comparisons);
+    let results: Vec<Value> = comparisons
+        .iter()
+        .map(|comparison| {
+            json!({
+                "bench": comparison.name,
+                "baseline_elapsed_ns": json_u64(comparison.baseline_elapsed_ns),
+                "current_elapsed_ns": json_u64(comparison.current_elapsed_ns),
+                "direction": comparison.direction.as_str(),
+                "change_percent": format_bps(comparison.change_bps),
+                "status": if comparison.failed { "fail" } else { "pass" },
+            })
+        })
+        .collect();
+
+    println!(
+        "{}",
+        json!({
+            "suite": BENCHMARK_SUITE,
+            "version": REPORT_VERSION,
+            "baseline": baseline_path,
+            "max_regression_percent": format_bps(max_regression_bps),
+            "status": status,
+            "results": results,
+        })
+    );
+}
+
+fn print_compare_markdown(
+    baseline_path: &str,
+    max_regression_bps: u128,
+    comparisons: &[Comparison],
+) {
+    println!("# {BENCHMARK_SUITE} Comparison");
+    println!();
+    println!("- Version: `{REPORT_VERSION}`");
+    println!("- Baseline: `{baseline_path}`");
+    println!(
+        "- Max regression threshold: `{}%`",
+        format_bps(max_regression_bps)
+    );
+    println!("- Status: `{}`", comparison_status(comparisons));
+    println!();
+    println!("| Benchmark | Baseline ns | Current ns | Direction | Change | Status |");
+    println!("| --- | ---: | ---: | --- | ---: | --- |");
+    for comparison in comparisons {
+        println!(
+            "| `{}` | {} | {} | {} | {}% | {} |",
+            comparison.name,
+            comparison.baseline_elapsed_ns,
+            comparison.current_elapsed_ns,
+            comparison.direction.as_str(),
+            format_bps(comparison.change_bps),
+            if comparison.failed { "fail" } else { "pass" }
+        );
+    }
+}
+
+fn comparison_status(comparisons: &[Comparison]) -> &'static str {
+    if comparisons.iter().any(|comparison| comparison.failed) {
+        "fail"
+    } else {
+        "pass"
+    }
+}
+
+fn json_u64(value: u128) -> u64 {
+    u64::try_from(value).unwrap_or(u64::MAX)
+}
+
+fn parse_percent_to_bps(input: &str) -> Result<u128, String> {
+    let trimmed = input.trim();
+    if trimmed.is_empty() {
+        return Err("empty regression threshold".to_owned());
+    }
+
+    let (whole, fraction) = trimmed.split_once('.').unwrap_or((trimmed, ""));
+    if whole.is_empty() || !whole.chars().all(|character| character.is_ascii_digit()) {
+        return Err(format!("invalid regression threshold: {input}"));
+    }
+    if fraction.len() > 2 || !fraction.chars().all(|character| character.is_ascii_digit()) {
+        return Err(format!(
+            "regression threshold must use at most two decimal places: {input}"
+        ));
+    }
+
+    let whole_bps = whole
+        .parse::<u128>()
+        .map_err(|error| format!("invalid regression threshold {input}: {error}"))?
+        .checked_mul(100)
+        .ok_or_else(|| format!("regression threshold is too large: {input}"))?;
+
+    let mut fraction_digits = fraction.to_owned();
+    while fraction_digits.len() < 2 {
+        fraction_digits.push('0');
+    }
+    let fraction_bps = if fraction_digits.is_empty() {
+        0
+    } else {
+        fraction_digits
+            .parse::<u128>()
+            .map_err(|error| format!("invalid regression threshold {input}: {error}"))?
+    };
+
+    whole_bps
+        .checked_add(fraction_bps)
+        .ok_or_else(|| format!("regression threshold is too large: {input}"))
+}
+
+fn format_bps(bps: u128) -> String {
+    format!("{}.{:02}", bps / 100, bps % 100)
+}
+
+impl ChangeDirection {
+    const fn as_str(self) -> &'static str {
+        match self {
+            Self::Improvement => "improvement",
+            Self::Regression => "regression",
+            Self::Unchanged => "unchanged",
+        }
+    }
 }
 
 fn print_markdown(results: &[BenchResult]) {

@@ -11,6 +11,14 @@ on:
         options:
           - "false"
           - "true"
+      benchmark_base_ref:
+        description: Optional git ref used as benchmark baseline
+        required: false
+        default: ""
+      benchmark_max_regression_pct:
+        description: Maximum allowed benchmark regression percentage
+        required: false
+        default: "20.00"
   pull_request:
   push:
     branches:
@@ -140,6 +148,9 @@ jobs:
 
       - name: Generate benchmark reports
         run: bash bin/check-vstr-bench.sh target/vstr-bench-report
+        env:
+          VSTR_BENCH_BASE_REF: ${{ inputs.benchmark_base_ref }}
+          VSTR_BENCH_MAX_REGRESSION_PCT: ${{ inputs.benchmark_max_regression_pct }}
 
       - name: Upload benchmark artifact
         uses: actions/upload-artifact@v4

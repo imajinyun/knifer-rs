@@ -35,6 +35,9 @@ testing, and release discipline while keeping the default crate lightweight.
   artifacts.
 - `VSTR-GAP-010: Complete` - knifer-go golden fixtures are represented in unit
   tests and parity docs.
+- `VSTR-GAP-001: Complete` - benchmark reports can be saved as plain text,
+  JSON, and Markdown, then compared with a baseline JSON artifact or git ref
+  using a regression threshold. The tracked formats are plain, JSON, and Markdown.
 
 ## Boundary Policy
 
@@ -46,8 +49,8 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 
 ## Open Todo
 
-1. `VSTR-GAP-001`: keep benchmark reports in plain, JSON, and Markdown formats,
-   then add baseline comparison and threshold checks.
+1. `VSTR-GAP-001: Complete` - keep benchmark reports in plain, JSON, and
+   Markdown formats, with baseline comparison and threshold checks.
 2. `VSTR-GAP-003: Complete` - Unicode boundary golden tests and optional
    grapheme helpers cover combining marks, emoji ZWJ sequences, flags, CJK, and
    mixed-width text.
@@ -76,4 +79,7 @@ valid Rust strings.
 
 The default CI keeps using the fast benchmark smoke check. The manual release
 benchmark workflow should generate `vstr-bench.md`, `vstr-bench.json`, and
-plain text output as release artifacts.
+plain text output as release artifacts. If `VSTR_BENCH_BASELINE_JSON` or
+`VSTR_BENCH_BASE_REF` is set, the same entry point should also generate
+`vstr-bench-compare.md` and `vstr-bench-compare.json`, failing when
+`VSTR_BENCH_MAX_REGRESSION_PCT` is exceeded.

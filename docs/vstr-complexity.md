@@ -37,6 +37,19 @@ When passed an output directory, the script writes a machine-readable historical
 - `vstr-bench.json`
 - `vstr-bench.md`
 
+When `VSTR_BENCH_BASELINE_JSON` points to a previous `vstr-bench.json`, the same
+entry point writes:
+
+- `vstr-bench-compare.json`
+- `vstr-bench-compare.md`
+
+`VSTR_BENCH_MAX_REGRESSION_PCT` sets the allowed regression threshold before the
+script fails. The comparison uses benchmark names and elapsed nanoseconds from
+the JSON report, so artifacts from different commits remain directly
+comparable. `VSTR_BENCH_BASE_REF` can be used instead of
+`VSTR_BENCH_BASELINE_JSON` to generate a baseline report from another git ref
+before comparing it with the current checkout.
+
 The manual release benchmark artifact should come from the same script so local
 reports and GitHub Actions artifacts remain comparable.
 
