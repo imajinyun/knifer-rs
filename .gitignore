@@ -1,25 +1,54 @@
 # Rust build artifacts
 /target/
 /fuzz/target/
+**/*.rs.bk
+*.rmeta
 
 # Local editor and OS noise
 .DS_Store
+.Spotlight-V100
+.Trashes
 .idea/
 .vscode/
 *.swp
 *.swo
+*.swn
 *~
+tags
 
 # Local environment files
 .env
 .env.*
 !.env.example
 
+# Local Cargo configuration and diagnostics
+/.cargo/config
+/.cargo/config.toml
+cargo-timing.html
+cargo-timing-*.html
+
 # Local coverage and profiling artifacts
 /coverage/
 /tarpaulin-report.html
+lcov.info
+*.lcov
 *.profraw
 *.profdata
+perf.data
+perf.data.old
+flamegraph.svg
+.aiflow/
+docs/*
+!docs/api
 
 # Local benchmark output
 /criterion/
+
+# Local fuzzing artifacts
+/fuzz/artifacts/
+/fuzz/corpus/
+/fuzz/crashes/
+
+# Local scratch space
+/tmp/
+/temp/

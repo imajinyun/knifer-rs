@@ -113,8 +113,17 @@ require_text .editorconfig '[*.rs]'
 require_text .gitattributes '* text=auto eol=lf'
 require_text .gitignore '/target/'
 require_text .gitignore '/fuzz/target/'
+require_text .gitignore '/.cargo/config.toml'
+require_text .gitignore 'cargo-timing-*.html'
 require_text .gitignore '.env.*'
+require_text .gitignore 'tags'
+require_text .gitignore 'lcov.info'
 require_text .gitignore '*.profraw'
+require_text .gitignore 'perf.data'
+require_text .gitignore 'flamegraph.svg'
+require_text .gitignore '/criterion/'
+require_text .gitignore '/fuzz/artifacts/'
+require_text .gitignore '/tmp/'
 if grep -Fq '/docs/' .gitignore; then
   echo "docs/ contains source documentation and must not be ignored" >&2
   exit 1
