@@ -32,12 +32,14 @@ require_file CHANGELOG.md
 require_file README.md
 require_file bin/check-project-contract.sh
 require_file bin/check-public-api-inventory.sh
+require_file bin/check-vstr-bench.sh
 require_file bin/check-vstr-benchmark-smoke.sh
 require_file .github/workflows/ci.yml
 require_file docs/public-api-inventory.md
 require_file docs/vstr-api-parity.md
 require_file docs/top-rust-utility-gap-analysis.md
 require_file docs/vstr-top-string-gap-analysis.md
+require_file benches/vstr_bench.rs
 require_file examples/vstr_benchmark_smoke.rs
 
 require_text Cargo.toml 'edition = "2024"'
@@ -47,6 +49,8 @@ require_text Cargo.toml 'missing_docs = "warn"'
 require_text Cargo.toml 'pedantic = "warn"'
 require_text Cargo.toml 'repository = "https://github.com/imajinyun/knifer-rs"'
 require_text Cargo.toml 'documentation = "https://docs.rs/knifer-rs"'
+require_text Cargo.toml 'name = "vstr_bench"'
+require_text Cargo.toml 'harness = false'
 require_text .github/workflows/ci.yml 'workflow_dispatch:'
 require_text .github/workflows/ci.yml 'macos-latest'
 require_text .github/workflows/ci.yml 'bash bin/check-public-api-inventory.sh'
@@ -105,6 +109,7 @@ require_text README.md 'cargo clippy --all-targets -- -D warnings'
 require_text README.md 'bash bin/check-project-contract.sh'
 require_text README.md 'bash bin/check-public-api-inventory.sh'
 require_text README.md 'bash bin/check-vstr-benchmark-smoke.sh'
+require_text README.md 'bash bin/check-vstr-bench.sh'
 require_text README.md 'cargo package --list --allow-dirty'
 require_text CONTRIBUTING.md 'bash bin/check-project-contract.sh'
 require_text CONTRIBUTING.md 'bash bin/check-public-api-inventory.sh'
@@ -176,6 +181,7 @@ require_text docs/top-rust-utility-gap-analysis.md 'RUSTDOCFLAGS=-Dwarnings carg
 require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-project-contract.sh'
 require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-public-api-inventory.sh'
 require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-vstr-benchmark-smoke.sh'
+require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-vstr-bench.sh'
 require_text docs/top-rust-utility-gap-analysis.md 'cargo package --list --allow-dirty'
 require_text docs/top-rust-utility-gap-analysis.md '.gitignore'
 require_text docs/top-rust-utility-gap-analysis.md '.gitattributes'
@@ -185,6 +191,8 @@ require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/memchr'
 require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/aho-corasick'
 require_text docs/vstr-top-string-gap-analysis.md 'BurntSushi/bstr'
 require_text docs/vstr-top-string-gap-analysis.md 'unicode-rs/unicode-segmentation'
+require_text benches/vstr_bench.rs 'bench_find_all'
+require_text benches/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
 require_text examples/vstr_benchmark_smoke.rs 'levenshtein_distance'
 

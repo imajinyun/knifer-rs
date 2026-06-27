@@ -138,6 +138,7 @@ RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
 bash bin/check-vstr-benchmark-smoke.sh
+bash bin/check-vstr-bench.sh
 cargo package --list --allow-dirty
 ```
 
