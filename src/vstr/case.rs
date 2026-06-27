@@ -47,6 +47,34 @@ pub fn to_kebab_case(input: &str) -> String {
     to_separated(input, '-')
 }
 
+/// Converts text to `dot.case`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::to_dot_case("helloWorld ID"), "hello.world.id");
+/// ```
+#[must_use]
+pub fn to_dot_case(input: &str) -> String {
+    to_separated(input, '.')
+}
+
+/// Converts text to `path/case`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::to_path_case("helloWorld ID"), "hello/world/id");
+/// ```
+#[must_use]
+pub fn to_path_case(input: &str) -> String {
+    to_separated(input, '/')
+}
+
 /// Converts text to `SCREAMING_SNAKE_CASE`.
 ///
 /// # Examples
@@ -75,6 +103,40 @@ pub fn to_screaming_kebab_case(input: &str) -> String {
     to_kebab_case(input).to_uppercase()
 }
 
+/// Converts text to `Train-Case`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::to_train_case("helloWorld ID"), "Hello-World-Id");
+/// ```
+#[must_use]
+pub fn to_train_case(input: &str) -> String {
+    to_kebab_case(input)
+        .split('-')
+        .map(capitalize)
+        .collect::<Vec<_>>()
+        .join("-")
+}
+
+/// Converts text to `COBOL-CASE`.
+///
+/// This is an alias for [`to_screaming_kebab_case`].
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::to_cobol_case("helloWorld ID"), "HELLO-WORLD-ID");
+/// ```
+#[must_use]
+pub fn to_cobol_case(input: &str) -> String {
+    to_screaming_kebab_case(input)
+}
+
 /// Converts text to title case with words separated by one ASCII space.
 ///
 /// # Examples
@@ -88,9 +150,26 @@ pub fn to_screaming_kebab_case(input: &str) -> String {
 pub fn to_title_case(input: &str) -> String {
     to_separated(input, ' ')
         .split_whitespace()
-        .map(uppercase_first)
+        .map(capitalize)
         .collect::<Vec<_>>()
         .join(" ")
+}
+
+/// Converts text to sentence case.
+///
+/// Words are normalized to one ASCII space, lower-cased, and the first
+/// Unicode scalar value is upper-cased.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::to_sentence_case("hello_world-ID"), "Hello world id");
+/// ```
+#[must_use]
+pub fn to_sentence_case(input: &str) -> String {
+    capitalize(&to_separated(input, ' ').to_lowercase())
 }
 
 /// Converts text to `camelCase`.
@@ -151,6 +230,68 @@ pub fn to_camel_case(input: &str) -> String {
 #[must_use]
 pub fn to_pascal_case(input: &str) -> String {
     uppercase_first(&to_camel_case(input))
+}
+
+/// Upper-cases the first Unicode scalar value and lower-cases the rest.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::capitalize("rUST"), "Rust");
+/// assert_eq!(vstr::capitalize("你好"), "你好");
+/// ```
+#[must_use]
+pub fn capitalize(input: &str) -> String {
+    let mut chars = input.chars();
+    let mut output = String::with_capacity(input.len());
+    if let Some(first) = chars.next() {
+        output.extend(first.to_uppercase());
+        output.push_str(&chars.as_str().to_lowercase());
+    }
+    output
+}
+
+/// Lower-cases the first Unicode scalar value and preserves the rest.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::uncapitalize("Rust"), "rust");
+/// assert_eq!(vstr::uncapitalize("HTTPServer"), "hTTPServer");
+/// ```
+#[must_use]
+pub fn uncapitalize(input: &str) -> String {
+    lowercase_first(input)
+}
+
+/// Swaps uppercase and lowercase Unicode scalar values.
+///
+/// Scalar values without case are preserved.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::swap_case("Rust 你好"), "rUST 你好");
+/// ```
+#[must_use]
+pub fn swap_case(input: &str) -> String {
+    let mut output = String::with_capacity(input.len());
+    for ch in input.chars() {
+        if ch.is_lowercase() {
+            output.extend(ch.to_uppercase());
+        } else if ch.is_uppercase() {
+            output.extend(ch.to_lowercase());
+        } else {
+            output.push(ch);
+        }
+    }
+    output
 }
 
 fn to_separated(input: &str, separator: char) -> String {

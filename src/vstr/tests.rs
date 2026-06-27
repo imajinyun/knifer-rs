@@ -133,11 +133,16 @@ fn case_helpers_normalize_common_word_boundaries() {
     assert_eq!(to_pascal_case("hello_world-id"), "HelloWorldId");
     assert_eq!(to_camel_case("HelloWorld"), "helloWorld");
     assert_eq!(to_pascal_case("helloWorld"), "HelloWorld");
+    assert_eq!(to_dot_case("helloWorld ID"), "hello.world.id");
+    assert_eq!(to_path_case("helloWorld ID"), "hello/world/id");
     assert_eq!(to_snake_case("HTTPServerID"), "http_server_id");
     assert_eq!(to_kebab_case("HTTPServerID"), "http-server-id");
     assert_eq!(to_screaming_snake_case("HTTPServerID"), "HTTP_SERVER_ID");
     assert_eq!(to_screaming_kebab_case("HTTPServerID"), "HTTP-SERVER-ID");
+    assert_eq!(to_train_case("HTTPServerID"), "Http-Server-Id");
+    assert_eq!(to_cobol_case("HTTPServerID"), "HTTP-SERVER-ID");
     assert_eq!(to_title_case("hello_world-id"), "Hello World Id");
+    assert_eq!(to_sentence_case("hello_world-ID"), "Hello world id");
     assert_eq!(
         to_snake_case("  hello--rust_world  "),
         "__hello__rust_world__"
@@ -152,6 +157,12 @@ fn case_helpers_handle_empty_and_unicode_words() {
     assert_eq!(to_pascal_case(""), "");
     assert_eq!(to_snake_case("你好 Rust"), "你好_rust");
     assert_eq!(to_pascal_case("你好 rust"), "你好Rust");
+    assert_eq!(capitalize("rUST"), "Rust");
+    assert_eq!(capitalize("你好"), "你好");
+    assert_eq!(uncapitalize("Rust"), "rust");
+    assert_eq!(uncapitalize("HTTPServer"), "hTTPServer");
+    assert_eq!(swap_case("Rust 你好"), "rUST 你好");
+    assert_eq!(swap_case("Straße"), "sTRASSE");
 }
 
 #[test]
@@ -386,7 +397,18 @@ fn text_formatting_helpers_indent_dedent_wrap_and_count() {
     assert!(lines("").is_empty());
     assert_eq!(non_blank_lines(" a \n\n b "), vec!["a", "b"]);
     assert_eq!(non_blank_lines(" \n\t"), Vec::<&str>::new());
+    assert_eq!(words("hello  Rust\n世界"), vec!["hello", "Rust", "世界"]);
+    assert_eq!(initials("rust string toolkit"), "RST");
+    assert_eq!(initials("你好 rust"), "你R");
     assert_eq!(chars("a你"), vec!['a', '你']);
+    assert!(is_palindrome("A man, a plan, a canal: Panama"));
+    assert!(is_palindrome("上海自来水来自海上"));
+    assert!(!is_palindrome("knifer-rs"));
+    assert_eq!(extract_digits("id=42, رقم=٣"), "42٣");
+    assert_eq!(
+        remove_ascii_punctuation("Hello, Rust! 你好，世界！"),
+        "Hello Rust 你好，世界！"
+    );
     assert_eq!(word_count("hello  Rust\n世界"), 3);
     assert_eq!(word_count(" \n\t"), 0);
     assert_eq!(line_count("a\nb\n"), 2);
