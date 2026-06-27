@@ -10,6 +10,12 @@ documentation = "https://docs.rs/knifer-rs"
 
 [dependencies]
 
+[features]
+default = []
+pattern-regex = []
+unicode-segmentation = []
+unicode-width = []
+
 [[bench]]
 name = "vstr_bench"
 harness = false
