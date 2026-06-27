@@ -1,5 +1,6 @@
 # Rust build artifacts
 /target/
+/fuzz/target/
 
 # Local editor and OS noise
 .DS_Store

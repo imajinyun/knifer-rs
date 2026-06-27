@@ -53,6 +53,9 @@ jobs:
       - name: Vstr benchmark smoke
         run: bash bin/check-vstr-benchmark-smoke.sh
 
+      - name: Vstr fuzz smoke
+        run: bash bin/check-vstr-fuzz-smoke.sh
+
   platform-test:
     name: ${{ matrix.os }} Stable Test
     runs-on: ${{ matrix.os }}

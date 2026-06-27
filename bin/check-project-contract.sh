@@ -37,6 +37,7 @@ require_file bin/check-project-contract.sh
 require_file bin/check-public-api-inventory.sh
 require_file bin/check-vstr-bench.sh
 require_file bin/check-vstr-benchmark-smoke.sh
+require_file bin/check-vstr-fuzz-smoke.sh
 require_file .github/workflows/ci.yml
 require_file docs/public-api-inventory.md
 require_file docs/vstr-api-parity.md
@@ -45,6 +46,13 @@ require_file docs/top-rust-utility-gap-analysis.md
 require_file docs/vstr-top-string-gap-analysis.md
 require_file benches/vstr_bench.rs
 require_file examples/vstr_benchmark_smoke.rs
+require_file fuzz/Cargo.toml
+require_file fuzz/Cargo.lock
+require_file fuzz/README.md
+require_file fuzz/fuzz_targets/substring.rs
+require_file fuzz/fuzz_targets/escaping.rs
+require_file fuzz/fuzz_targets/path_matching.rs
+require_file fuzz/fuzz_targets/replacement.rs
 
 require_text Cargo.toml 'edition = "2024"'
 require_text Cargo.toml 'rust-version = "1.85"'
@@ -87,11 +95,13 @@ require_text .github/workflows/ci.yml 'cargo test --locked --no-default-features
 require_text .github/workflows/ci.yml 'cargo test --locked --all-features'
 require_text .github/workflows/ci.yml 'bash bin/check-public-api-inventory.sh'
 require_text .github/workflows/ci.yml 'bash bin/check-vstr-benchmark-smoke.sh'
+require_text .github/workflows/ci.yml 'bash bin/check-vstr-fuzz-smoke.sh'
 require_text .github/workflows/ci.yml 'cargo package --list --allow-dirty'
 require_text .editorconfig 'end_of_line = lf'
 require_text .editorconfig '[*.rs]'
 require_text .gitattributes '* text=auto eol=lf'
 require_text .gitignore '/target/'
+require_text .gitignore '/fuzz/target/'
 require_text .gitignore '.env.*'
 require_text .gitignore '*.profraw'
 if grep -Fq '/docs/' .gitignore; then
@@ -144,6 +154,7 @@ require_text README.md 'bash bin/check-project-contract.sh'
 require_text README.md 'bash bin/check-public-api-inventory.sh'
 require_text README.md 'bash bin/check-vstr-benchmark-smoke.sh'
 require_text README.md 'bash bin/check-vstr-bench.sh'
+require_text README.md 'bash bin/check-vstr-fuzz-smoke.sh'
 require_text README.md 'fast CI coverage check'
 require_text README.md 'formal `cargo bench` target'
 require_text README.md 'cargo package --list --allow-dirty'
@@ -270,6 +281,7 @@ require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-project-contr
 require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-public-api-inventory.sh'
 require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-vstr-benchmark-smoke.sh'
 require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-vstr-bench.sh'
+require_text docs/top-rust-utility-gap-analysis.md 'bash bin/check-vstr-fuzz-smoke.sh'
 require_text docs/top-rust-utility-gap-analysis.md 'cargo package --list --allow-dirty'
 require_text docs/top-rust-utility-gap-analysis.md '.gitignore'
 require_text docs/top-rust-utility-gap-analysis.md '.gitattributes'
@@ -290,6 +302,7 @@ require_text docs/vstr-top-string-gap-analysis.md 'VSTR-GAP-011: Complete'
 require_text docs/vstr-top-string-gap-analysis.md 'VSTR-GAP-012: Complete'
 require_text docs/vstr-top-string-gap-analysis.md 'VSTR-GAP-005: Complete'
 require_text docs/vstr-top-string-gap-analysis.md 'VSTR-GAP-007: Complete'
+require_text docs/vstr-top-string-gap-analysis.md 'VSTR-GAP-008: Complete'
 require_text docs/vstr-top-string-gap-analysis.md 'plain, JSON, and Markdown'
 require_text docs/vstr-top-string-gap-analysis.md 'Unicode boundary golden tests'
 require_text docs/vstr-top-string-gap-analysis.md 'Wrap and truncation boundaries'
@@ -317,10 +330,26 @@ require_text benches/vstr_bench.rs 'print_json'
 require_text benches/vstr_bench.rs 'print_markdown'
 require_text bin/check-vstr-bench.sh '-- --json'
 require_text bin/check-vstr-bench.sh '-- --markdown'
+require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_substring'
+require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_escaping'
+require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_path_matching'
+require_text bin/check-vstr-fuzz-smoke.sh 'fuzz_replacement'
 require_text benches/vstr_bench.rs 'bench_find_all'
 require_text benches/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
 require_text examples/vstr_benchmark_smoke.rs 'levenshtein_distance'
+require_text fuzz/Cargo.toml 'name = "knifer-rs-fuzz"'
+require_text fuzz/Cargo.toml 'publish = false'
+require_text fuzz/Cargo.toml 'knifer_rs = { package = "knifer-rs", path = ".." }'
+require_text fuzz/README.md 'fuzz_substring'
+require_text fuzz/README.md 'bash bin/check-vstr-fuzz-smoke.sh'
+require_text fuzz/fuzz_targets/substring.rs 'take_chars'
+require_text fuzz/fuzz_targets/substring.rs 'drop_chars'
+require_text fuzz/fuzz_targets/substring.rs 'sub(input'
+require_text fuzz/fuzz_targets/escaping.rs 'escape_regex'
+require_text fuzz/fuzz_targets/escaping.rs 'escape_unicode'
+require_text fuzz/fuzz_targets/path_matching.rs 'ant_path_match'
+require_text fuzz/fuzz_targets/replacement.rs 'replace_many'
 
 if grep -R --include='*.rs' -n '\bunsafe\b' src; then
   echo "unsafe Rust is not allowed in src/" >&2

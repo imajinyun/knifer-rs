@@ -141,6 +141,7 @@ bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
 bash bin/check-vstr-benchmark-smoke.sh
 bash bin/check-vstr-bench.sh
+bash bin/check-vstr-fuzz-smoke.sh
 cargo package --list --allow-dirty
 ```
 
@@ -148,6 +149,10 @@ Benchmark smoke and benchmark suite have different jobs. The smoke command is a
 fast CI coverage check that proves expensive `vstr` paths still execute and emit
 expected labels. The formal `cargo bench` target is the stable benchmark entry
 point for local performance comparison and future historical reports.
+
+Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
+substring boundaries, escaping, Ant-style path matching, and replacement
+invariants without adding runtime dependencies to the main library.
 
 ## Compatibility
 

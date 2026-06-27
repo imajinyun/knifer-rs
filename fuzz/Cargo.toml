@@ -1,0 +1,24 @@
+[package]
+name = "knifer-rs-fuzz"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+knifer_rs = { package = "knifer-rs", path = ".." }
+
+[[bin]]
+name = "fuzz_substring"
+path = "fuzz_targets/substring.rs"
+
+[[bin]]
+name = "fuzz_escaping"
+path = "fuzz_targets/escaping.rs"
+
+[[bin]]
+name = "fuzz_path_matching"
+path = "fuzz_targets/path_matching.rs"
+
+[[bin]]
+name = "fuzz_replacement"
+path = "fuzz_targets/replacement.rs"
