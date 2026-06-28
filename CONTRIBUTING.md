@@ -16,6 +16,7 @@ RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
 bash bin/check-api-semver.sh
+bash bin/check-release-api-semver.sh
 bash bin/check-docs-rs-ready.sh
 ```
 
@@ -39,7 +40,10 @@ The minimum supported Rust version is declared in `Cargo.toml` as
 reflected in `CHANGELOG.md` and, for `vstr`, in `docs/vstr-api-parity.md`.
 Run `bin/check-api-semver.sh` before refreshing `docs/public-api-inventory.md`;
 it reports removed or changed signatures as breaking and new signatures as
-additive API work.
+additive API work. Before a release, run `bin/check-release-api-semver.sh` with
+`API_SEMVER_BASELINE_REF`, `API_SEMVER_BASELINE_ROOT`, or
+`API_SEMVER_BASELINE_RUSTDOC` so `cargo-semver-checks` compares against a real
+published or tagged baseline.
 
 ## Commit Shape
 

@@ -207,6 +207,7 @@ RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
 bash bin/check-api-semver.sh
+bash bin/check-release-api-semver.sh
 bash bin/check-vstr-benchmark-smoke.sh
 bash bin/check-vstr-bench.sh
 bash bin/check-vstr-fuzz-smoke.sh
@@ -259,7 +260,22 @@ centering, and whitespace invariants.
 Public API checks are intentionally split. `check-public-api-inventory.sh`
 ensures the generated signature snapshot is in sync, while
 `check-api-semver.sh` classifies removed or changed signatures as breaking and
-new signatures as additive inventory work.
+new signatures as additive inventory work. `check-release-api-semver.sh` keeps
+that fast local check and, when a release baseline is configured, runs
+`cargo-semver-checks check-release`.
+
+For release review against a git tag or branch, install `cargo-semver-checks`
+and pass a baseline ref:
+
+```bash
+cargo install cargo-semver-checks --locked
+API_SEMVER_BASELINE_REF=v0.1.0 \
+API_SEMVER_REQUIRED=true \
+bash bin/check-release-api-semver.sh
+```
+
+The manual GitHub Actions workflow exposes `run_release_api_semver` and
+`api_semver_baseline_ref` for the same release-grade API gate.
 
 Optional `pattern-regex` helpers are available for callers that want regex-backed
 matching while keeping the default feature set at zero runtime dependencies:

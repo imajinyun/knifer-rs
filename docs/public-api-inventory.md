@@ -296,6 +296,8 @@ Generic iterator APIs use forms such as `where I: IntoIterator`.
 ## Open Inventory Work
 
 The local semver-aware check classifies removed APIs and changed signatures as
-breaking, while newly exported APIs are additive inventory work. A future
-release-readiness pass can still add `cargo-semver-checks` or rustdoc JSON for
-cross-release compatibility against published crate versions.
+breaking, while newly exported APIs are additive inventory work.
+`bin/check-release-api-semver.sh` layers `cargo-semver-checks check-release`
+on top of the local check when a release baseline is configured with
+`API_SEMVER_BASELINE_REF`, `API_SEMVER_BASELINE_ROOT`, or
+`API_SEMVER_BASELINE_RUSTDOC`.

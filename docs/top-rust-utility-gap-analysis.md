@@ -23,9 +23,11 @@ engineering discipline rather than by cloning their APIs.
 
 ## Current Gaps
 
-1. Keep `docs/public-api-inventory.md` synchronized with public API signature snapshot checks and generated signature snapshot review.
-2. Continue evolving from local semver-aware checks toward release-grade
-   `cargo-semver-checks` against published versions.
+1. Keep `docs/public-api-inventory.md` synchronized with public API signature snapshot checks
+   and generated signature snapshot review.
+2. Release-grade API checks now have a `cargo-semver-checks` gate through
+   `bin/check-release-api-semver.sh`; continue using real published versions or
+   release tags as baselines before publishing.
 3. Continue expanding benchmark history beyond fast smoke coverage.
 4. Continue expanding fuzz/property tests for boundary-heavy helpers.
 5. Keep dependency policy explicit before optional Unicode or regex features
@@ -43,6 +45,7 @@ RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
 bash bin/check-api-semver.sh
+bash bin/check-release-api-semver.sh
 bash bin/check-vstr-benchmark-smoke.sh
 bash bin/check-vstr-bench.sh
 bash bin/check-vstr-fuzz-smoke.sh
@@ -51,3 +54,7 @@ bash bin/check-docs-rs-ready.sh
 
 `bash bin/check-docs-rs-ready.sh` is the docs.rs publish gate. Public API
 changes should update the generated signature snapshot and the changelog.
+`bash bin/check-release-api-semver.sh` skips `cargo-semver-checks` unless a
+baseline is configured; release review should set `API_SEMVER_REQUIRED=true`
+and one of `API_SEMVER_BASELINE_REF`, `API_SEMVER_BASELINE_ROOT`, or
+`API_SEMVER_BASELINE_RUSTDOC`.

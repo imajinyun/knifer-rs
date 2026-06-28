@@ -97,6 +97,10 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
   `WhitespaceMode`, `LongWordPolicy`, scalar `wrap_with_options`, and optional
   display-width `wrap_width_with_options` for separators, whitespace
   preservation, and long-word policy.
+- `VSTR-TODO-009: Complete` - release-grade API compatibility now has
+  `bin/check-release-api-semver.sh` and manual CI wiring for
+  `cargo-semver-checks` against a configured baseline ref, source tree, or
+  rustdoc JSON.
 
 ### Next
 
@@ -105,8 +109,6 @@ the `Later` list when the current engineering gates stay green.
 
 ### Later
 
-9. `VSTR-TODO-009` - evolve local API signature checks toward release-grade
-   `cargo-semver-checks` against published versions or release tags.
 10. `VSTR-TODO-010` - keep README first-screen examples and feature flag docs
     aligned with the growing facade.
 11. `VSTR-TODO-011` - extend case conversion compatibility fixtures for acronym,

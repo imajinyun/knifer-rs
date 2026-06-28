@@ -19,6 +19,18 @@ on:
         description: Maximum allowed benchmark regression percentage
         required: false
         default: "20.00"
+      run_release_api_semver:
+        description: Run cargo-semver-checks release API gate
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+      api_semver_baseline_ref:
+        description: Optional git ref used as cargo-semver-checks baseline
+        required: false
+        default: ""
   pull_request:
   push:
     branches:
@@ -69,6 +81,13 @@ jobs:
 
       - name: Public API semver check
         run: bash bin/check-api-semver.sh
+
+      - name: Release API semver check
+        if: github.event_name == 'workflow_dispatch' && inputs.run_release_api_semver == 'true'
+        run: bash bin/check-release-api-semver.sh
+        env:
+          API_SEMVER_REQUIRED: "true"
+          API_SEMVER_BASELINE_REF: ${{ inputs.api_semver_baseline_ref }}
 
       - name: Vstr benchmark smoke
         run: bash bin/check-vstr-benchmark-smoke.sh
