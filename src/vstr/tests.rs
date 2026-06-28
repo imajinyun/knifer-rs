@@ -1018,6 +1018,76 @@ fn wrap_and_truncate_boundary_cases_follow_scalar_width_policy() {
 }
 
 #[test]
+fn wrap_with_options_exposes_scalar_layout_policy() {
+    assert_eq!(
+        wrap_with_options("hello rust world", &WrapOptions::new(10)),
+        wrap("hello rust world", 10)
+    );
+    assert_eq!(
+        wrap_with_options(
+            "api/v1/users",
+            &WrapOptions::new(7).with_word_separators(&['/'])
+        ),
+        "api/v1/\nusers"
+    );
+    assert_eq!(
+        wrap_with_options(
+            "a   b\tc",
+            &WrapOptions::new(4).with_whitespace_mode(WhitespaceMode::Preserve)
+        ),
+        "a   \nb\tc"
+    );
+    assert_eq!(
+        wrap_with_options(
+            "superlongword",
+            &WrapOptions::new(5).with_long_word_policy(LongWordPolicy::Preserve)
+        ),
+        "superlongword"
+    );
+    assert_eq!(
+        wrap_with_options(
+            "alpha beta gamma",
+            &WrapOptions::new(9).with_indent("> ", "..")
+        ),
+        "> alpha\n..beta\n..gamma"
+    );
+    assert_eq!(wrap_with_options("ignored", &WrapOptions::new(0)), "");
+}
+
+#[cfg(feature = "unicode-width")]
+#[test]
+fn wrap_width_with_options_exposes_display_layout_policy() {
+    assert_eq!(
+        wrap_width_with_options("你好Rust world", &WrapOptions::new(8)),
+        wrap_width("你好Rust world", 8)
+    );
+    assert_eq!(
+        wrap_width_with_options(
+            "路径/api  用户",
+            &WrapOptions::new(6)
+                .with_word_separators(&['/'])
+                .with_whitespace_mode(WhitespaceMode::Preserve)
+                .with_long_word_policy(LongWordPolicy::Preserve)
+        ),
+        "路径/\napi  \n用户"
+    );
+    assert_eq!(
+        wrap_width_with_options(
+            "你好世界Rust",
+            &WrapOptions::new(6).with_long_word_policy(LongWordPolicy::Preserve)
+        ),
+        "你好世界Rust"
+    );
+    assert_eq!(
+        wrap_width_with_options(
+            "alpha 你好 beta",
+            &WrapOptions::new(9).with_indent("=> ", "   ")
+        ),
+        "=> alpha\n   你好\n   beta"
+    );
+}
+
+#[test]
 fn knifer_go_vstr_golden_fixtures_cover_case_conversion() {
     assert_eq!(to_camel_case("hello_world"), "helloWorld");
     assert_eq!(to_pascal_case("hello_world"), "HelloWorld");

@@ -91,6 +91,13 @@ so wrapping always makes progress. CJK, emoji, combining
 marks, and ZWJ sequences are counted as Unicode scalar values, not terminal
 display cells.
 
+`wrap_with_options` makes the scalar layout policy explicit through
+`WrapOptions`, `WhitespaceMode`, and `LongWordPolicy`. It can preserve
+whitespace runs, keep long words intact, and split at caller-provided word
+separators such as `/` or `-` without changing the default `wrap` behavior. The
+`unicode-width` feature adds `wrap_width_with_options`, which uses the same
+policy object but measures line budgets in display cells.
+
 `wrap_with_indent` counts indentation inside the requested width. If an indent
 is equal to or wider than the width, content still progresses at one scalar per
 line. `truncate_with_suffix` reserves suffix budget inside the requested scalar

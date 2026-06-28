@@ -93,6 +93,10 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 - `VSTR-TODO-007: Complete` - `knifer_rs::vencoding` MVP covers BOM sniffing,
   BOM stripping, UTF-8 validation, and lossy UTF-8 decoding without adding a
   default dependency or making `vstr` ambiguous.
+- `VSTR-TODO-008: Complete` - text layout strategy now exposes `WrapOptions`,
+  `WhitespaceMode`, `LongWordPolicy`, scalar `wrap_with_options`, and optional
+  display-width `wrap_width_with_options` for separators, whitespace
+  preservation, and long-word policy.
 
 ### Next
 
@@ -101,8 +105,6 @@ the `Later` list when the current engineering gates stay green.
 
 ### Later
 
-8. `VSTR-TODO-008` - expand text layout strategy around word separators,
-   preserve-whitespace mode, display width, and long-word policy.
 9. `VSTR-TODO-009` - evolve local API signature checks toward release-grade
    `cargo-semver-checks` against published versions or release tags.
 10. `VSTR-TODO-010` - keep README first-screen examples and feature flag docs

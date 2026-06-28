@@ -56,10 +56,12 @@ standard library is intentionally lower level.
 - Terminal/display-width helpers must be separate from scalar-count helpers.
 - The default build must not depend on `unicode-width`.
 - Display-width helpers are exposed as `display_width`, `take_width`,
-  `truncate_width`, `wrap_width`, and `wrap_width_with_indent` only when the
-  `unicode-width` feature is enabled.
+  `truncate_width`, `wrap_width`, `wrap_width_with_indent`, and
+  `wrap_width_with_options` only when the `unicode-width` feature is enabled.
 - Width-based wrapping and truncation must document CJK, emoji, indentation,
   long-word splitting, and combining mark behavior.
+  `wrap_width_with_options` must reuse the scalar `WrapOptions` policy type
+  while measuring budgets in display cells.
 
 `matcher-aho-corasick` Admission Contract:
 

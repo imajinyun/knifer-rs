@@ -106,6 +106,19 @@ assert_eq!(vstr::take_width("👨‍👩‍👧‍👦 family", 2), "👨‍👩
 assert_eq!(vstr::truncate_width("你好Rust", 6, "..."), "你...");
 #[cfg(feature = "unicode-width")]
 assert_eq!(vstr::wrap_width("你好Rust world", 8), "你好Rust\nworld");
+let wrap_options = vstr::WrapOptions::new(7).with_word_separators(&['/']);
+assert_eq!(vstr::wrap_with_options("api/v1/users", &wrap_options), "api/v1/\nusers");
+let preserve_options =
+    vstr::WrapOptions::new(4).with_whitespace_mode(vstr::WhitespaceMode::Preserve);
+assert_eq!(vstr::wrap_with_options("a   b", &preserve_options), "a   \nb");
+let long_word_options =
+    vstr::WrapOptions::new(5).with_long_word_policy(vstr::LongWordPolicy::Preserve);
+assert_eq!(vstr::wrap_with_options("superlongword", &long_word_options), "superlongword");
+#[cfg(feature = "unicode-width")]
+assert_eq!(
+    vstr::wrap_width_with_options("路径/api  用户", &vstr::WrapOptions::new(6).with_word_separators(&['/'])),
+    "路径/\napi\n用户"
+);
 assert_eq!(vstr::abbreviate_middle("abcdefghijklmnopqrstuvwxyz", 10, "..."), "abcd...xyz");
 assert_eq!(vstr::mask("13800138000", 3, 4, '*'), "138****8000");
 assert_eq!(vstr::collapse_repeated_char("a---b----c", '-'), "a-b-c");
