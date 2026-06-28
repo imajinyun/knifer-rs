@@ -1033,6 +1033,50 @@ fn property_style_replacement_and_escaping_helpers_are_stable() {
 }
 
 #[test]
+fn property_style_reusable_matcher_preserves_match_contracts() {
+    let mut rng = DeterministicRng::new(0x5eed_0005);
+    let candidates = ["", "a", "aa", "你", "你好", "🚀", "e", "\u{301}", "--", "_"];
+    let replacements = ["", "A", "AA", "N", "NH", "R", "E", "'", "-", "U"];
+
+    for _ in 0..256 {
+        let input = rng.string(36);
+        let mut needles = Vec::new();
+        for _ in 0..rng.usize(8).saturating_add(1) {
+            needles.push(candidates[rng.usize(candidates.len())]);
+        }
+
+        for kind in [MatchKind::LeftmostFirst, MatchKind::LeftmostLongest] {
+            let matcher = VStrMatcher::with_kind(needles.iter().copied(), kind);
+
+            assert_eq!(
+                matcher.len(),
+                needles.iter().filter(|needle| !needle.is_empty()).count()
+            );
+            assert_eq!(
+                matcher.is_empty(),
+                needles.iter().all(|needle| needle.is_empty())
+            );
+            assert_eq!(
+                matcher.find(&input),
+                expected_matcher_find(&input, &needles, kind)
+            );
+            assert_eq!(
+                matcher.find_all(&input),
+                expected_matcher_find_all(&input, &needles, kind)
+            );
+            assert_eq!(
+                matcher.find_overlapping(&input),
+                expected_matcher_find_overlapping(&input, &needles, kind)
+            );
+            assert_eq!(
+                matcher.replace_all(&input, replacements),
+                expected_matcher_replace_all(&input, &needles, kind, &replacements)
+            );
+        }
+    }
+}
+
+#[test]
 fn property_style_ant_path_literal_patterns_match_themselves() {
     let mut rng = DeterministicRng::new(0x5eed_0003);
 
@@ -1085,6 +1129,119 @@ fn property_style_unicode_width_helpers_respect_display_boundaries() {
 
 fn assert_approx_eq(left: f64, right: f64) {
     assert!((left - right).abs() < f64::EPSILON);
+}
+
+fn expected_matcher_find<'needle>(
+    input: &str,
+    needles: &[&'needle str],
+    kind: MatchKind,
+) -> Option<VStrMatch<'needle>> {
+    expected_matcher_find_from(input, needles, kind, 0)
+}
+
+fn expected_matcher_find_all<'needle>(
+    input: &str,
+    needles: &[&'needle str],
+    kind: MatchKind,
+) -> Vec<VStrMatch<'needle>> {
+    let mut found = Vec::new();
+    let mut offset = 0;
+
+    while offset < input.len() {
+        let Some(matched) = expected_matcher_find_from(input, needles, kind, offset) else {
+            break;
+        };
+        offset = matched.end;
+        found.push(matched);
+    }
+
+    found
+}
+
+fn expected_matcher_find_overlapping<'needle>(
+    input: &str,
+    needles: &[&'needle str],
+    kind: MatchKind,
+) -> Vec<VStrMatch<'needle>> {
+    input
+        .char_indices()
+        .filter_map(|(start, _)| expected_matcher_at(input, needles, kind, start))
+        .collect()
+}
+
+fn expected_matcher_replace_all(
+    input: &str,
+    needles: &[&str],
+    kind: MatchKind,
+    replacements: &[&str],
+) -> String {
+    let mut output = String::new();
+    let mut offset = 0;
+
+    for matched in expected_matcher_find_all(input, needles, kind) {
+        output.push_str(&input[offset..matched.start]);
+        output.push_str(
+            replacements
+                .get(matched.pattern_index)
+                .copied()
+                .unwrap_or(matched.needle),
+        );
+        offset = matched.end;
+    }
+
+    output.push_str(&input[offset..]);
+    output
+}
+
+fn expected_matcher_find_from<'needle>(
+    input: &str,
+    needles: &[&'needle str],
+    kind: MatchKind,
+    offset: usize,
+) -> Option<VStrMatch<'needle>> {
+    if offset >= input.len() {
+        return None;
+    }
+
+    input[offset..]
+        .char_indices()
+        .find_map(|(relative_start, _)| {
+            expected_matcher_at(input, needles, kind, offset + relative_start)
+        })
+}
+
+fn expected_matcher_at<'needle>(
+    input: &str,
+    needles: &[&'needle str],
+    kind: MatchKind,
+    start: usize,
+) -> Option<VStrMatch<'needle>> {
+    let mut matched: Option<VStrMatch<'needle>> = None;
+
+    for (pattern_index, needle) in needles.iter().enumerate() {
+        if needle.is_empty() || !input[start..].starts_with(needle) {
+            continue;
+        }
+
+        let candidate = VStrMatch {
+            needle,
+            pattern_index,
+            start,
+            end: start + needle.len(),
+        };
+
+        matched = Some(match (matched, kind) {
+            (None, _) => candidate,
+            (Some(current), MatchKind::LeftmostLongest)
+                if candidate.needle.len() > current.needle.len() =>
+            {
+                candidate
+            }
+            (Some(current), MatchKind::LeftmostFirst | MatchKind::LeftmostLongest) => current,
+        });
+    }
+
+    matched
 }
 
 #[cfg(feature = "unicode-width")]
