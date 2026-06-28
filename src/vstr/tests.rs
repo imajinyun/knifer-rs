@@ -621,6 +621,96 @@ fn unicode_segmentation_helpers_expose_sentence_boundaries() {
     );
 }
 
+#[cfg(feature = "unicode-segmentation")]
+#[test]
+fn unicode_segmentation_conformance_fixtures_cover_curated_uax29_subset() {
+    let grapheme_fixtures = [
+        ("crlf", "a\r\nb", vec!["a", "\r\n", "b"]),
+        (
+            "combining mark stack",
+            "a\u{0308}\u{0301}",
+            vec!["a\u{0308}\u{0301}"],
+        ),
+        ("emoji modifier", "👍🏽", vec!["👍🏽"]),
+        (
+            "emoji keycap",
+            "1\u{FE0F}\u{20E3}",
+            vec!["1\u{FE0F}\u{20E3}"],
+        ),
+        ("regional flag", "🇺🇳", vec!["🇺🇳"]),
+        ("emoji zwj role", "👩\u{200d}💻", vec!["👩\u{200d}💻"]),
+        (
+            "hangul jamo",
+            "\u{1100}\u{1161}\u{11A8}",
+            vec!["\u{1100}\u{1161}\u{11A8}"],
+        ),
+    ];
+
+    for (name, input, expected) in grapheme_fixtures {
+        assert_eq!(graphemes(input), expected, "{name}");
+        assert_eq!(grapheme_len(input), expected.len(), "{name}");
+        assert_eq!(take_graphemes(input, expected.len()), input, "{name}");
+    }
+
+    let word_fixtures = [
+        ("apostrophe", "can't stop", vec!["can't", "stop"]),
+        ("decimal", "jump 32.3 feet", vec!["jump", "32.3", "feet"]),
+        ("cjk", "你好世界", vec!["你", "好", "世", "界"]),
+        (
+            "mixed punctuation",
+            "Rust-go, 世界!",
+            vec!["Rust", "go", "世", "界"],
+        ),
+    ];
+
+    for (name, input, expected) in word_fixtures {
+        assert_eq!(unicode_words(input), expected, "{name}");
+        assert_eq!(unicode_word_len(input), expected.len(), "{name}");
+        assert_eq!(split_word_bounds(input).concat(), input, "{name}");
+        assert_eq!(
+            split_word_bound_indices(input)
+                .into_iter()
+                .map(|(_, segment)| segment)
+                .collect::<Vec<_>>()
+                .concat(),
+            input,
+            "{name}"
+        );
+    }
+
+    let sentence_fixtures = [
+        (
+            "terminal punctuation",
+            "One. Two? Three!",
+            vec!["One. ", "Two? ", "Three!"],
+        ),
+        (
+            "abbreviation",
+            "Mr. Fox jumped. The dog slept.",
+            vec!["Mr. ", "Fox jumped. ", "The dog slept."],
+        ),
+        (
+            "separator span",
+            "[...] The dog was too lazy.",
+            vec!["[...] ", "The dog was too lazy."],
+        ),
+    ];
+
+    for (name, input, expected_bounds) in sentence_fixtures {
+        assert_eq!(split_sentence_bounds(input), expected_bounds, "{name}");
+        assert_eq!(split_sentence_bounds(input).concat(), input, "{name}");
+        assert_eq!(
+            split_sentence_bound_indices(input)
+                .into_iter()
+                .map(|(_, segment)| segment)
+                .collect::<Vec<_>>()
+                .concat(),
+            input,
+            "{name}"
+        );
+    }
+}
+
 #[cfg(feature = "unicode-width")]
 #[test]
 fn unicode_width_helpers_follow_display_cell_boundaries() {

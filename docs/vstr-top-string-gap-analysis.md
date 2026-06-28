@@ -66,6 +66,9 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
   comparison, and threshold checks.
 - Unicode boundary coverage includes scalar golden tests plus optional
   grapheme, word, sentence, and display-width helpers.
+- `VSTR-TODO-002: Complete` - curated UAX #29 conformance fixtures now cover
+  representative grapheme, word, and sentence boundaries without importing
+  large upstream data files.
 - Wrap and truncation behavior is locked with golden tests for long words,
   whitespace, CJK, emoji, indentation, and suffix budgets.
 - Regex-backed helpers are available behind `pattern-regex`.
@@ -79,13 +82,10 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
    deterministic smoke targets, then decide whether to add `cargo-fuzz`,
    checked-in corpus seeds, or both. The initial harness strategy is tracked in
    `fuzz/PLAN.md`.
-2. `VSTR-TODO-002` - add Unicode conformance fixtures. Start with a curated
-   UAX #29 subset for grapheme, word, and sentence boundaries before importing
-   large upstream data files.
-3. `VSTR-TODO-003` - deepen regex-backed golden tests. Cover invalid patterns,
+2. `VSTR-TODO-003` - deepen regex-backed golden tests. Cover invalid patterns,
    capture replacement, Unicode classes, empty matches, and multi-byte byte
    ranges.
-4. `VSTR-TODO-004` - define benchmark history operations. Document where
+3. `VSTR-TODO-004` - define benchmark history operations. Document where
    baseline artifacts live, when they are refreshed, and how regression
    thresholds are interpreted.
 
