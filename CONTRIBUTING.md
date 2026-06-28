@@ -81,4 +81,6 @@ Prefer focused changes:
 
 - Keep generated build output under `target/`; do not commit it.
 - Keep local editor, environment, coverage, and benchmark artifacts ignored.
+- Keep `aiflow.yaml` in the repository root. Use `.aiflow/` only for local
+  generated run evidence, caches, and temporary state.
 - Preserve LF line endings through `.editorconfig` and `.gitattributes`.

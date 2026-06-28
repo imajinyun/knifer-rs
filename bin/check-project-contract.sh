@@ -25,6 +25,7 @@ require_file Cargo.lock
 require_file .editorconfig
 require_file .gitattributes
 require_file .gitignore
+require_file aiflow.yaml
 require_file LICENSE
 require_file SECURITY.md
 require_file CONTRIBUTING.md
@@ -164,6 +165,7 @@ require_text .gitignore '/criterion/'
 require_text .gitignore '/fuzz/artifacts/'
 require_text .gitignore '/fuzz/corpus/*'
 require_text .gitignore '!/fuzz/corpus/*.txt'
+require_text .gitignore '/.aiflow/'
 require_text .gitignore '/tmp/'
 if grep -Eq '(^|/|\*)docs(/|\*|$)' .gitignore; then
   echo "docs/ contains source documentation and must not be ignored" >&2
@@ -172,6 +174,8 @@ fi
 require_text README.md 'knifer_rs::vstr'
 require_text README.md 'knifer_rs::vbytes'
 require_text README.md 'knifer_rs::vencoding'
+require_text README.md 'root `aiflow.yaml`'
+require_text README.md '`.aiflow/` directory'
 require_text README.md 'Benchmark Direction'
 require_text README.md 'docs/public-api-inventory.md'
 require_text README.md 'docs/vstr-complexity.md'
@@ -246,6 +250,24 @@ require_text CONTRIBUTING.md 'cargo package --locked --allow-dirty'
 require_text CONTRIBUTING.md 'confirm `CHANGELOG.md` explains the release boundary'
 require_text CONTRIBUTING.md 'docs/dependency-policy.md'
 require_text CONTRIBUTING.md 'removed or changed signatures as breaking'
+require_text CONTRIBUTING.md 'aiflow.yaml'
+require_text CONTRIBUTING.md '.aiflow/'
+require_text aiflow.yaml 'name: knifer-rs'
+require_text aiflow.yaml 'language: rust'
+require_text aiflow.yaml 'store_path: .aiflow/store.json'
+require_text aiflow.yaml 'aiflow.yaml'
+require_text aiflow.yaml '".aiflow"'
+require_text aiflow.yaml '".aiflow/*"'
+require_text aiflow.yaml 'cargo fmt --check'
+require_text aiflow.yaml 'cargo test --locked --all-features'
+require_text aiflow.yaml 'cargo clippy --all-targets -- -D warnings'
+require_text aiflow.yaml 'bash bin/check-project-contract.sh'
+require_text aiflow.yaml 'aiflow.yaml stays in the repository root while .aiflow stays local-only'
+require_text aiflow.yaml '.aiflow contains only local generated evidence, caches, and temporary state'
+require_text aiflow.yaml 'allow_commit: false'
+require_text aiflow.yaml 'allow_push: false'
+require_text aiflow.yaml 'mcp:'
+require_text aiflow.yaml 'aiflow-docs-mcp'
 require_text docs/dependency-policy.md 'Dependency Policy'
 require_text docs/dependency-policy.md 'zero-runtime-dependency core'
 require_text docs/dependency-policy.md 'Do not add non-optional runtime dependencies to the default feature set.'

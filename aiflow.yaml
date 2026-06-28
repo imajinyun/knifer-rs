@@ -1,0 +1,126 @@
+name: knifer-rs
+root: .
+language: rust
+store_path: .aiflow/store.json
+
+workspace:
+  include_globs:
+    - "Cargo.toml"
+    - "Cargo.lock"
+    - "aiflow.yaml"
+    - "README.md"
+    - "CONTRIBUTING.md"
+    - "CHANGELOG.md"
+    - "LICENSE"
+    - "SECURITY.md"
+    - ".editorconfig"
+    - ".gitattributes"
+    - ".gitignore"
+    - ".github/*"
+    - ".github/workflows/*"
+    - "src/*"
+    - "src/vstr/*"
+    - "bench/*"
+    - "bin/*"
+    - "docs/*"
+    - "examples/*"
+    - "fuzz/*"
+    - "fuzz/corpus/*"
+    - "fuzz/fuzz_targets/*"
+  exclude_globs:
+    - ".git"
+    - ".git/*"
+    - ".aiflow"
+    - ".aiflow/*"
+    - "target"
+    - "target/*"
+    - "fuzz/target"
+    - "fuzz/target/*"
+    - "fuzz/artifacts"
+    - "fuzz/artifacts/*"
+    - "fuzz/crashes"
+    - "fuzz/crashes/*"
+    - "criterion"
+    - "criterion/*"
+    - "tmp"
+    - "tmp/*"
+    - "temp"
+    - "temp/*"
+
+commands:
+  allowlist:
+    - cargo fmt --check
+    - cargo test --locked
+    - cargo test --locked --no-default-features
+    - cargo test --locked --all-features
+    - cargo test --locked --examples
+    - cargo clippy --all-targets -- -D warnings
+    - RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
+    - bash bin/check-examples.sh
+    - bash bin/check-project-contract.sh
+    - bash bin/check-public-api-inventory.sh
+    - bash bin/check-api-semver.sh
+    - bash bin/check-release-api-semver.sh
+    - bash bin/check-docs-rs-ready.sh
+    - bash bin/check-vstr-benchmark-smoke.sh
+    - bash bin/check-vstr-fuzz-smoke.sh
+    - git diff
+    - git status
+  format:
+    - cargo fmt --check
+  test:
+    - cargo test --locked
+    - cargo test --locked --examples
+  vet:
+    - cargo clippy --all-targets -- -D warnings
+    - bash bin/check-project-contract.sh
+    - bash bin/check-public-api-inventory.sh
+    - bash bin/check-api-semver.sh
+  release:
+    - cargo fmt --check
+    - cargo test --locked
+    - cargo test --locked --no-default-features
+    - cargo test --locked --all-features
+    - cargo test --locked --examples
+    - cargo clippy --all-targets -- -D warnings
+    - RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
+    - bash bin/check-examples.sh
+    - bash bin/check-docs-rs-ready.sh
+    - bash bin/check-project-contract.sh
+
+acceptance:
+  criteria:
+    - Safe Rust remains enforced with unsafe_code = "forbid"
+    - default feature set remains zero-runtime-dependency
+    - public API inventory and semver checks stay in sync
+    - benchmark and fuzz smoke gates remain runnable without release-only work
+    - aiflow.yaml stays in the repository root while .aiflow stays local-only
+    - .aiflow contains only local generated evidence, caches, and temporary state
+  required_commands:
+    - cargo fmt --check
+    - cargo test --locked
+    - cargo test --locked --all-features
+    - cargo clippy --all-targets -- -D warnings
+    - bash bin/check-project-contract.sh
+  require_review: false
+  require_clean_diff: false
+  require_fix_diff: false
+
+permissions:
+  require_plan_approval: false
+  require_command_approval: true
+  allow_commit: false
+  allow_push: false
+  max_fix_attempts: 0
+
+mcp:
+  docs:
+    command: aiflow-docs-mcp
+    args:
+      - serve
+
+security:
+  redact_secrets: true
+  max_patch_bytes: 262144
+  network:
+    mode: audit

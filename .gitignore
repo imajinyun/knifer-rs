@@ -37,7 +37,9 @@ lcov.info
 perf.data
 perf.data.old
 flamegraph.svg
-.aiflow/
+
+# Local aiflow evidence and temporary state
+/.aiflow/
 
 # Local benchmark output
 /criterion/

@@ -7,6 +7,10 @@ APIs grouped by focused `v*` facade modules, prefer standard-library behavior
 where it is already clear, and add reusable helpers only when they make common
 business code easier to read and test.
 
+Workflow automation is declared in root `aiflow.yaml`. The `.aiflow/` directory
+is local-only and is reserved for generated run evidence, caches, and temporary
+state.
+
 ## Benchmark Direction 📊
 
 `knifer-rs` is benchmarked against Rust helper and utility-function crates such
