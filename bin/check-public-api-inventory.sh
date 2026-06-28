@@ -152,7 +152,7 @@ extract_public_signatures() {
 }
 
 if [[ "${1:-}" == "--print-signatures" ]]; then
-  extract_public_signatures src/lib.rs src/vbytes.rs src/vstr/*.rs
+  extract_public_signatures src/lib.rs src/vbytes.rs src/vencoding.rs src/vstr/*.rs
   exit 0
 fi
 
@@ -181,11 +181,11 @@ if [[ -z "$expected_signatures" ]]; then
   echo "missing public API signature snapshot in $inventory" >&2
   echo "add lines between $signature_start and $signature_end" >&2
   echo >&2
-  extract_public_signatures src/lib.rs src/vbytes.rs src/vstr/*.rs >&2
+  extract_public_signatures src/lib.rs src/vbytes.rs src/vencoding.rs src/vstr/*.rs >&2
   exit 1
 fi
 
-actual_signatures="$(extract_public_signatures src/lib.rs src/vbytes.rs src/vstr/*.rs)"
+actual_signatures="$(extract_public_signatures src/lib.rs src/vbytes.rs src/vencoding.rs src/vstr/*.rs)"
 
 if [[ "$actual_signatures" != "$expected_signatures" ]]; then
   echo "public API signature snapshot is out of sync" >&2

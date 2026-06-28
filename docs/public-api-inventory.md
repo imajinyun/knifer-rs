@@ -22,6 +22,19 @@ knifer_rs::vbytes::to_str = pub const fn to_str(input: &[u8]) -> Result<&str, co
 knifer_rs::vbytes::trim_ascii = pub fn trim_ascii(input: &[u8]) -> &[u8]
 knifer_rs::vbytes::trim_ascii_end = pub fn trim_ascii_end(input: &[u8]) -> &[u8]
 knifer_rs::vbytes::trim_ascii_start = pub fn trim_ascii_start(input: &[u8]) -> &[u8]
+knifer_rs::vencoding = pub mod vencoding
+knifer_rs::vencoding::Bom = pub enum Bom
+knifer_rs::vencoding::Bom::byte_len = pub const fn byte_len(self) -> usize
+knifer_rs::vencoding::Bom::encoding_name = pub const fn encoding_name(self) -> &'static str
+knifer_rs::vencoding::BomScan = pub struct BomScan<'src>
+knifer_rs::vencoding::decode_utf8_lossy = pub fn decode_utf8_lossy(input: &[u8]) -> Cow<'_, str>
+knifer_rs::vencoding::decode_utf8_lossy_without_bom = pub fn decode_utf8_lossy_without_bom(input: &[u8]) -> Cow<'_, str>
+knifer_rs::vencoding::detect_bom = pub const fn detect_bom(input: &[u8]) -> Option<Bom>
+knifer_rs::vencoding::is_utf8 = pub const fn is_utf8(input: &[u8]) -> bool
+knifer_rs::vencoding::scan_bom = pub fn scan_bom(input: &[u8]) -> BomScan<'_>
+knifer_rs::vencoding::strip_bom = pub fn strip_bom(input: &[u8]) -> &[u8]
+knifer_rs::vencoding::validate_utf8 = pub const fn validate_utf8(input: &[u8]) -> Result<&str, core::str::Utf8Error>
+knifer_rs::vencoding::validate_utf8_without_bom = pub fn validate_utf8_without_bom(input: &[u8]) -> Result<&str, core::str::Utf8Error>
 knifer_rs::vstr = pub mod vstr
 knifer_rs::vstr::EmojiOptions = pub struct EmojiOptions<'src>
 knifer_rs::vstr::EmojiOptions::new = pub const fn new() -> Self
@@ -218,11 +231,9 @@ Potential helpers: `contains_pattern`, `find_pattern`, `find_all_patterns`,
 Potential types and methods: `VStrMatcher`, `VStrMatch`, `MatchKind`,
 `leftmost-first`, `leftmost-longest`, and `find_overlapping`.
 
-## Reserved Facade Boundaries
+## Facade Boundaries
 
-Future facades should stay separate from `knifer_rs::vstr`:
-
-- `knifer_rs::vencoding`
+Byte and encoding helpers stay separate from `knifer_rs::vstr`.
 
 ## `vbytes` API Shape
 
@@ -231,12 +242,20 @@ be valid UTF-8. All byte ranges are byte offsets. Byte-oriented helpers should
 not reinterpret invalid UTF-8 as `&str`; use `to_str` only when explicit UTF-8
 validation is desired.
 
+## `vencoding` API Shape
+
+`knifer_rs::vencoding` is implemented as an encoding-boundary facade for BOM
+sniffing, UTF-8 validation, and lossy UTF-8 decoding. The MVP does not perform
+general transcoding or add a default dependency on `encoding_rs`.
+
 ## Current Function Groups
 
 Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `vbytes::to_str`, `vbytes::sub`, `vbytes::trim_ascii`, `vbytes::find`,
 `vbytes::find_all`, `vbytes::strip_prefix`, `vbytes::strip_suffix`,
-`vbytes::replace_all`,
+`vbytes::replace_all`, `vencoding`, `vencoding::Bom`,
+`vencoding::detect_bom`, `vencoding::strip_bom`, `vencoding::validate_utf8`,
+`vencoding::decode_utf8_lossy`,
 `EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,

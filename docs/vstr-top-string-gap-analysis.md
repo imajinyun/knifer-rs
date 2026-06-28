@@ -41,8 +41,9 @@ testing, and release discipline while keeping the default crate lightweight.
 - `VSTR-GAP-013: Complete` - repository hygiene uses top-project-style
   `.gitignore`, `.editorconfig`, and `.gitattributes`.
 - `VSTR-GAP-014: Complete` - docs.rs/package readiness has a local gate.
-- `VSTR-GAP-015: Complete` - future `vencoding` boundary is documented instead
-  of mixing encoding conversion into `vstr`.
+- `VSTR-GAP-015: Complete` - `vencoding` is implemented as a separate
+  encoding-boundary facade instead of mixing BOM and decoding policy into
+  `vstr`.
 - `VSTR-GAP-016: Complete` - reusable `VStrMatcher` supports leftmost-first,
   leftmost-longest, and `find_overlapping` semantics without making the simple
   facade heavy.
@@ -89,6 +90,9 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 - `VSTR-TODO-006: Complete` - `knifer_rs::vbytes` MVP covers byte length,
   UTF-8 validation, byte slicing, ASCII trimming, search, prefix/suffix, and
   replacement without changing `vstr` semantics.
+- `VSTR-TODO-007: Complete` - `knifer_rs::vencoding` MVP covers BOM sniffing,
+  BOM stripping, UTF-8 validation, and lossy UTF-8 decoding without adding a
+  default dependency or making `vstr` ambiguous.
 
 ### Next
 
@@ -97,8 +101,6 @@ the `Later` list when the current engineering gates stay green.
 
 ### Later
 
-7. `VSTR-TODO-007` - implement a `vencoding` MVP for BOM sniffing, UTF-8
-   validation, and lossy decoding.
 8. `VSTR-TODO-008` - expand text layout strategy around word separators,
    preserve-whitespace mode, display width, and long-word policy.
 9. `VSTR-TODO-009` - evolve local API signature checks toward release-grade
@@ -113,12 +115,12 @@ the `Later` list when the current engineering gates stay green.
 `vbytes` handles byte strings that may be invalid UTF-8. All byte ranges are
 byte offsets. It aligns with `bstr` concepts without making `vstr` ambiguous.
 
-## Future `vencoding` Facade Plan
+## `vencoding` Facade
 
-`vencoding` should cover BOM handling, UTF-8 validation, lossy decoding,
-fallback decoding APIs, and possible optional integration with `encoding_rs`.
-Java-style Unicode escape helpers can remain in `vstr` because they operate on
-valid Rust strings.
+`vencoding` covers BOM handling, UTF-8 validation, and lossy UTF-8 decoding.
+Fallback transcoding APIs and possible optional integration with `encoding_rs`
+remain future work under this facade. Java-style Unicode escape helpers can
+remain in `vstr` because they operate on valid Rust strings.
 
 ## Release Benchmark Workflow
 

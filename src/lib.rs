@@ -4,4 +4,5 @@
 //! string helpers.
 
 pub mod vbytes;
+pub mod vencoding;
 pub mod vstr;

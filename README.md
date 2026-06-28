@@ -30,9 +30,10 @@ in `docs/vstr-complexity.md`. Dependency admission rules live in
 
 ## Status 🚦
 
-The crate is pre-1.0 and currently exposes two MVP facades:
-`knifer_rs::vstr` for valid UTF-8 strings and `knifer_rs::vbytes` for byte
-slices that may not be valid UTF-8. Public API changes are tracked in
+The crate is pre-1.0 and currently exposes three MVP facades:
+`knifer_rs::vstr` for valid UTF-8 strings, `knifer_rs::vbytes` for byte slices
+that may not be valid UTF-8, and `knifer_rs::vencoding` for BOM and UTF-8
+encoding boundaries. Public API changes are tracked in
 `docs/public-api-inventory.md`; `vstr` compatibility notes are tracked in
 `docs/vstr-api-parity.md`.
 
@@ -152,12 +153,25 @@ assert_eq!(vbytes::find_all(b"aaaa", b"aa"), vec![(0, 2), (2, 4)]);
 assert_eq!(vbytes::replace_all(&input, &[0xff], b"?"), b"a?b");
 ```
 
+`vencoding` keeps BOM handling and UTF-8 decoding policy explicit:
+
+```rust
+use knifer_rs::vencoding::{self, Bom};
+
+let input = [0xEF, 0xBB, 0xBF, b'a', 0xff];
+assert_eq!(vencoding::detect_bom(&input), Some(Bom::Utf8));
+assert_eq!(vencoding::strip_bom(&input), &[b'a', 0xff]);
+assert!(vencoding::validate_utf8_without_bom(&input).is_err());
+assert_eq!(vencoding::decode_utf8_lossy_without_bom(&input), "a\u{FFFD}");
+```
+
 ## Project Layout 🧭
 
 ```text
 src/
   lib.rs       crate entry point and public facade exports
   vbytes.rs    byte-slice helpers for possibly invalid UTF-8
+  vencoding.rs BOM and UTF-8 validation/decoding helpers
   vstr/
     mod.rs     vstr facade and public re-exports
     basic.rs   common string helpers
