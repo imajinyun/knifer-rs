@@ -1,7 +1,13 @@
+#![cfg_attr(fuzzing, no_main)]
+
 use knifer_rs::vstr;
+
+#[cfg(fuzzing)]
+use libfuzzer_sys::fuzz_target;
 
 const SEEDS: &str = include_str!("../corpus/path_matching.txt");
 
+#[cfg(not(fuzzing))]
 fn main() {
     let paths = [
         "",
@@ -15,14 +21,7 @@ fn main() {
     ];
 
     for path in paths.into_iter().chain(SEEDS.lines()) {
-        assert!(vstr::ant_path_match(path, path));
-        assert!(vstr::ant_path_match("/**", path));
-        assert!(vstr::ant_path_match("**", path));
-
-        if !path.is_empty() && !path.contains('*') && !path.contains('?') {
-            let pattern = format!("/{path}/**");
-            assert!(vstr::ant_path_match(&pattern, &format!("/{path}/child")));
-        }
+        assert_path_matching_invariants(path);
     }
 
     let cases = [
@@ -51,3 +50,21 @@ fn main() {
     ));
     assert!(vstr::ant_path_match_with_separator("a/**", "a/b", ""));
 }
+
+fn assert_path_matching_invariants(path: &str) {
+    assert!(vstr::ant_path_match(path, path));
+    assert!(vstr::ant_path_match("/**", path));
+    assert!(vstr::ant_path_match("**", path));
+
+    if !path.is_empty() && !path.contains('*') && !path.contains('?') {
+        let pattern = format!("/{path}/**");
+        assert!(vstr::ant_path_match(&pattern, &format!("/{path}/child")));
+    }
+}
+
+#[cfg(fuzzing)]
+fuzz_target!(|data: &[u8]| {
+    if let Ok(path) = std::str::from_utf8(data) {
+        assert_path_matching_invariants(path);
+    }
+});

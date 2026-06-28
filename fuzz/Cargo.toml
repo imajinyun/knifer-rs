@@ -4,29 +4,54 @@ version = "0.0.0"
 edition = "2024"
 publish = false
 
+[package.metadata]
+cargo-fuzz = true
+
 [dependencies]
 knifer_rs = { package = "knifer-rs", path = ".." }
+libfuzzer-sys = "0.4"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(fuzzing)'] }
 
 [[bin]]
 name = "fuzz_substring"
 path = "fuzz_targets/substring.rs"
+test = false
+doc = false
+bench = false
 
 [[bin]]
 name = "fuzz_escaping"
 path = "fuzz_targets/escaping.rs"
+test = false
+doc = false
+bench = false
 
 [[bin]]
 name = "fuzz_path_matching"
 path = "fuzz_targets/path_matching.rs"
+test = false
+doc = false
+bench = false
 
 [[bin]]
 name = "fuzz_replacement"
 path = "fuzz_targets/replacement.rs"
+test = false
+doc = false
+bench = false
 
 [[bin]]
 name = "fuzz_matcher"
 path = "fuzz_targets/matcher.rs"
+test = false
+doc = false
+bench = false
 
 [[bin]]
 name = "fuzz_text_boundaries"
 path = "fuzz_targets/text_boundaries.rs"
+test = false
+doc = false
+bench = false

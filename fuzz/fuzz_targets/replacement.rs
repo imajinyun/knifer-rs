@@ -1,4 +1,9 @@
+#![cfg_attr(fuzzing, no_main)]
+
 use knifer_rs::vstr;
+
+#[cfg(fuzzing)]
+use libfuzzer_sys::fuzz_target;
 
 const SEEDS: &str = include_str!("../corpus/replacement.txt");
 
@@ -15,6 +20,7 @@ fn corpus() -> [(&'static str, &'static [(&'static str, &'static str)]); 8] {
     ]
 }
 
+#[cfg(not(fuzzing))]
 fn main() {
     for (input, replacements) in corpus() {
         assert_replacement_invariants(input, replacements);
@@ -53,3 +59,11 @@ fn assert_replacement_invariants(input: &str, replacements: &[(&str, &str)]) {
     let insensitive = vstr::replace_ignore_case(input, "case", "word");
     assert!(insensitive.is_char_boundary(0) && insensitive.is_char_boundary(insensitive.len()));
 }
+
+#[cfg(fuzzing)]
+fuzz_target!(|data: &[u8]| {
+    if let Ok(input) = std::str::from_utf8(data) {
+        let replacements = [("a", "A"), ("你", "N"), ("🚀", "R"), ("line", "row")];
+        assert_replacement_invariants(input, &replacements);
+    }
+});

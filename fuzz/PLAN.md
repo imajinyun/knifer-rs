@@ -35,14 +35,31 @@ generated crash output, large minimized corpora, or local engine state.
 
 ## Layer 3: Optional Engine Fuzzing
 
-If `cargo-fuzz` or another engine is added later:
+`cargo-fuzz` is available as an optional local engine. It stays out of the root
+crate and default CI. Run focused targets directly:
+
+```bash
+cargo fuzz run fuzz_substring
+cargo fuzz run fuzz_escaping
+cargo fuzz run fuzz_matcher
+```
+
+Or run the bounded local wrapper:
+
+```bash
+VSTR_FUZZ_RUN_SECS=60 bash bin/check-vstr-fuzz.sh
+```
+
+The wrapper prints an installation hint and exits successfully when
+`cargo-fuzz` is missing, so ordinary development and CI are not blocked.
+
+Keep these rules:
 
 - keep the current target names and invariant checks;
 - keep engine dependencies out of the root crate and default feature set;
-- run engine fuzzing only in manual, nightly, or release workflows;
+- run engine fuzzing only in local, manual, nightly, or release workflows;
 - keep default CI on deterministic smoke unless runtime stays consistently low;
-- document any new generated directories in `.gitignore` before enabling the
-  workflow.
+- document generated directories in `.gitignore` before enabling any workflow.
 
 ## Promotion Rules
 

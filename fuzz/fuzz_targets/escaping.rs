@@ -1,4 +1,9 @@
+#![cfg_attr(fuzzing, no_main)]
+
 use knifer_rs::vstr;
+
+#[cfg(fuzzing)]
+use libfuzzer_sys::fuzz_target;
 
 const SEEDS: &str = include_str!("../corpus/escaping.txt");
 
@@ -26,6 +31,7 @@ fn tolerant_decode_corpus() -> [&'static str; 5] {
     ]
 }
 
+#[cfg(not(fuzzing))]
 fn main() {
     for input in roundtrip_corpus() {
         assert_roundtrip(input);
@@ -64,3 +70,11 @@ fn assert_tolerant_decode(input: &str) {
         tolerant_unicode.is_char_boundary(0) && tolerant_unicode.is_char_boundary(tolerant_unicode.len())
     );
 }
+
+#[cfg(fuzzing)]
+fuzz_target!(|data: &[u8]| {
+    if let Ok(input) = std::str::from_utf8(data) {
+        assert_roundtrip(input);
+        assert_tolerant_decode(input);
+    }
+});

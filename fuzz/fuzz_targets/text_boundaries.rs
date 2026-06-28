@@ -1,4 +1,9 @@
+#![cfg_attr(fuzzing, no_main)]
+
 use knifer_rs::vstr;
+
+#[cfg(fuzzing)]
+use libfuzzer_sys::fuzz_target;
 
 const SEEDS: &str = include_str!("../corpus/text_boundaries.txt");
 
@@ -31,6 +36,7 @@ fn assert_scalar_budget(output: &str, max_chars: usize) {
     );
 }
 
+#[cfg(not(fuzzing))]
 fn main() {
     let suffixes = ["", ".", "...", "🚀"];
     for input in corpus().into_iter().chain(SEEDS.lines()) {
@@ -89,3 +95,11 @@ fn assert_text_boundary_invariants(input: &str, suffixes: [&str; 4]) {
     assert_valid_utf8(&no_whitespace);
     assert!(no_whitespace.chars().all(|ch| !ch.is_whitespace()));
 }
+
+#[cfg(fuzzing)]
+fuzz_target!(|data: &[u8]| {
+    if let Ok(input) = std::str::from_utf8(data) {
+        let suffixes = ["", ".", "...", "🚀"];
+        assert_text_boundary_invariants(input, suffixes);
+    }
+});

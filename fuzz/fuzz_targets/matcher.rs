@@ -1,4 +1,9 @@
+#![cfg_attr(fuzzing, no_main)]
+
 use knifer_rs::vstr::{MatchKind, VStrMatch, VStrMatcher};
+
+#[cfg(fuzzing)]
+use libfuzzer_sys::fuzz_target;
 
 const SEEDS: &str = include_str!("../corpus/matcher.txt");
 
@@ -17,6 +22,7 @@ fn corpus() -> [(&'static str, &'static [&'static str]); 10] {
     ]
 }
 
+#[cfg(not(fuzzing))]
 fn main() {
     let replacements = ["", "A", "AA", "N", "R", "-", "_", "X"];
 
@@ -82,3 +88,12 @@ fn assert_sorted_by_start(matches: &[VStrMatch<'_>]) {
         assert!(pair[0].start <= pair[1].start);
     }
 }
+
+#[cfg(fuzzing)]
+fuzz_target!(|data: &[u8]| {
+    if let Ok(input) = std::str::from_utf8(data) {
+        let needles = ["a", "aa", "你", "你好", "🚀", "e", "\u{301}", "--", "_"];
+        let replacements = ["", "A", "AA", "N", "R", "-", "_", "X"];
+        assert_matcher_invariants(input, &needles, replacements);
+    }
+});

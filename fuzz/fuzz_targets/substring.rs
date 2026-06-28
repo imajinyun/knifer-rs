@@ -1,4 +1,9 @@
+#![cfg_attr(fuzzing, no_main)]
+
 use knifer_rs::vstr;
+
+#[cfg(fuzzing)]
+use libfuzzer_sys::fuzz_target;
 
 const SEEDS: &str = include_str!("../corpus/substring.txt");
 
@@ -30,31 +35,43 @@ fn assert_char_boundary(input: &str, output: &str) {
     );
 }
 
+#[cfg(not(fuzzing))]
 fn main() {
     for input in corpus().into_iter().chain(SEEDS.lines()) {
-        let char_count = input.chars().count();
-        for count in 0..=char_count + 3 {
-            assert_char_boundary(input, vstr::take_chars(input, count));
-            assert_char_boundary(input, vstr::drop_chars(input, count));
-            assert_eq!(
-                vstr::take_chars(input, count).chars().count(),
-                char_count.min(count)
-            );
-            assert_eq!(
-                vstr::drop_chars(input, count).chars().count(),
-                char_count.saturating_sub(count)
-            );
-        }
+        assert_substring_invariants(input);
+    }
+}
 
-        for from in -(char_count as isize + 3)..=(char_count as isize + 3) {
-            for to in -(char_count as isize + 3)..=(char_count as isize + 3) {
-                let output = vstr::sub(input, from, to);
-                assert!(
-                    output.is_char_boundary(0) && output.is_char_boundary(output.len()),
-                    "sub must return valid UTF-8: input={input:?} from={from} to={to} output={output:?}"
-                );
-                assert!(output.chars().count() <= char_count);
-            }
+fn assert_substring_invariants(input: &str) {
+    let char_count = input.chars().count();
+    for count in 0..=char_count + 3 {
+        assert_char_boundary(input, vstr::take_chars(input, count));
+        assert_char_boundary(input, vstr::drop_chars(input, count));
+        assert_eq!(
+            vstr::take_chars(input, count).chars().count(),
+            char_count.min(count)
+        );
+        assert_eq!(
+            vstr::drop_chars(input, count).chars().count(),
+            char_count.saturating_sub(count)
+        );
+    }
+
+    for from in -(char_count as isize + 3)..=(char_count as isize + 3) {
+        for to in -(char_count as isize + 3)..=(char_count as isize + 3) {
+            let output = vstr::sub(input, from, to);
+            assert!(
+                output.is_char_boundary(0) && output.is_char_boundary(output.len()),
+                "sub must return valid UTF-8: input={input:?} from={from} to={to} output={output:?}"
+            );
+            assert!(output.chars().count() <= char_count);
         }
     }
 }
+
+#[cfg(fuzzing)]
+fuzz_target!(|data: &[u8]| {
+    if let Ok(input) = std::str::from_utf8(data) {
+        assert_substring_invariants(input);
+    }
+});

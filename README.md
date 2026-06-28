@@ -138,6 +138,7 @@ bash bin/check-release-api-semver.sh
 bash bin/check-vstr-benchmark-smoke.sh
 bash bin/check-vstr-bench.sh
 bash bin/check-vstr-fuzz-smoke.sh
+bash bin/check-vstr-fuzz.sh
 bash bin/check-docs-rs-ready.sh
 ```
 
@@ -185,6 +186,16 @@ substring boundaries, escaping, Ant-style path matching, and replacement
 invariants without adding runtime dependencies to the main library. The
 text-boundary target also covers wrap, truncation, abbreviation, masking,
 centering, and whitespace invariants.
+
+Optional long-running fuzz sessions use `cargo-fuzz` from the separate
+`fuzz/` crate. The local wrapper skips cleanly when `cargo-fuzz` is missing:
+
+```bash
+cargo fuzz run fuzz_substring
+cargo fuzz run fuzz_escaping
+cargo fuzz run fuzz_matcher
+VSTR_FUZZ_RUN_SECS=60 bash bin/check-vstr-fuzz.sh
+```
 
 Public API checks are intentionally split. `check-public-api-inventory.sh`
 ensures the all-features signature snapshot and optional feature delta are in
