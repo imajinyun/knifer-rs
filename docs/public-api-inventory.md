@@ -373,3 +373,26 @@ breaking, while newly exported APIs are additive inventory work.
 on top of the local check when a release baseline is configured with
 `API_SEMVER_BASELINE_REF`, `API_SEMVER_BASELINE_ROOT`, or
 `API_SEMVER_BASELINE_RUSTDOC`.
+
+## Release Baseline Procedure
+
+Before publishing the first `0.1.x` release, run the local inventory and semver
+checks against the working tree:
+
+```bash
+bash bin/check-public-api-inventory.sh
+bash bin/check-api-semver.sh
+```
+
+After the release is tagged, use that tag as the baseline for future release
+reviews:
+
+```bash
+API_SEMVER_BASELINE_REF=v0.1.0 \
+API_SEMVER_REQUIRED=true \
+bash bin/check-release-api-semver.sh
+```
+
+For published crate comparisons, use `API_SEMVER_BASELINE_CRATES_IO=true`
+instead of a local tag. Release branches should use exactly one baseline source
+so `cargo-semver-checks` reports a single explainable compatibility decision.

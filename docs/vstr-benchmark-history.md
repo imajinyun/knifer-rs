@@ -16,9 +16,9 @@ The script writes:
 
 - `vstr-bench.txt`
 - `vstr-bench.json`, including `schema`, `version`, `suite`,
-  `environment`, and result records;
+  `environment`, `inputs`, and result records;
 - `vstr-bench.md`, including rustc version, target triple, feature set, and
-  commit SHA.
+  commit SHA, plus baseline source, regression threshold, and run mode.
 
 When a baseline is supplied, it also writes:
 
@@ -47,6 +47,9 @@ bash bin/check-vstr-bench.sh target/vstr-bench-report
 ```
 
 Set only one of `VSTR_BENCH_BASE_REF` and `VSTR_BENCH_BASELINE_JSON`.
+Every JSON and Markdown report records the resolved baseline source, run mode,
+and `VSTR_BENCH_MAX_REGRESSION_PCT` value so saved artifacts remain
+self-describing during release review.
 
 ## Refresh Policy
 

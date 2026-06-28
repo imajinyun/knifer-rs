@@ -55,13 +55,16 @@ commands:
     - cargo test --locked --all-features
     - cargo test --locked --examples
     - cargo clippy --all-targets -- -D warnings
+    - cargo clippy --all-targets --all-features -- -D warnings
     - RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
     - bash bin/check-examples.sh
     - bash bin/check-project-contract.sh
     - bash bin/check-public-api-inventory.sh
     - bash bin/check-api-semver.sh
     - bash bin/check-release-api-semver.sh
+    - bash bin/check-release-ready.sh
     - bash bin/check-docs-rs-ready.sh
+    - bash bin/check-package-contents.sh
     - bash bin/check-vstr-benchmark-smoke.sh
     - bash bin/check-vstr-fuzz-smoke.sh
     - git diff
@@ -73,6 +76,7 @@ commands:
     - cargo test --locked --examples
   vet:
     - cargo clippy --all-targets -- -D warnings
+    - cargo clippy --all-targets --all-features -- -D warnings
     - bash bin/check-project-contract.sh
     - bash bin/check-public-api-inventory.sh
     - bash bin/check-api-semver.sh
@@ -83,10 +87,18 @@ commands:
     - cargo test --locked --all-features
     - cargo test --locked --examples
     - cargo clippy --all-targets -- -D warnings
+    - cargo clippy --all-targets --all-features -- -D warnings
     - RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
     - bash bin/check-examples.sh
+    - bash bin/check-release-ready.sh
     - bash bin/check-docs-rs-ready.sh
+    - bash bin/check-package-contents.sh
     - bash bin/check-project-contract.sh
+    - bash bin/check-public-api-inventory.sh
+    - bash bin/check-api-semver.sh
+    - bash bin/check-release-api-semver.sh
+    - bash bin/check-vstr-benchmark-smoke.sh
+    - bash bin/check-vstr-fuzz-smoke.sh
 
 acceptance:
   criteria:
@@ -101,6 +113,7 @@ acceptance:
     - cargo test --locked
     - cargo test --locked --all-features
     - cargo clippy --all-targets -- -D warnings
+    - cargo clippy --all-targets --all-features -- -D warnings
     - bash bin/check-project-contract.sh
   require_review: false
   require_clean_diff: false

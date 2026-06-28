@@ -129,22 +129,13 @@ src/
 ## Development Checks ✅
 
 ```bash
-cargo fmt --check
-cargo test --locked
-cargo test --locked --examples
-cargo clippy --all-targets -- -D warnings
-RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
-bash bin/check-examples.sh
-bash bin/check-project-contract.sh
-bash bin/check-public-api-inventory.sh
-bash bin/check-api-semver.sh
-bash bin/check-release-api-semver.sh
-bash bin/check-vstr-benchmark-smoke.sh
-bash bin/check-vstr-bench.sh
-bash bin/check-vstr-fuzz-smoke.sh
-bash bin/check-vstr-fuzz.sh
-bash bin/check-docs-rs-ready.sh
+bash bin/check-release-ready.sh
 ```
+
+The release-ready script runs formatting, default/no-default/all-features tests,
+examples, default and all-features clippy, rustdoc, docs.rs readiness, package
+contents, API inventory, semver, benchmark smoke, and fuzz smoke gates. The
+expanded command list lives in `CONTRIBUTING.md` and `aiflow.yaml`.
 
 Benchmark smoke and benchmark suite have different jobs. The smoke command is a
 fast CI coverage check that proves expensive `vstr` paths still execute and emit
@@ -256,6 +247,10 @@ knifer-rs = { version = "0.1", features = ["unicode-width"] }
 The docs.rs readiness check is the local publish gate. It verifies crate
 metadata, builds rustdoc with the docs.rs configuration and all features, and
 runs `cargo package --locked --allow-dirty`.
+
+The package contents check verifies the publish archive includes source,
+examples, benchmark entry points, and governance docs while excluding local
+`.aiflow/`, `target/`, fuzz runtime output, and temporary state.
 
 ## Compatibility 🔒
 

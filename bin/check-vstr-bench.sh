@@ -9,12 +9,7 @@ baseline_tmp=""
 rustc_version="$(rustc --version)"
 target_triple="$(rustc -vV | awk '/^host: / { print $2 }')"
 commit_sha="$(git rev-parse --short=12 HEAD 2>/dev/null || printf 'unknown')"
-
-bench_env=(
-  VSTR_BENCH_RUSTC_VERSION="$rustc_version"
-  VSTR_BENCH_TARGET_TRIPLE="$target_triple"
-  VSTR_BENCH_COMMIT_SHA="$commit_sha"
-)
+run_mode="report"
 
 cleanup() {
   if [[ -n "$baseline_tmp" ]]; then
@@ -29,20 +24,35 @@ if [[ -n "$baseline_json" && -n "$baseline_ref" ]]; then
   exit 1
 fi
 
+benchmark_env() {
+  env \
+    VSTR_BENCH_RUSTC_VERSION="$rustc_version" \
+    VSTR_BENCH_TARGET_TRIPLE="$target_triple" \
+    VSTR_BENCH_COMMIT_SHA="$commit_sha" \
+    VSTR_BENCH_BASE_REF="$baseline_ref" \
+    VSTR_BENCH_BASELINE_JSON="$baseline_json" \
+    VSTR_BENCH_MAX_REGRESSION_PCT="$max_regression_pct" \
+    VSTR_BENCH_RUN_MODE="$run_mode" \
+    "$@"
+}
+
 if [[ -n "$baseline_ref" ]]; then
+  run_mode="compare-ref"
   baseline_tmp="$(mktemp -d)"
   mkdir -p "$baseline_tmp/repo"
   git archive "$baseline_ref" | tar -x -C "$baseline_tmp/repo"
   (
     cd "$baseline_tmp/repo"
-    env "${bench_env[@]}" cargo bench --bench vstr_bench --quiet -- --json
+    benchmark_env cargo bench --bench vstr_bench --quiet -- --json
   ) > "$baseline_tmp/vstr-bench-baseline.json"
   baseline_json="$baseline_tmp/vstr-bench-baseline.json"
+elif [[ -n "$baseline_json" ]]; then
+  run_mode="compare-json"
 fi
 
-output="$(env "${bench_env[@]}" cargo bench --bench vstr_bench --quiet)"
-json_output="$(env "${bench_env[@]}" cargo bench --bench vstr_bench --quiet -- --json)"
-markdown_output="$(env "${bench_env[@]}" cargo bench --bench vstr_bench --quiet -- --markdown)"
+output="$(benchmark_env cargo bench --bench vstr_bench --quiet)"
+json_output="$(benchmark_env cargo bench --bench vstr_bench --quiet -- --json)"
+markdown_output="$(benchmark_env cargo bench --bench vstr_bench --quiet -- --markdown)"
 compare_json_output=""
 compare_markdown_output=""
 
@@ -85,7 +95,11 @@ for json_field in \
   '"rustc_version":"' \
   '"target_triple":"' \
   '"feature_set":"' \
-  '"commit_sha":"'
+  '"commit_sha":"' \
+  '"inputs":' \
+  '"baseline_source":"' \
+  '"max_regression_percent":"' \
+  '"run_mode":"'
 do
   if ! grep -Fq "$json_field" <<<"$json_output"; then
     echo "missing JSON benchmark metadata: $json_field" >&2
@@ -107,7 +121,11 @@ for markdown_field in \
   '- rustc: `' \
   '- target: `' \
   '- features: `' \
-  '- commit: `'
+  '- commit: `' \
+  '## Inputs' \
+  '- baseline source: `' \
+  '- max regression threshold: `' \
+  '- run mode: `'
 do
   if ! grep -Fq -- "$markdown_field" <<<"$markdown_output"; then
     echo "missing Markdown benchmark metadata: $markdown_field" >&2
@@ -123,12 +141,12 @@ if [[ -n "$baseline_json" ]]; then
   fi
 
   compare_json_output="$(
-    env "${bench_env[@]}" cargo bench --bench vstr_bench --quiet -- \
+    benchmark_env cargo bench --bench vstr_bench --quiet -- \
       --compare-json "$baseline_json" \
       --max-regression-pct "$max_regression_pct"
   )"
   compare_markdown_output="$(
-    env "${bench_env[@]}" cargo bench --bench vstr_bench --quiet -- \
+    benchmark_env cargo bench --bench vstr_bench --quiet -- \
       --compare-markdown "$baseline_json" \
       --max-regression-pct "$max_regression_pct"
   )"

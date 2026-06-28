@@ -73,6 +73,9 @@ jobs:
       - name: Clippy
         run: cargo clippy --all-targets -- -D warnings
 
+      - name: Clippy all features
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
       - name: Docs
         run: RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
 
@@ -155,6 +158,9 @@ jobs:
 
       - name: Docs.rs readiness
         run: bash bin/check-docs-rs-ready.sh
+
+      - name: Package contents
+        run: bash bin/check-package-contents.sh
 
   release-benchmark:
     name: Release Benchmark Report

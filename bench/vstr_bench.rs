@@ -30,6 +30,12 @@ struct BenchEnvironment {
     commit_sha: String,
 }
 
+struct BenchInputs {
+    baseline_source: String,
+    max_regression_percent: String,
+    run_mode: String,
+}
+
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum ReportFormat {
     Plain,
@@ -169,15 +175,19 @@ fn result(name: &'static str, elapsed: Duration, checksum: usize) -> BenchResult
 
 fn print_plain(results: &[BenchResult]) {
     let environment = bench_environment();
+    let inputs = bench_inputs();
     println!(
-        "suite={} schema={} version={} rustc={} target={} features={} commit={}",
+        "suite={} schema={} version={} rustc={} target={} features={} commit={} baseline_source={} max_regression_percent={} run_mode={}",
         BENCHMARK_SUITE,
         REPORT_SCHEMA,
         REPORT_VERSION,
         environment.rustc_version,
         environment.target_triple,
         environment.feature_set,
-        environment.commit_sha
+        environment.commit_sha,
+        inputs.baseline_source,
+        inputs.max_regression_percent,
+        inputs.run_mode
     );
     for result in results {
         println!(
@@ -189,14 +199,18 @@ fn print_plain(results: &[BenchResult]) {
 
 fn print_json(results: &[BenchResult]) {
     let environment = bench_environment();
+    let inputs = bench_inputs();
     let mut output = String::new();
     write!(
         output,
-        "{{\"schema\":\"{REPORT_SCHEMA}\",\"suite\":\"{BENCHMARK_SUITE}\",\"version\":\"{REPORT_VERSION}\",\"environment\":{{\"rustc_version\":\"{}\",\"target_triple\":\"{}\",\"feature_set\":\"{}\",\"commit_sha\":\"{}\"}},\"results\":[",
+        "{{\"schema\":\"{REPORT_SCHEMA}\",\"suite\":\"{BENCHMARK_SUITE}\",\"version\":\"{REPORT_VERSION}\",\"environment\":{{\"rustc_version\":\"{}\",\"target_triple\":\"{}\",\"feature_set\":\"{}\",\"commit_sha\":\"{}\"}},\"inputs\":{{\"baseline_source\":\"{}\",\"max_regression_percent\":\"{}\",\"run_mode\":\"{}\"}},\"results\":[",
         json_escape(&environment.rustc_version),
         json_escape(&environment.target_triple),
         json_escape(&environment.feature_set),
         json_escape(&environment.commit_sha),
+        json_escape(&inputs.baseline_source),
+        json_escape(&inputs.max_regression_percent),
+        json_escape(&inputs.run_mode),
     )
     .expect("write to String cannot fail");
 
@@ -298,6 +312,7 @@ fn change_from_baseline(
 fn print_compare_json(baseline_path: &str, max_regression_bps: u128, comparisons: &[Comparison]) {
     let status = comparison_status(comparisons);
     let environment = bench_environment();
+    let inputs = bench_inputs();
     let results: Vec<Value> = comparisons
         .iter()
         .map(|comparison| {
@@ -324,6 +339,11 @@ fn print_compare_json(baseline_path: &str, max_regression_bps: u128, comparisons
                 "feature_set": environment.feature_set,
                 "commit_sha": environment.commit_sha,
             },
+            "inputs": {
+                "baseline_source": inputs.baseline_source,
+                "max_regression_percent": inputs.max_regression_percent,
+                "run_mode": inputs.run_mode,
+            },
             "baseline": baseline_path,
             "max_regression_percent": format_bps(max_regression_bps),
             "status": status,
@@ -338,6 +358,7 @@ fn print_compare_markdown(
     comparisons: &[Comparison],
 ) {
     let environment = bench_environment();
+    let inputs = bench_inputs();
     println!("# {BENCHMARK_SUITE} Comparison");
     println!();
     println!("- Schema: `{REPORT_SCHEMA}`");
@@ -350,6 +371,8 @@ fn print_compare_markdown(
     println!("- Status: `{}`", comparison_status(comparisons));
     println!();
     print_environment_markdown(&environment);
+    println!();
+    print_inputs_markdown(&inputs);
     println!();
     println!("| Benchmark | Baseline ns | Current ns | Direction | Change | Status |");
     println!("| --- | ---: | ---: | --- | ---: | --- |");
@@ -433,6 +456,7 @@ impl ChangeDirection {
 
 fn print_markdown(results: &[BenchResult]) {
     let environment = bench_environment();
+    let inputs = bench_inputs();
     println!("# {BENCHMARK_SUITE} Report");
     println!();
     println!("- Schema: `{REPORT_SCHEMA}`");
@@ -440,6 +464,8 @@ fn print_markdown(results: &[BenchResult]) {
     println!("- Iterations per benchmark: `{ITERATIONS}`");
     println!();
     print_environment_markdown(&environment);
+    println!();
+    print_inputs_markdown(&inputs);
     println!();
     println!("| Benchmark | Iterations | Elapsed ns | Checksum |");
     println!("| --- | ---: | ---: | ---: |");
@@ -460,6 +486,17 @@ fn print_environment_markdown(environment: &BenchEnvironment) {
     println!("- commit: `{}`", environment.commit_sha);
 }
 
+fn print_inputs_markdown(inputs: &BenchInputs) {
+    println!("## Inputs");
+    println!();
+    println!("- baseline source: `{}`", inputs.baseline_source);
+    println!(
+        "- max regression threshold: `{}%`",
+        inputs.max_regression_percent
+    );
+    println!("- run mode: `{}`", inputs.run_mode);
+}
+
 fn bench_environment() -> BenchEnvironment {
     BenchEnvironment {
         rustc_version: env::var("VSTR_BENCH_RUSTC_VERSION")
@@ -469,6 +506,29 @@ fn bench_environment() -> BenchEnvironment {
         feature_set: active_feature_set(),
         commit_sha: env::var("VSTR_BENCH_COMMIT_SHA").unwrap_or_else(|_| UNKNOWN_ENV.to_owned()),
     }
+}
+
+fn bench_inputs() -> BenchInputs {
+    BenchInputs {
+        baseline_source: benchmark_baseline_source(),
+        max_regression_percent: env::var("VSTR_BENCH_MAX_REGRESSION_PCT")
+            .unwrap_or_else(|_| "20.00".to_owned()),
+        run_mode: env::var("VSTR_BENCH_RUN_MODE").unwrap_or_else(|_| "report".to_owned()),
+    }
+}
+
+fn benchmark_baseline_source() -> String {
+    env::var("VSTR_BENCH_BASE_REF")
+        .ok()
+        .filter(|value| !value.is_empty())
+        .map(|value| format!("git-ref:{value}"))
+        .or_else(|| {
+            env::var("VSTR_BENCH_BASELINE_JSON")
+                .ok()
+                .filter(|value| !value.is_empty())
+                .map(|value| format!("json:{value}"))
+        })
+        .unwrap_or_else(|| "none".to_owned())
 }
 
 fn active_feature_set() -> String {
