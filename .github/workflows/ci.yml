@@ -61,6 +61,9 @@ jobs:
       - name: Test
         run: cargo test --locked
 
+      - name: Test examples
+        run: bash bin/check-examples.sh
+
       - name: Test without default features
         run: cargo test --locked --no-default-features
 

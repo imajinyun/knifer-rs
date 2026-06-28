@@ -11,8 +11,10 @@ Run the same checks as CI before sending changes:
 ```bash
 cargo fmt --check
 cargo test --locked
+cargo test --locked --examples
 cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
+bash bin/check-examples.sh
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
 bash bin/check-api-semver.sh
@@ -54,8 +56,10 @@ cargo fmt --check
 cargo test --locked
 cargo test --locked --no-default-features
 cargo test --locked --all-features
+cargo test --locked --examples
 cargo clippy --all-targets -- -D warnings
 RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
+bash bin/check-examples.sh
 bash bin/check-docs-rs-ready.sh
 bash bin/check-project-contract.sh
 cargo package --locked --allow-dirty
