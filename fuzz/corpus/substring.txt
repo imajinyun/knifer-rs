@@ -1,0 +1,12 @@
+
+ascii
+  spaced
+你好Rust
+é
+🇨🇳 flag
+👨‍👩‍👧‍👦
+line break
+　wide space
+a/b/c
+emoji 🚀 text
+नमस्ते rust

@@ -1,0 +1,8 @@
+hello rust world
+aaaa
+你好你好
+emoji 🚀 rocket
+Case CASE case
+skip-empty
+a--a__a
+line line line

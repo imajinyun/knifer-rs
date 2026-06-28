@@ -1,5 +1,7 @@
 use knifer_rs::vstr::{MatchKind, VStrMatch, VStrMatcher};
 
+const SEEDS: &str = include_str!("../corpus/matcher.txt");
+
 fn corpus() -> [(&'static str, &'static [&'static str]); 10] {
     [
         ("", &["a", "aa"]),
@@ -19,34 +21,43 @@ fn main() {
     let replacements = ["", "A", "AA", "N", "R", "-", "_", "X"];
 
     for (input, needles) in corpus() {
-        for kind in [MatchKind::LeftmostFirst, MatchKind::LeftmostLongest] {
-            let matcher = VStrMatcher::with_kind(needles.iter().copied(), kind);
+        assert_matcher_invariants(input, needles, replacements);
+    }
 
-            assert_eq!(
-                matcher.len(),
-                needles.iter().filter(|needle| !needle.is_empty()).count()
-            );
-            assert_eq!(matcher.is_empty(), needles.iter().all(|needle| needle.is_empty()));
+    let seed_needles = ["a", "aa", "你", "你好", "🚀", "e", "\u{301}", "--", "_"];
+    for input in SEEDS.lines() {
+        assert_matcher_invariants(input, &seed_needles, replacements);
+    }
+}
 
-            let all = matcher.find_all(input);
-            assert_non_overlapping(input, &all);
-            assert_eq!(matcher.find(input), all.first().cloned());
+fn assert_matcher_invariants(input: &str, needles: &[&str], replacements: [&str; 8]) {
+    for kind in [MatchKind::LeftmostFirst, MatchKind::LeftmostLongest] {
+        let matcher = VStrMatcher::with_kind(needles.iter().copied(), kind);
 
-            let overlapping = matcher.find_overlapping(input);
-            assert_sorted_by_start(&overlapping);
-            for matched in &overlapping {
-                assert_valid_match(input, matched);
-                assert!(input[matched.start..matched.end] == *matched.needle);
-            }
+        assert_eq!(
+            matcher.len(),
+            needles.iter().filter(|needle| !needle.is_empty()).count()
+        );
+        assert_eq!(matcher.is_empty(), needles.iter().all(|needle| needle.is_empty()));
 
-            for matched in &all {
-                assert_valid_match(input, matched);
-                assert!(input[matched.start..matched.end] == *matched.needle);
-            }
+        let all = matcher.find_all(input);
+        assert_non_overlapping(input, &all);
+        assert_eq!(matcher.find(input), all.first().cloned());
 
-            let replaced = matcher.replace_all(input, replacements);
-            assert!(replaced.is_char_boundary(0) && replaced.is_char_boundary(replaced.len()));
+        let overlapping = matcher.find_overlapping(input);
+        assert_sorted_by_start(&overlapping);
+        for matched in &overlapping {
+            assert_valid_match(input, matched);
+            assert!(input[matched.start..matched.end] == *matched.needle);
         }
+
+        for matched in &all {
+            assert_valid_match(input, matched);
+            assert!(input[matched.start..matched.end] == *matched.needle);
+        }
+
+        let replaced = matcher.replace_all(input, replacements);
+        assert!(replaced.is_char_boundary(0) && replaced.is_char_boundary(replaced.len()));
     }
 }
 

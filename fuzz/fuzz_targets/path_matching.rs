@@ -1,5 +1,7 @@
 use knifer_rs::vstr;
 
+const SEEDS: &str = include_str!("../corpus/path_matching.txt");
+
 fn main() {
     let paths = [
         "",
@@ -12,7 +14,7 @@ fn main() {
         "a.b.c.d",
     ];
 
-    for path in paths {
+    for path in paths.into_iter().chain(SEEDS.lines()) {
         assert!(vstr::ant_path_match(path, path));
         assert!(vstr::ant_path_match("/**", path));
         assert!(vstr::ant_path_match("**", path));

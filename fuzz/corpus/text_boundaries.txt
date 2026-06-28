@@ -1,0 +1,12 @@
+
+ascii words only
+  spaced   words	with lines
+你好世界 Rust
+éé cafe
+🇨🇳 flag text
+👨‍👩‍👧‍👦 family
+emoji 🚀 text
+supercalifragilistic
+line break case
+नमस्ते rust utility
+a---b----c

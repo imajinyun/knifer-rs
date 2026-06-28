@@ -44,7 +44,8 @@ flamegraph.svg
 
 # Local fuzzing artifacts
 /fuzz/artifacts/
-/fuzz/corpus/
+/fuzz/corpus/*
+!/fuzz/corpus/*.txt
 /fuzz/crashes/
 
 # Local scratch space

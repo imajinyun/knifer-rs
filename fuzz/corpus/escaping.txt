@@ -1,0 +1,14 @@
+
+literal
+.*?^$#&-~\[]{}
+a+b*(c)
+<tag attr="value">&text</tag>
+emoji 🚀
+你好 & rust
+line\nbreak
+'single' and "double"
+\u4F60\u597D
+\uD83D\uDE80
+\uD83Dbroken
+\uDE80
+\uZZZZ

@@ -20,7 +20,7 @@ the default CI workflow.
 
 ## Layer 2: Checked-In Corpus Seeds
 
-Future corpus seeds should be small text files grouped by behavior:
+Corpus seeds are small text files under `fuzz/corpus/`, grouped by behavior:
 
 - `substring`: scalar indexes, negative indexes, empty input, CJK, emoji;
 - `escaping`: regex metacharacters, malformed Unicode escapes, surrogate pairs;
@@ -29,8 +29,9 @@ Future corpus seeds should be small text files grouped by behavior:
 - `matcher`: leftmost-first, leftmost-longest, overlap, replacement indexes;
 - `text_boundaries`: wrap, truncate, mask, width, indentation.
 
-Seed files should be reviewed like tests. Do not commit generated crash output,
-large minimized corpora, or local engine state.
+Each deterministic smoke target reads its matching seed file with
+`include_str!`. Seed files should be reviewed like tests. Do not commit
+generated crash output, large minimized corpora, or local engine state.
 
 ## Layer 3: Optional Engine Fuzzing
 

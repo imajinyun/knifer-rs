@@ -1,5 +1,7 @@
 use knifer_rs::vstr;
 
+const SEEDS: &str = include_str!("../corpus/escaping.txt");
+
 fn roundtrip_corpus() -> [&'static str; 9] {
     [
         "",
@@ -26,24 +28,39 @@ fn tolerant_decode_corpus() -> [&'static str; 5] {
 
 fn main() {
     for input in roundtrip_corpus() {
-        let escaped_regex = vstr::escape_regex(input);
-        assert_eq!(escaped_regex, vstr::quote_meta(input));
-        assert!(escaped_regex.len() >= input.len());
+        assert_roundtrip(input);
+    }
 
-        let escaped_html = vstr::escape_html(input);
-        let unescaped_html = vstr::unescape_html(&escaped_html);
-        assert_eq!(unescaped_html, input);
-
-        let escaped_unicode = vstr::escape_unicode(input);
-        let unescaped_unicode = vstr::unescape_unicode(&escaped_unicode);
-        assert_eq!(unescaped_unicode, input);
+    for input in SEEDS.lines() {
+        if input.contains(r"\u") {
+            assert_tolerant_decode(input);
+        } else {
+            assert_roundtrip(input);
+        }
     }
 
     for input in tolerant_decode_corpus() {
-        let tolerant_unicode = vstr::unescape_unicode(input);
-        assert!(
-            tolerant_unicode.is_char_boundary(0)
-                && tolerant_unicode.is_char_boundary(tolerant_unicode.len())
-        );
+        assert_tolerant_decode(input);
     }
+}
+
+fn assert_roundtrip(input: &str) {
+    let escaped_regex = vstr::escape_regex(input);
+    assert_eq!(escaped_regex, vstr::quote_meta(input));
+    assert!(escaped_regex.len() >= input.len());
+
+    let escaped_html = vstr::escape_html(input);
+    let unescaped_html = vstr::unescape_html(&escaped_html);
+    assert_eq!(unescaped_html, input);
+
+    let escaped_unicode = vstr::escape_unicode(input);
+    let unescaped_unicode = vstr::unescape_unicode(&escaped_unicode);
+    assert_eq!(unescaped_unicode, input);
+}
+
+fn assert_tolerant_decode(input: &str) {
+    let tolerant_unicode = vstr::unescape_unicode(input);
+    assert!(
+        tolerant_unicode.is_char_boundary(0) && tolerant_unicode.is_char_boundary(tolerant_unicode.len())
+    );
 }

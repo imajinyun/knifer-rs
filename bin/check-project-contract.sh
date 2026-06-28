@@ -50,6 +50,12 @@ require_file fuzz/Cargo.toml
 require_file fuzz/Cargo.lock
 require_file fuzz/README.md
 require_file fuzz/PLAN.md
+require_file fuzz/corpus/substring.txt
+require_file fuzz/corpus/escaping.txt
+require_file fuzz/corpus/path_matching.txt
+require_file fuzz/corpus/replacement.txt
+require_file fuzz/corpus/matcher.txt
+require_file fuzz/corpus/text_boundaries.txt
 require_file fuzz/fuzz_targets/substring.rs
 require_file fuzz/fuzz_targets/escaping.rs
 require_file fuzz/fuzz_targets/path_matching.rs
@@ -124,6 +130,8 @@ require_text .gitignore 'perf.data'
 require_text .gitignore 'flamegraph.svg'
 require_text .gitignore '/criterion/'
 require_text .gitignore '/fuzz/artifacts/'
+require_text .gitignore '/fuzz/corpus/*'
+require_text .gitignore '!/fuzz/corpus/*.txt'
 require_text .gitignore '/tmp/'
 if grep -Eq '(^|/|\*)docs(/|\*|$)' .gitignore; then
   echo "docs/ contains source documentation and must not be ignored" >&2
@@ -499,25 +507,39 @@ require_text fuzz/README.md 'fuzz_matcher'
 require_text fuzz/README.md 'fuzz_text_boundaries'
 require_text fuzz/README.md 'bash bin/check-vstr-fuzz-smoke.sh'
 require_text fuzz/README.md 'fuzz/PLAN.md'
+require_text fuzz/README.md 'fuzz/corpus/'
 require_text fuzz/PLAN.md 'Layer 1: Deterministic Smoke'
 require_text fuzz/PLAN.md 'Layer 2: Checked-In Corpus Seeds'
 require_text fuzz/PLAN.md 'Layer 3: Optional Engine Fuzzing'
 require_text fuzz/PLAN.md 'Promotion Rules'
 require_text fuzz/PLAN.md 'default CI'
 require_text fuzz/PLAN.md 'cargo-fuzz'
+require_text fuzz/PLAN.md 'include_str!'
 require_text docs/vstr-top-string-gap-analysis.md 'fuzz/PLAN.md'
+require_text fuzz/corpus/substring.txt '你好Rust'
+require_text fuzz/corpus/escaping.txt '\uD83D\uDE80'
+require_text fuzz/corpus/path_matching.txt '/api/v1/users'
+require_text fuzz/corpus/replacement.txt 'Case CASE case'
+require_text fuzz/corpus/matcher.txt 'emoji 🚀🚀'
+require_text fuzz/corpus/text_boundaries.txt 'supercalifragilistic'
 require_text fuzz/fuzz_targets/substring.rs 'take_chars'
+require_text fuzz/fuzz_targets/substring.rs 'include_str!("../corpus/substring.txt")'
 require_text fuzz/fuzz_targets/substring.rs 'drop_chars'
 require_text fuzz/fuzz_targets/substring.rs 'sub(input'
 require_text fuzz/fuzz_targets/escaping.rs 'escape_regex'
+require_text fuzz/fuzz_targets/escaping.rs 'include_str!("../corpus/escaping.txt")'
 require_text fuzz/fuzz_targets/escaping.rs 'escape_unicode'
 require_text fuzz/fuzz_targets/path_matching.rs 'ant_path_match'
+require_text fuzz/fuzz_targets/path_matching.rs 'include_str!("../corpus/path_matching.txt")'
 require_text fuzz/fuzz_targets/replacement.rs 'replace_many'
+require_text fuzz/fuzz_targets/replacement.rs 'include_str!("../corpus/replacement.txt")'
 require_text fuzz/fuzz_targets/matcher.rs 'VStrMatcher'
 require_text fuzz/fuzz_targets/matcher.rs 'find_overlapping'
+require_text fuzz/fuzz_targets/matcher.rs 'include_str!("../corpus/matcher.txt")'
 require_text fuzz/fuzz_targets/text_boundaries.rs 'truncate_with_suffix'
 require_text fuzz/fuzz_targets/text_boundaries.rs 'abbreviate_middle'
 require_text fuzz/fuzz_targets/text_boundaries.rs 'wrap_with_indent'
+require_text fuzz/fuzz_targets/text_boundaries.rs 'include_str!("../corpus/text_boundaries.txt")'
 require_text fuzz/fuzz_targets/text_boundaries.rs 'mask'
 
 if grep -R --include='*.rs' -n '\bunsafe\b' src; then

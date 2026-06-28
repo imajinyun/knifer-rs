@@ -1,0 +1,10 @@
+
+/
+/api/v1/users
+/api/v1/admin/users/a
+a/b/c
+你好/世界
+emoji/🚀/path
+a.b.c.d
+**/literal
+file?.txt

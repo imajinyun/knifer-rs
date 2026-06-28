@@ -1,5 +1,7 @@
 use knifer_rs::vstr;
 
+const SEEDS: &str = include_str!("../corpus/substring.txt");
+
 fn corpus() -> [&'static str; 12] {
     [
         "",
@@ -29,7 +31,7 @@ fn assert_char_boundary(input: &str, output: &str) {
 }
 
 fn main() {
-    for input in corpus() {
+    for input in corpus().into_iter().chain(SEEDS.lines()) {
         let char_count = input.chars().count();
         for count in 0..=char_count + 3 {
             assert_char_boundary(input, vstr::take_chars(input, count));

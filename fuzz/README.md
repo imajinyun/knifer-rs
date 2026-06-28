@@ -10,6 +10,10 @@ Run all targets with:
 bash bin/check-vstr-fuzz-smoke.sh
 ```
 
+Checked-in seed files live in `fuzz/corpus/`. Each smoke target keeps a small
+inline corpus and also reads its matching seed file with `include_str!`, so
+reviewed edge cases become part of the fast smoke loop.
+
 Current targets:
 
 - `fuzz_substring`: scalar-boundary slicing helpers.
