@@ -77,7 +77,8 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 
 1. `VSTR-TODO-001` - introduce a real fuzz harness strategy. Keep the current
    deterministic smoke targets, then decide whether to add `cargo-fuzz`,
-   checked-in corpus seeds, or both.
+   checked-in corpus seeds, or both. The initial harness strategy is tracked in
+   `fuzz/PLAN.md`.
 2. `VSTR-TODO-002` - add Unicode conformance fixtures. Start with a curated
    UAX #29 subset for grapheme, word, and sentence boundaries before importing
    large upstream data files.

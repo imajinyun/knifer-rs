@@ -49,6 +49,7 @@ require_file examples/vstr_benchmark_smoke.rs
 require_file fuzz/Cargo.toml
 require_file fuzz/Cargo.lock
 require_file fuzz/README.md
+require_file fuzz/PLAN.md
 require_file fuzz/fuzz_targets/substring.rs
 require_file fuzz/fuzz_targets/escaping.rs
 require_file fuzz/fuzz_targets/path_matching.rs
@@ -497,6 +498,14 @@ require_text fuzz/README.md 'fuzz_substring'
 require_text fuzz/README.md 'fuzz_matcher'
 require_text fuzz/README.md 'fuzz_text_boundaries'
 require_text fuzz/README.md 'bash bin/check-vstr-fuzz-smoke.sh'
+require_text fuzz/README.md 'fuzz/PLAN.md'
+require_text fuzz/PLAN.md 'Layer 1: Deterministic Smoke'
+require_text fuzz/PLAN.md 'Layer 2: Checked-In Corpus Seeds'
+require_text fuzz/PLAN.md 'Layer 3: Optional Engine Fuzzing'
+require_text fuzz/PLAN.md 'Promotion Rules'
+require_text fuzz/PLAN.md 'default CI'
+require_text fuzz/PLAN.md 'cargo-fuzz'
+require_text docs/vstr-top-string-gap-analysis.md 'fuzz/PLAN.md'
 require_text fuzz/fuzz_targets/substring.rs 'take_chars'
 require_text fuzz/fuzz_targets/substring.rs 'drop_chars'
 require_text fuzz/fuzz_targets/substring.rs 'sub(input'

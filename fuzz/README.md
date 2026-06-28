@@ -23,3 +23,5 @@ Current targets:
 
 These are deterministic smoke targets today. If libFuzzer coverage is added
 later, keep the same target boundaries and reuse the invariant checks here.
+See `fuzz/PLAN.md` for the layered fuzz harness strategy, corpus seed policy,
+and promotion rules for fuzz-found regressions.
