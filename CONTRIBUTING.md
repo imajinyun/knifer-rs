@@ -64,7 +64,18 @@ bash bin/check-release-ready.sh
 
 `aiflow.yaml` keeps `commands.release` as this single entry point and
 `commands.release-detail` as the expanded command list used by the script.
-Keep those layers aligned when adding or removing release checks.
+The expanded release gate is grouped into three layers:
+
+- fast vet gates: format, default/no-default/all-features tests, examples,
+  clippy, rustdoc, project contract, public API inventory, and local semver
+  checks.
+- publish readiness gates: docs.rs readiness, package contents, and release API
+  semver baseline checks.
+- release evidence smoke gates: benchmark smoke and fuzz smoke.
+
+Keep `commands.vet`, `commands.publish-readiness`,
+`commands.release-evidence`, `commands.release`, `commands.release-detail`, and
+`bin/check-release-ready.sh` aligned when adding or removing release checks.
 
 For package review, the release gate runs:
 

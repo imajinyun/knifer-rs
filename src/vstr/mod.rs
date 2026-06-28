@@ -10,10 +10,13 @@
 //! - `basic` contains everyday scalar-based helpers such as trimming,
 //!   substring, searching, replacement, and literal escaping.
 //! - `text` contains higher-level text cleanup, wrapping, truncation,
-//!   masking, and inspection helpers.
-//! - `matcher` contains the reusable multi-pattern literal matcher facade.
+//!   masking, inspection helpers, and a split `text/wrap` file family for
+//!   scalar layout policy.
+//! - `matcher` contains the reusable multi-pattern literal matcher facade and
+//!   optional backend adapter.
 //! - `width` contains optional display-cell measurement and wrapping helpers
-//!   behind the `unicode-width` feature.
+//!   behind the `unicode-width` feature, including a split `width/wrap` file
+//!   family for display-cell layout policy.
 
 mod basic;
 mod case;
