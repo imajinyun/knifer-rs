@@ -191,6 +191,8 @@ all_features_api_files=(
   src/vstr/grapheme.rs
   src/vstr/pattern.rs
   src/vstr/width.rs
+  src/vstr/width/measure.rs
+  src/vstr/width/wrap.rs
 )
 
 extract_snapshot() {

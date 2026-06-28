@@ -125,6 +125,7 @@ src/
     path.rs    Ant-style path matching helpers
     similarity.rs text similarity and fingerprint helpers
     text/      text normalization, truncation, wrapping, and inspection helpers
+    width/     optional display-width measurement and wrapping helpers
 ```
 
 ## Development Checks ✅

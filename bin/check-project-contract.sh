@@ -55,6 +55,9 @@ require_file src/vstr/text/inspect.rs
 require_file src/vstr/text/normalize.rs
 require_file src/vstr/text/transform.rs
 require_file src/vstr/text/wrap.rs
+require_file src/vstr/width.rs
+require_file src/vstr/width/measure.rs
+require_file src/vstr/width/wrap.rs
 require_file src/vstr/tests.rs
 require_file src/vstr/tests/basic.rs
 require_file src/vstr/tests/case.rs
@@ -139,6 +142,7 @@ require_text Cargo.toml 'unicode-segmentation = ["dep:unicode-segmentation"]'
 require_text Cargo.toml 'unicode-width = ["dep:unicode-width"]'
 require_text aiflow.yaml '    - "src/vstr/basic/*"'
 require_text aiflow.yaml '    - "src/vstr/text/*"'
+require_text aiflow.yaml '    - "src/vstr/width/*"'
 require_text aiflow.yaml '    - ".aiflow/*"'
 require_text src/vstr/basic/mod.rs 'mod affix;'
 require_text src/vstr/basic/mod.rs 'mod casefold;'
@@ -175,6 +179,10 @@ require_text src/vstr/text.rs 'pub use inspect::*;'
 require_text src/vstr/text.rs 'pub use normalize::*;'
 require_text src/vstr/text.rs 'pub use transform::*;'
 require_text src/vstr/text.rs 'pub use wrap::*;'
+require_text src/vstr/width.rs 'mod measure;'
+require_text src/vstr/width.rs 'mod wrap;'
+require_text src/vstr/width.rs 'pub use measure::*;'
+require_text src/vstr/width.rs 'pub use wrap::*;'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/affix.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/compare.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/escape.rs'
@@ -193,6 +201,8 @@ require_text bin/check-public-api-inventory.sh '  src/vstr/text/inspect.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/text/normalize.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/text/transform.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/text/wrap.rs'
+require_text bin/check-public-api-inventory.sh '  src/vstr/width/measure.rs'
+require_text bin/check-public-api-inventory.sh '  src/vstr/width/wrap.rs'
 if awk '
   /^\[dependencies\]$/ { in_deps = 1; next }
   /^\[/ { in_deps = 0 }

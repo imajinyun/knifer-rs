@@ -22,6 +22,7 @@ workspace:
     - "src/vstr/*"
     - "src/vstr/basic/*"
     - "src/vstr/text/*"
+    - "src/vstr/width/*"
     - "bench/*"
     - "bin/*"
     - "docs/*"
