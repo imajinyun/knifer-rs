@@ -10,8 +10,10 @@ use std::time::{Duration, Instant};
 use serde_json::{Value, json};
 
 const ITERATIONS: usize = 1_024;
+const REPORT_SCHEMA: &str = "https://knifer-rs.dev/schemas/vstr-bench-report.v1";
 const REPORT_VERSION: &str = "v1";
 const BENCHMARK_SUITE: &str = "vstr_bench";
+const UNKNOWN_ENV: &str = "unknown";
 
 #[derive(Clone, Copy)]
 struct BenchResult {
@@ -19,6 +21,13 @@ struct BenchResult {
     iterations: usize,
     elapsed_ns: u128,
     checksum: usize,
+}
+
+struct BenchEnvironment {
+    rustc_version: String,
+    target_triple: String,
+    feature_set: String,
+    commit_sha: String,
 }
 
 #[derive(Clone, Copy, Eq, PartialEq)]
@@ -159,6 +168,17 @@ fn result(name: &'static str, elapsed: Duration, checksum: usize) -> BenchResult
 }
 
 fn print_plain(results: &[BenchResult]) {
+    let environment = bench_environment();
+    println!(
+        "suite={} schema={} version={} rustc={} target={} features={} commit={}",
+        BENCHMARK_SUITE,
+        REPORT_SCHEMA,
+        REPORT_VERSION,
+        environment.rustc_version,
+        environment.target_triple,
+        environment.feature_set,
+        environment.commit_sha
+    );
     for result in results {
         println!(
             "bench={} iterations={} elapsed_ns={} checksum={}",
@@ -168,10 +188,15 @@ fn print_plain(results: &[BenchResult]) {
 }
 
 fn print_json(results: &[BenchResult]) {
+    let environment = bench_environment();
     let mut output = String::new();
     write!(
         output,
-        "{{\"suite\":\"{BENCHMARK_SUITE}\",\"version\":\"{REPORT_VERSION}\",\"results\":["
+        "{{\"schema\":\"{REPORT_SCHEMA}\",\"suite\":\"{BENCHMARK_SUITE}\",\"version\":\"{REPORT_VERSION}\",\"environment\":{{\"rustc_version\":\"{}\",\"target_triple\":\"{}\",\"feature_set\":\"{}\",\"commit_sha\":\"{}\"}},\"results\":[",
+        json_escape(&environment.rustc_version),
+        json_escape(&environment.target_triple),
+        json_escape(&environment.feature_set),
+        json_escape(&environment.commit_sha),
     )
     .expect("write to String cannot fail");
 
@@ -272,6 +297,7 @@ fn change_from_baseline(
 
 fn print_compare_json(baseline_path: &str, max_regression_bps: u128, comparisons: &[Comparison]) {
     let status = comparison_status(comparisons);
+    let environment = bench_environment();
     let results: Vec<Value> = comparisons
         .iter()
         .map(|comparison| {
@@ -289,8 +315,15 @@ fn print_compare_json(baseline_path: &str, max_regression_bps: u128, comparisons
     println!(
         "{}",
         json!({
+            "schema": REPORT_SCHEMA,
             "suite": BENCHMARK_SUITE,
             "version": REPORT_VERSION,
+            "environment": {
+                "rustc_version": environment.rustc_version,
+                "target_triple": environment.target_triple,
+                "feature_set": environment.feature_set,
+                "commit_sha": environment.commit_sha,
+            },
             "baseline": baseline_path,
             "max_regression_percent": format_bps(max_regression_bps),
             "status": status,
@@ -304,8 +337,10 @@ fn print_compare_markdown(
     max_regression_bps: u128,
     comparisons: &[Comparison],
 ) {
+    let environment = bench_environment();
     println!("# {BENCHMARK_SUITE} Comparison");
     println!();
+    println!("- Schema: `{REPORT_SCHEMA}`");
     println!("- Version: `{REPORT_VERSION}`");
     println!("- Baseline: `{baseline_path}`");
     println!(
@@ -313,6 +348,8 @@ fn print_compare_markdown(
         format_bps(max_regression_bps)
     );
     println!("- Status: `{}`", comparison_status(comparisons));
+    println!();
+    print_environment_markdown(&environment);
     println!();
     println!("| Benchmark | Baseline ns | Current ns | Direction | Change | Status |");
     println!("| --- | ---: | ---: | --- | ---: | --- |");
@@ -395,10 +432,14 @@ impl ChangeDirection {
 }
 
 fn print_markdown(results: &[BenchResult]) {
+    let environment = bench_environment();
     println!("# {BENCHMARK_SUITE} Report");
     println!();
+    println!("- Schema: `{REPORT_SCHEMA}`");
     println!("- Version: `{REPORT_VERSION}`");
     println!("- Iterations per benchmark: `{ITERATIONS}`");
+    println!();
+    print_environment_markdown(&environment);
     println!();
     println!("| Benchmark | Iterations | Elapsed ns | Checksum |");
     println!("| --- | ---: | ---: | ---: |");
@@ -408,6 +449,56 @@ fn print_markdown(results: &[BenchResult]) {
             result.name, result.iterations, result.elapsed_ns, result.checksum
         );
     }
+}
+
+fn print_environment_markdown(environment: &BenchEnvironment) {
+    println!("## Environment");
+    println!();
+    println!("- rustc: `{}`", environment.rustc_version);
+    println!("- target: `{}`", environment.target_triple);
+    println!("- features: `{}`", environment.feature_set);
+    println!("- commit: `{}`", environment.commit_sha);
+}
+
+fn bench_environment() -> BenchEnvironment {
+    BenchEnvironment {
+        rustc_version: env::var("VSTR_BENCH_RUSTC_VERSION")
+            .unwrap_or_else(|_| UNKNOWN_ENV.to_owned()),
+        target_triple: env::var("VSTR_BENCH_TARGET_TRIPLE")
+            .unwrap_or_else(|_| UNKNOWN_ENV.to_owned()),
+        feature_set: active_feature_set(),
+        commit_sha: env::var("VSTR_BENCH_COMMIT_SHA").unwrap_or_else(|_| UNKNOWN_ENV.to_owned()),
+    }
+}
+
+fn active_feature_set() -> String {
+    let mut features = Vec::new();
+
+    if cfg!(feature = "matcher-aho-corasick") {
+        features.push("matcher-aho-corasick");
+    }
+    if cfg!(feature = "pattern-regex") {
+        features.push("pattern-regex");
+    }
+    if cfg!(feature = "unicode-segmentation") {
+        features.push("unicode-segmentation");
+    }
+    if cfg!(feature = "unicode-width") {
+        features.push("unicode-width");
+    }
+
+    if features.is_empty() {
+        "default".to_owned()
+    } else {
+        features.join(",")
+    }
+}
+
+fn json_escape(input: &str) -> String {
+    input
+        .replace('\\', "\\\\")
+        .replace('"', "\\\"")
+        .replace('\n', "\\n")
 }
 
 fn bench_contains(input: &str) -> usize {

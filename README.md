@@ -152,7 +152,9 @@ To generate release-grade benchmark artifacts locally, pass an output directory:
 bash bin/check-vstr-bench.sh target/vstr-bench-report
 ```
 
-That writes `vstr-bench.txt`, `vstr-bench.json`, and `vstr-bench.md`. The same
+That writes `vstr-bench.txt`, `vstr-bench.json`, and `vstr-bench.md`. JSON and
+Markdown reports include a stable metadata contract:
+`schema/version plus rustc, target, feature set, and commit metadata`. The same
 entry point is used by the manual GitHub Actions benchmark workflow when
 `run_release_bench` is set to `true`.
 

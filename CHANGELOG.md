@@ -39,6 +39,8 @@ in the relevant parity documents.
 - Added CI coverage for no-default-features, all-features, MSRV, docs.rs
   readiness, public API inventory, local API semver checks, benchmark smoke,
   and fuzz smoke.
+- Added versioned benchmark JSON/Markdown artifacts with schema and environment
+  metadata for release comparison.
 - Added manual release workflows for benchmark artifact generation and
   release-grade API semver checks with `cargo-semver-checks`.
 - Added project governance files: `LICENSE`, `SECURITY.md`, and

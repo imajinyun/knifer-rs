@@ -15,8 +15,10 @@ bash bin/check-vstr-bench.sh target/vstr-bench-report
 The script writes:
 
 - `vstr-bench.txt`
-- `vstr-bench.json`
-- `vstr-bench.md`
+- `vstr-bench.json`, including `schema`, `version`, `suite`,
+  `environment`, and result records;
+- `vstr-bench.md`, including rustc version, target triple, feature set, and
+  commit SHA.
 
 When a baseline is supplied, it also writes:
 
@@ -54,6 +56,7 @@ Refresh the baseline when one of these changes is intentional:
 - a benchmarked API is added, removed, or renamed;
 - the benchmark harness changes measurement units, iteration counts, or output
   schema;
+- the benchmark report schema or environment metadata contract changes;
 - an accepted optimization or regression changes expected runtime behavior.
 
 Do not refresh the baseline only to hide an unexplained slowdown. First inspect
