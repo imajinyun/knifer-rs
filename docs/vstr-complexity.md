@@ -70,12 +70,15 @@ same pattern: `unicode_sentences` filters separator-only spans, while
 `split_sentence_bounds` and `split_sentence_bound_indices` preserve them.
 
 The `unicode-width` feature adds terminal display-width helpers such as
-`display_width`, `take_width`, and `truncate_width`. These helpers follow the
-`unicode-width` crate's rules, including CJK full-width characters, combining
-marks, and emoji ZWJ sequences. `take_width` measures each candidate prefix as a
-complete string so its behavior stays aligned with `display_width`.
-`truncate_width` reserves suffix budget in display cells. Optional helpers must
-not silently change scalar-based helpers.
+`display_width`, `take_width`, `truncate_width`, `wrap_width`, and
+`wrap_width_with_indent`. These helpers follow the `unicode-width` crate's
+rules, including CJK full-width characters, combining marks, and emoji ZWJ
+sequences. `take_width` measures each candidate prefix as a complete string so
+its behavior stays aligned with `display_width`. `truncate_width` reserves
+suffix budget in display cells. `wrap_width` and `wrap_width_with_indent` use
+display-cell budgets while preserving the same whitespace-collapse and
+long-word progress guarantees as scalar `wrap`. Optional helpers must not
+silently change scalar-based helpers.
 
 ## Wrap and Truncation Boundaries
 

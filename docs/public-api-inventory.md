@@ -182,6 +182,8 @@ knifer_rs::vstr::with_emoji_replacer = pub fn with_emoji_replacer<'src>(replacer
 knifer_rs::vstr::word_count = pub fn word_count(input: &str) -> usize
 knifer_rs::vstr::words = pub fn words(input: &str) -> Vec<&str>
 knifer_rs::vstr::wrap = pub fn wrap(input: &str, width: usize) -> String
+knifer_rs::vstr::wrap_width = pub fn wrap_width(input: &str, width: usize) -> String
+knifer_rs::vstr::wrap_width_with_indent = pub fn wrap_width_with_indent(input: &str, width: usize, initial_indent: &str, subsequent_indent: &str) -> String
 knifer_rs::vstr::wrap_with_indent = pub fn wrap_with_indent(input: &str, width: usize, initial_indent: &str, subsequent_indent: &str) -> String
 <!-- public-api-signatures:end -->
 
@@ -223,7 +225,8 @@ Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
 `unicode_word_indices`, `split_word_bounds`, `split_word_bound_indices`,
 `unicode_sentences`, `unicode_sentence_len`, `split_sentence_bounds`,
 `split_sentence_bound_indices`,
-`display_width`, `take_width`, `truncate_width`,
+`display_width`, `take_width`, `truncate_width`, `wrap_width`,
+`wrap_width_with_indent`,
 `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
 `swap_case`, `normalize_whitespace`, `remove_whitespace`, `between`,

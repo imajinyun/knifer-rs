@@ -102,6 +102,8 @@ assert_eq!(vstr::display_width("abc你好"), 7);
 assert_eq!(vstr::take_width("👨‍👩‍👧‍👦 family", 2), "👨‍👩‍👧‍👦");
 #[cfg(feature = "unicode-width")]
 assert_eq!(vstr::truncate_width("你好Rust", 6, "..."), "你...");
+#[cfg(feature = "unicode-width")]
+assert_eq!(vstr::wrap_width("你好Rust world", 8), "你好Rust\nworld");
 assert_eq!(vstr::abbreviate_middle("abcdefghijklmnopqrstuvwxyz", 10, "..."), "abcd...xyz");
 assert_eq!(vstr::mask("13800138000", 3, 4, '*'), "138****8000");
 assert_eq!(vstr::collapse_repeated_char("a---b----c", '-'), "a-b-c");
@@ -233,7 +235,7 @@ knifer-rs = { version = "0.1", features = ["unicode-segmentation"] }
 ```
 
 Optional `unicode-width` helpers add terminal display-cell measurement and
-truncation for CJK, combining marks, and emoji ZWJ text:
+wrapping/truncation for CJK, combining marks, and emoji ZWJ text:
 
 ```toml
 [dependencies]

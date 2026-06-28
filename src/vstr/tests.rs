@@ -645,6 +645,18 @@ fn unicode_width_helpers_follow_display_cell_boundaries() {
     assert_eq!(truncate_width("你好Rust", 6, "..."), "你...");
     assert_eq!(truncate_width("short", 10, "..."), "short");
     assert_eq!(truncate_width("e\u{301}clair", 4, "..."), "e\u{301}...");
+
+    assert_eq!(wrap_width("你好Rust world", 8), "你好Rust\nworld");
+    assert_eq!(wrap_width("你好世界Rust", 6), "你好世\n界Rust");
+    assert_eq!(
+        wrap_width_with_indent("你好Rust world", 10, "* ", "  "),
+        "* 你好Rust\n  world"
+    );
+    assert_eq!(
+        wrap_width_with_indent("alpha 你好 beta", 9, "=> ", "   "),
+        "=> alpha\n   你好\n   beta"
+    );
+    assert_eq!(wrap_width_with_indent("ignored", 0, "> ", "  "), "");
 }
 
 #[test]
