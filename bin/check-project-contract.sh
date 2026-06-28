@@ -66,6 +66,9 @@ require_file src/vstr/text/wrap/tokens.rs
 require_file src/vstr/width.rs
 require_file src/vstr/width/measure.rs
 require_file src/vstr/width/wrap.rs
+require_file src/vstr/width/wrap/basic.rs
+require_file src/vstr/width/wrap/options_wrap.rs
+require_file src/vstr/width/wrap/tokens.rs
 require_file src/vstr/tests.rs
 require_file src/vstr/tests/basic.rs
 require_file src/vstr/tests/case.rs
@@ -153,6 +156,7 @@ require_text aiflow.yaml '    - "src/vstr/matcher/*"'
 require_text aiflow.yaml '    - "src/vstr/text/*"'
 require_text aiflow.yaml '    - "src/vstr/text/wrap/*"'
 require_text aiflow.yaml '    - "src/vstr/width/*"'
+require_text aiflow.yaml '    - "src/vstr/width/wrap/*"'
 require_text aiflow.yaml '    - ".aiflow/*"'
 require_text src/vstr/basic/mod.rs 'mod affix;'
 require_text src/vstr/basic/mod.rs 'mod casefold;'
@@ -205,6 +209,11 @@ require_text src/vstr/width.rs 'mod measure;'
 require_text src/vstr/width.rs 'mod wrap;'
 require_text src/vstr/width.rs 'pub use measure::*;'
 require_text src/vstr/width.rs 'pub use wrap::*;'
+require_text src/vstr/width/wrap.rs 'mod basic;'
+require_text src/vstr/width/wrap.rs 'mod options_wrap;'
+require_text src/vstr/width/wrap.rs 'mod tokens;'
+require_text src/vstr/width/wrap.rs 'pub use basic::*;'
+require_text src/vstr/width/wrap.rs 'pub use options_wrap::*;'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/affix.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/compare.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/escape.rs'
@@ -230,6 +239,8 @@ require_text bin/check-public-api-inventory.sh '  src/vstr/text/wrap/options.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/text/wrap/options_wrap.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/width/measure.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/width/wrap.rs'
+require_text bin/check-public-api-inventory.sh '  src/vstr/width/wrap/basic.rs'
+require_text bin/check-public-api-inventory.sh '  src/vstr/width/wrap/options_wrap.rs'
 if awk '
   /^\[dependencies\]$/ { in_deps = 1; next }
   /^\[/ { in_deps = 0 }

@@ -128,6 +128,7 @@ src/
     text/      text normalization, truncation, wrapping, and inspection helpers
       wrap/    scalar wrapping options, tokenization, and render helpers
     width/     optional display-width measurement and wrapping helpers
+      wrap/    display-width wrapping tokenization and render helpers
 ```
 
 ## Development Checks ✅

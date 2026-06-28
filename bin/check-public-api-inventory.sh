@@ -198,6 +198,8 @@ all_features_api_files=(
   src/vstr/width.rs
   src/vstr/width/measure.rs
   src/vstr/width/wrap.rs
+  src/vstr/width/wrap/basic.rs
+  src/vstr/width/wrap/options_wrap.rs
 )
 
 extract_snapshot() {

@@ -74,6 +74,9 @@ require_entry src/vstr/text/wrap/tokens.rs
 require_entry src/vstr/width.rs
 require_entry src/vstr/width/measure.rs
 require_entry src/vstr/width/wrap.rs
+require_entry src/vstr/width/wrap/basic.rs
+require_entry src/vstr/width/wrap/options_wrap.rs
+require_entry src/vstr/width/wrap/tokens.rs
 require_entry src/vbytes.rs
 require_entry src/vencoding.rs
 require_entry examples/vstr_daily.rs
