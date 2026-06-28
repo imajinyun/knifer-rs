@@ -439,6 +439,7 @@ require_text docs/vstr-api-parity.md 'knifer_go_vstr_golden_fixtures_cover_simil
 require_text src/vstr/tests.rs 'property_style_substring_helpers_keep_scalar_boundaries'
 require_text src/vstr/tests.rs 'property_style_replacement_and_escaping_helpers_are_stable'
 require_text src/vstr/tests.rs 'property_style_ant_path_literal_patterns_match_themselves'
+require_text src/vstr/tests.rs 'property_style_unicode_width_helpers_respect_display_boundaries'
 require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_case_conversion'
 require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_unicode_escape'
 require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_ant_path_matching'

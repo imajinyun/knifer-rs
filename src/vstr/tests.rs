@@ -1054,8 +1054,85 @@ fn property_style_ant_path_literal_patterns_match_themselves() {
     }
 }
 
+#[cfg(feature = "unicode-width")]
+#[test]
+fn property_style_unicode_width_helpers_respect_display_boundaries() {
+    let mut rng = DeterministicRng::new(0x5eed_0004);
+    let fixed_inputs = [
+        "",
+        "abc",
+        "你好世界",
+        "e\u{301}clair",
+        "👨\u{200d}👩\u{200d}👧\u{200d}👦 family",
+        "🇨🇳 flag",
+        "a   b\t\tc",
+        "supercalifragilistic",
+        "🚀🚀go",
+        "\u{3000}wide space",
+    ];
+
+    for input in fixed_inputs {
+        assert_unicode_width_properties(input, 0..=12);
+    }
+
+    for _ in 0..256 {
+        let input = rng.string(40);
+        let max_width = rng.usize(18);
+
+        assert_unicode_width_properties(&input, max_width..=max_width);
+    }
+}
+
 fn assert_approx_eq(left: f64, right: f64) {
     assert!((left - right).abs() < f64::EPSILON);
+}
+
+#[cfg(feature = "unicode-width")]
+fn assert_unicode_width_properties(input: &str, widths: impl IntoIterator<Item = usize>) {
+    for width in widths {
+        let taken = take_width(input, width);
+        assert!(input.starts_with(taken));
+        assert!(input.is_char_boundary(taken.len()));
+        assert!(display_width(taken) <= width);
+        if let Some(next) = input[taken.len()..].chars().next() {
+            let next_end = taken.len() + next.len_utf8();
+            assert!(display_width(&input[..next_end]) > width);
+        }
+
+        let truncated = truncate_width(input, width, "...");
+        if width == 0 {
+            assert!(truncated.is_empty());
+        } else {
+            assert!(display_width(&truncated) <= width);
+        }
+
+        let wrapped = wrap_width(input, width);
+        if width == 0 {
+            assert!(wrapped.is_empty());
+        } else {
+            for line in wrapped.lines() {
+                assert!(width_line_fits_or_progresses(line, width));
+            }
+        }
+
+        let indented = wrap_width_with_indent(input, width, "> ", "  ");
+        if width == 0 {
+            assert!(indented.is_empty());
+        } else {
+            for (index, line) in indented.lines().enumerate() {
+                let indent = if index == 0 { "> " } else { "  " };
+                assert!(line.starts_with(indent));
+                let content = &line[indent.len()..];
+                let content_width = width.saturating_sub(display_width(indent)).max(1);
+                assert!(width_line_fits_or_progresses(content, content_width));
+            }
+        }
+    }
+}
+
+#[cfg(feature = "unicode-width")]
+fn width_line_fits_or_progresses(line: &str, width: usize) -> bool {
+    display_width(line) <= width || line.chars().count() == 1
 }
 
 struct DeterministicRng {
