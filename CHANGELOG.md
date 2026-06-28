@@ -45,6 +45,8 @@ in the relevant parity documents.
   release-grade API semver checks with `cargo-semver-checks`.
 - Added optional local `cargo-fuzz` support and a bounded fuzz wrapper while
   keeping default CI on deterministic fuzz smoke.
+- Added public API stability classes for core stable, optional feature, and
+  experimental-but-public facade surfaces.
 - Added project governance files: `LICENSE`, `SECURITY.md`, and
   `CONTRIBUTING.md`.
 

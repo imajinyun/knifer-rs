@@ -1,4 +1,9 @@
 //! String and text utilities.
+//!
+//! Default `vstr` helpers are scalar-based and part of the core stable facade.
+//! Regex, Unicode segmentation, and display-width helpers are optional feature
+//! facades. [`VStrMatcher`] is public and behavior-tested, while matcher backend
+//! internals can evolve behind the same public semantics.
 
 mod basic;
 mod case;

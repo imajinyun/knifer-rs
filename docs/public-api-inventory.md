@@ -9,6 +9,50 @@ surface. The same check also computes the default zero-runtime-dependency API
 surface and verifies that the feature-gated delta matches the optional snapshot
 in this file.
 
+## API Stability Classes
+
+`knifer-rs` is still pre-1.0, but public APIs are classified so callers know
+which behavior is already treated as a strong contract.
+
+### Core Stable Facade
+
+The core stable facade is available in the default zero-runtime-dependency
+build. For this class, signature changes here are treated as breaking unless
+they are purely additive. Behavior is locked by unit tests, doctests, golden
+fixtures, fuzz smoke, and project contract checks.
+
+Core stable areas:
+
+- `knifer_rs::vstr`: trim, blank/empty predicates, substring helpers, scalar
+  text helpers, case conversion, replacement, literal search, escaping, Ant
+  path matching, emoji helpers, and similarity helpers.
+- `knifer_rs::vbytes`: byte length, UTF-8 validation, byte slicing, ASCII trim,
+  byte search, prefix/suffix stripping, and byte replacement.
+- `knifer_rs::vencoding`: BOM detection, BOM stripping, UTF-8 validation, and
+  lossy UTF-8 decoding boundaries.
+
+### Optional Feature Facade
+
+The optional feature facade is public only when its feature is enabled. These APIs are absent from the default build and are listed in the optional signature snapshot below. Once enabled, their signatures are checked with the same semver-aware inventory gates as the all-features surface.
+
+Optional feature areas:
+
+- `pattern-regex`: regex-backed `contains_pattern`, `find_pattern`,
+  `find_all_patterns`, `replace_pattern`, and `PatternError`.
+- `unicode-segmentation`: grapheme, word, and sentence boundary helpers.
+- `unicode-width`: display-cell width, width truncation, and width wrapping.
+
+### Experimental-But-Public Facade
+
+Some public APIs are intentionally useful now but may still receive pre-1.0
+semantic tuning as long as signature and behavior changes are recorded.
+`VStrMatcher`, `VStrMatch`, and `MatchKind` are in this class because the
+default implementation and the optional `matcher-aho-corasick` backend must keep
+the same public semantics, while backend internals can still evolve.
+
+Experimental-but-public behavior is still covered by parity tests, fuzz smoke,
+and the all-features inventory; it is not a private implementation detail.
+
 ## All-Features Public API Signature Snapshot
 
 <!-- public-api-signatures:start -->
@@ -268,16 +312,6 @@ knifer_rs::vstr::wrap_width = pub fn wrap_width(input: &str, width: usize) -> St
 knifer_rs::vstr::wrap_width_with_indent = pub fn wrap_width_with_indent(input: &str, width: usize, initial_indent: &str, subsequent_indent: &str) -> String
 knifer_rs::vstr::wrap_width_with_options = pub fn wrap_width_with_options(input: &str, options: &WrapOptions<'_>) -> String
 <!-- public-api-optional-signatures:end -->
-
-## Reserved `pattern-regex` API Shape
-
-Potential helpers: `contains_pattern`, `find_pattern`, `find_all_patterns`,
-`replace_pattern`, and `PatternError`.
-
-## Reserved Multi-Pattern Matcher Shape
-
-Potential types and methods: `VStrMatcher`, `VStrMatch`, `MatchKind`,
-`leftmost-first`, `leftmost-longest`, and `find_overlapping`.
 
 ## Facade Boundaries
 

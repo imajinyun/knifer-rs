@@ -205,6 +205,12 @@ zero-runtime-dependency API boundary visible beside the all-features surface.
 `check-release-api-semver.sh` keeps that fast local check and, when a release
 baseline is configured, runs `cargo-semver-checks check-release`.
 
+The API stability model is tracked in `docs/public-api-inventory.md`: the
+`core stable facade` is available in the default build, the
+`optional feature facade` appears only behind Cargo features, and
+`experimental-but-public APIs` such as `VStrMatcher` keep tested public
+semantics while pre-1.0 internals can still evolve.
+
 For release review against a git tag or branch, install `cargo-semver-checks`
 and pass a baseline ref:
 
