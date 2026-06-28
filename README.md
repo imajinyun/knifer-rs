@@ -122,6 +122,7 @@ src/
     classify.rs character classification helpers
     emoji.rs   emoji detection and removal helpers
     encoding.rs HTML and Unicode escaping helpers
+    matcher/   reusable literal matcher facade and optional backend adapter
     path.rs    Ant-style path matching helpers
     similarity.rs text similarity and fingerprint helpers
     text/      text normalization, truncation, wrapping, and inspection helpers

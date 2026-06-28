@@ -57,6 +57,10 @@ require_entry src/vstr/basic/split.rs
 require_entry src/vstr/basic/substring.rs
 require_entry src/vstr/basic/trim.rs
 require_entry src/vstr/basic/value.rs
+require_entry src/vstr/matcher.rs
+require_entry src/vstr/matcher/backend.rs
+require_entry src/vstr/matcher/search.rs
+require_entry src/vstr/matcher/types.rs
 require_entry src/vstr/text.rs
 require_entry src/vstr/text/content.rs
 require_entry src/vstr/text/inspect.rs

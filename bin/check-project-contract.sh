@@ -49,6 +49,10 @@ require_file src/vstr/basic/split.rs
 require_file src/vstr/basic/substring.rs
 require_file src/vstr/basic/trim.rs
 require_file src/vstr/basic/value.rs
+require_file src/vstr/matcher.rs
+require_file src/vstr/matcher/backend.rs
+require_file src/vstr/matcher/search.rs
+require_file src/vstr/matcher/types.rs
 require_file src/vstr/text.rs
 require_file src/vstr/text/content.rs
 require_file src/vstr/text/inspect.rs
@@ -141,6 +145,7 @@ require_text Cargo.toml 'pattern-regex = ["dep:regex"]'
 require_text Cargo.toml 'unicode-segmentation = ["dep:unicode-segmentation"]'
 require_text Cargo.toml 'unicode-width = ["dep:unicode-width"]'
 require_text aiflow.yaml '    - "src/vstr/basic/*"'
+require_text aiflow.yaml '    - "src/vstr/matcher/*"'
 require_text aiflow.yaml '    - "src/vstr/text/*"'
 require_text aiflow.yaml '    - "src/vstr/width/*"'
 require_text aiflow.yaml '    - ".aiflow/*"'
@@ -169,6 +174,11 @@ require_text src/vstr/basic/mod.rs 'pub use split::*;'
 require_text src/vstr/basic/mod.rs 'pub use substring::*;'
 require_text src/vstr/basic/mod.rs 'pub use trim::*;'
 require_text src/vstr/basic/mod.rs 'pub use value::*;'
+require_text src/vstr/matcher.rs 'mod search;'
+require_text src/vstr/matcher.rs 'mod types;'
+require_text src/vstr/matcher.rs 'pub use types::{MatchKind, VStrMatch, VStrMatcher};'
+require_text src/vstr/matcher.rs '#[cfg(feature = "matcher-aho-corasick")]'
+require_text src/vstr/matcher.rs 'mod backend;'
 require_text src/vstr/text.rs 'mod content;'
 require_text src/vstr/text.rs 'mod inspect;'
 require_text src/vstr/text.rs 'mod normalize;'
@@ -196,6 +206,8 @@ require_text bin/check-public-api-inventory.sh '  src/vstr/basic/split.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/substring.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/trim.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/basic/value.rs'
+require_text bin/check-public-api-inventory.sh '  src/vstr/matcher/search.rs'
+require_text bin/check-public-api-inventory.sh '  src/vstr/matcher/types.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/text/content.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/text/inspect.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/text/normalize.rs'

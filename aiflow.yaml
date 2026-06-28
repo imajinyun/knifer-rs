@@ -21,6 +21,7 @@ workspace:
     - "src/*"
     - "src/vstr/*"
     - "src/vstr/basic/*"
+    - "src/vstr/matcher/*"
     - "src/vstr/text/*"
     - "src/vstr/width/*"
     - "bench/*"
