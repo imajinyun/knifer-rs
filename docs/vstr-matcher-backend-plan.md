@@ -1,12 +1,13 @@
 # `vstr` Matcher Backend Plan
 
 `VStrMatcher` is the stable public facade for reusable literal multi-pattern
-matching. The current implementation intentionally uses Safe Rust literal search
-so public semantics can mature before an optional automaton backend is added.
+matching. The default implementation uses Safe Rust literal search, and the
+optional backend uses `aho-corasick` only as an implementation detail behind the
+same facade contract.
 
 ## Feature Boundary
 
-The future backend feature name is `matcher-aho-corasick`.
+The backend feature name is `matcher-aho-corasick`.
 
 Admission rules:
 
@@ -36,8 +37,7 @@ the public contract.
 
 ## Test Requirements
 
-Before enabling `matcher-aho-corasick`, add parity tests that run the same input
-matrix with and without the feature:
+Parity tests run the same input matrix with and without the feature:
 
 - empty needles and duplicate needles;
 - leftmost-first versus leftmost-longest ties;

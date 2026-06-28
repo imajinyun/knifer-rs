@@ -12,12 +12,14 @@ keywords = ["utility", "string", "safe-rust", "business"]
 categories = ["development-tools", "text-processing"]
 
 [dependencies]
+aho-corasick = { version = "1", optional = true }
 regex = { version = "1", optional = true }
 unicode-segmentation = { version = "1", optional = true }
 unicode-width = { version = "0.2", optional = true }
 
 [features]
 default = []
+matcher-aho-corasick = ["dep:aho-corasick"]
 pattern-regex = ["dep:regex"]
 unicode-segmentation = ["dep:unicode-segmentation"]
 unicode-width = ["dep:unicode-width"]

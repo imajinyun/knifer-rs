@@ -26,19 +26,28 @@ pub struct VStrMatch<'needle> {
 
 /// Reusable literal multi-pattern matcher for `vstr`.
 ///
-/// Empty needles are ignored. This Safe Rust MVP uses straightforward literal
-/// search and is intended to lock down public semantics before any optional
-/// automaton-backed optimization is introduced.
+/// Empty needles are ignored. The default build uses straightforward literal
+/// search. The optional `matcher-aho-corasick` feature may use an automaton
+/// backend internally, but the public tie-break and replacement semantics stay
+/// owned by this facade.
 #[derive(Clone, Debug)]
 pub struct VStrMatcher<'needle> {
     needles: Vec<Needle<'needle>>,
     kind: MatchKind,
+    #[cfg(feature = "matcher-aho-corasick")]
+    backend: Option<MatcherBackend>,
 }
 
 #[derive(Clone, Debug)]
 struct Needle<'needle> {
     value: &'needle str,
     index: usize,
+}
+
+#[cfg(feature = "matcher-aho-corasick")]
+#[derive(Clone, Debug)]
+struct MatcherBackend {
+    automaton: aho_corasick::AhoCorasick,
 }
 
 impl<'needle> VStrMatcher<'needle> {
@@ -83,13 +92,21 @@ impl<'needle> VStrMatcher<'needle> {
     where
         I: IntoIterator<Item = &'needle str>,
     {
-        let needles = needles
+        let needles: Vec<Needle<'needle>> = needles
             .into_iter()
             .enumerate()
             .filter_map(|(index, value)| (!value.is_empty()).then_some(Needle { value, index }))
             .collect();
 
-        Self { needles, kind }
+        #[cfg(feature = "matcher-aho-corasick")]
+        let backend = MatcherBackend::new(&needles, kind);
+
+        Self {
+            needles,
+            kind,
+            #[cfg(feature = "matcher-aho-corasick")]
+            backend,
+        }
     }
 
     /// Returns `true` when the matcher has no non-empty needles.
@@ -227,6 +244,11 @@ impl<'needle> VStrMatcher<'needle> {
             return None;
         }
 
+        #[cfg(feature = "matcher-aho-corasick")]
+        if let Some(backend) = &self.backend {
+            return backend.find_at(&self.needles, self.kind, input, offset);
+        }
+
         let mut best = None;
 
         for needle in &self.needles {
@@ -248,21 +270,36 @@ impl<'needle> VStrMatcher<'needle> {
     }
 
     fn find_starting_at(&self, input: &str, start: usize) -> Option<VStrMatch<'needle>> {
-        let mut best = None;
+        find_starting_at(&self.needles, self.kind, input, start)
+    }
+}
 
-        for needle in &self.needles {
-            if input[start..].starts_with(needle.value) {
-                let matched = VStrMatch {
-                    needle: needle.value,
-                    pattern_index: needle.index,
-                    start,
-                    end: start + needle.value.len(),
-                };
-                best = Some(choose_same_start_match(best, matched, self.kind));
-            }
+#[cfg(feature = "matcher-aho-corasick")]
+impl MatcherBackend {
+    fn new(needles: &[Needle<'_>], kind: MatchKind) -> Option<Self> {
+        if needles.is_empty() {
+            return None;
         }
 
-        best
+        aho_corasick::AhoCorasickBuilder::new()
+            .match_kind(match kind {
+                MatchKind::LeftmostFirst => aho_corasick::MatchKind::LeftmostFirst,
+                MatchKind::LeftmostLongest => aho_corasick::MatchKind::LeftmostLongest,
+            })
+            .build(needles.iter().map(|needle| needle.value))
+            .ok()
+            .map(|automaton| Self { automaton })
+    }
+
+    fn find_at<'needle>(
+        &self,
+        needles: &[Needle<'needle>],
+        kind: MatchKind,
+        input: &str,
+        offset: usize,
+    ) -> Option<VStrMatch<'needle>> {
+        let start = self.automaton.find(&input[offset..])?.start() + offset;
+        find_starting_at(needles, kind, input, start)
     }
 }
 
@@ -295,4 +332,27 @@ fn choose_same_start_match<'needle>(
         }
         (Some(current), MatchKind::LeftmostFirst | MatchKind::LeftmostLongest) => current,
     }
+}
+
+fn find_starting_at<'needle>(
+    needles: &[Needle<'needle>],
+    kind: MatchKind,
+    input: &str,
+    start: usize,
+) -> Option<VStrMatch<'needle>> {
+    let mut best = None;
+
+    for needle in needles {
+        if input[start..].starts_with(needle.value) {
+            let matched = VStrMatch {
+                needle: needle.value,
+                pattern_index: needle.index,
+                start,
+                end: start + needle.value.len(),
+            };
+            best = Some(choose_same_start_match(best, matched, kind));
+        }
+    }
+
+    best
 }

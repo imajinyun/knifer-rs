@@ -539,6 +539,62 @@ fn reusable_matcher_supports_leftmost_longest_and_overlap() {
 }
 
 #[test]
+fn reusable_matcher_backend_parity_matrix_locks_public_semantics() {
+    let cases = [
+        (
+            "empty and duplicate needles",
+            "",
+            &["", "a", "a"][..],
+            &["", "x", "y"][..],
+        ),
+        (
+            "leftmost-first and leftmost-longest tie",
+            "aaaa",
+            &["a", "aa", "aaa"][..],
+            &["x", "y"][..],
+        ),
+        (
+            "multibyte byte offsets",
+            "你好你好",
+            &["你", "你好", "好你"][..],
+            &["N", "NH", "HN"][..],
+        ),
+        (
+            "mixed ascii unicode",
+            "go🚀rust🚀go",
+            &["🚀", "go", "rust"][..],
+            &["R"][..],
+        ),
+    ];
+
+    for (name, input, needles, replacements) in cases {
+        for kind in [MatchKind::LeftmostFirst, MatchKind::LeftmostLongest] {
+            let matcher = VStrMatcher::with_kind(needles.iter().copied(), kind);
+            assert_eq!(
+                matcher.find(input),
+                expected_matcher_find(input, needles, kind),
+                "{name:?} {kind:?} find"
+            );
+            assert_eq!(
+                matcher.find_all(input),
+                expected_matcher_find_all(input, needles, kind),
+                "{name:?} {kind:?} find_all"
+            );
+            assert_eq!(
+                matcher.find_overlapping(input),
+                expected_matcher_find_overlapping(input, needles, kind),
+                "{name:?} {kind:?} find_overlapping"
+            );
+            assert_eq!(
+                matcher.replace_all(input, replacements.iter().copied()),
+                expected_matcher_replace_all(input, needles, kind, replacements),
+                "{name:?} {kind:?} replace_all"
+            );
+        }
+    }
+}
+
+#[test]
 fn equality_and_reverse_helpers_are_unicode_aware() {
     assert!(equals_ignore_case("Knifer-RS", "knifer-rs"));
     assert!(equals_ignore_case("Straße", "straße"));

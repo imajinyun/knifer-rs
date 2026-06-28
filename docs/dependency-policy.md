@@ -66,6 +66,8 @@ standard library is intentionally lower level.
 `matcher-aho-corasick` Admission Contract:
 
 - The default build must not depend on `aho-corasick`.
+- `matcher-aho-corasick` may enable the optional `aho-corasick` dependency for
+  reusable matcher internals only.
 - `VStrMatcher` signatures, `VStrMatch` byte offsets, empty-needle handling, and
   replacement fallback semantics must not change.
 - The optional backend must preserve `MatchKind::LeftmostFirst`,

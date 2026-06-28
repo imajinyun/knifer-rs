@@ -25,6 +25,8 @@ in the relevant parity documents.
   behavior.
 - Added `VStrMatcher` for reusable literal multi-pattern matching with
   leftmost-first, leftmost-longest, overlap, and replacement semantics.
+- Added the optional `matcher-aho-corasick` backend for `VStrMatcher` internals
+  while preserving the default zero-runtime-dependency build.
 - Added the `vbytes` facade for byte slices that may not be valid UTF-8,
   covering byte length, UTF-8 checks, byte slicing, ASCII trimming, literal
   search, prefix/suffix stripping, and replacement.

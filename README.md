@@ -84,6 +84,7 @@ knifer-rs = {
 | Feature | Adds | Default |
 | --- | --- | --- |
 | `default` | Safe Rust helpers for `vstr`, `vbytes`, and `vencoding` | enabled |
+| `matcher-aho-corasick` | optional automaton backend for `VStrMatcher` internals | disabled |
 | `pattern-regex` | regex-backed pattern helpers such as `vstr::find_pattern` | disabled |
 | `unicode-segmentation` | grapheme, word, and sentence boundary helpers | disabled |
 | `unicode-width` | display-cell width, truncation, and wrap helpers | disabled |
@@ -240,5 +241,6 @@ runs `cargo package --locked --allow-dirty`.
 - Safety: unsafe code is forbidden by Cargo lints and checked by the project
   contract script.
 - Dependencies: zero runtime dependencies in the default feature set; optional
-  features add focused crates such as `regex`, `unicode-segmentation`, and
-  `unicode-width`.
+features add focused crates such as `regex`, `unicode-segmentation`, and
+  `unicode-width`; `matcher-aho-corasick` adds `aho-corasick` only for matcher
+  internals.
