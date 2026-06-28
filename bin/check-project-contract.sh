@@ -35,6 +35,19 @@ require_file docs/api-behavior-contract.md
 require_file docs/dependency-policy.md
 require_file src/vbytes.rs
 require_file src/vencoding.rs
+require_file src/vstr/tests.rs
+require_file src/vstr/tests/basic.rs
+require_file src/vstr/tests/case.rs
+require_file src/vstr/tests/classify.rs
+require_file src/vstr/tests/emoji.rs
+require_file src/vstr/tests/encoding.rs
+require_file src/vstr/tests/matcher.rs
+require_file src/vstr/tests/path.rs
+require_file src/vstr/tests/property.rs
+require_file src/vstr/tests/similarity.rs
+require_file src/vstr/tests/support.rs
+require_file src/vstr/tests/text.rs
+require_file src/vstr/tests/unicode.rs
 require_file bin/check-docs-rs-ready.sh
 require_file bin/check-examples.sh
 require_file bin/check-package-contents.sh
@@ -559,19 +572,19 @@ require_text src/vencoding.rs 'vencoding_detects_bom_prefixes_with_overlapping_o
 require_text docs/dependency-policy.md '`vencoding` Admission Contract'
 require_text docs/dependency-policy.md '`encoding` feature'
 require_text docs/dependency-policy.md 'fallback decoding APIs'
-require_text src/vstr/tests.rs 'unicode_boundary_golden_cases_document_scalar_semantics'
-require_text src/vstr/tests.rs 'wrap_and_truncate_boundary_cases_follow_scalar_width_policy'
-require_text src/vstr/tests.rs 'wrap_with_options_exposes_scalar_layout_policy'
-require_text src/vstr/tests.rs 'wrap_width_with_options_exposes_display_layout_policy'
-require_text src/vstr/tests.rs 'WrapOptions::new(7).with_word_separators'
-require_text src/vstr/tests.rs 'WhitespaceMode::Preserve'
-require_text src/vstr/tests.rs 'LongWordPolicy::Preserve'
-require_text src/vstr/tests.rs 'emoji_zwj'
-require_text src/vstr/tests.rs 'mixed_width'
-require_text src/vstr/tests.rs 'supercalifragilistic'
-require_text src/vstr/tests.rs 'wrap_with_indent("abcdefghij", 4, ">>>>", "--")'
-require_text src/vstr/tests.rs 'truncate_with_suffix("abcdef", 3, "...")'
-require_text src/vstr/tests.rs 'abbreviate_middle("abcdef", 5, "")'
+require_text src/vstr/tests/unicode.rs 'unicode_boundary_golden_cases_document_scalar_semantics'
+require_text src/vstr/tests/text.rs 'wrap_and_truncate_boundary_cases_follow_scalar_width_policy'
+require_text src/vstr/tests/text.rs 'wrap_with_options_exposes_scalar_layout_policy'
+require_text src/vstr/tests/text.rs 'wrap_width_with_options_exposes_display_layout_policy'
+require_text src/vstr/tests/text.rs 'WrapOptions::new(7).with_word_separators'
+require_text src/vstr/tests/text.rs 'WhitespaceMode::Preserve'
+require_text src/vstr/tests/text.rs 'LongWordPolicy::Preserve'
+require_text src/vstr/tests/unicode.rs 'emoji_zwj'
+require_text src/vstr/tests/unicode.rs 'mixed_width'
+require_text src/vstr/tests/text.rs 'supercalifragilistic'
+require_text src/vstr/tests/text.rs 'wrap_with_indent("abcdefghij", 4, ">>>>", "--")'
+require_text src/vstr/tests/text.rs 'truncate_with_suffix("abcdef", 3, "...")'
+require_text src/vstr/tests/text.rs 'abbreviate_middle("abcdef", 5, "")'
 require_text docs/vstr-api-parity.md 'Golden Fixtures'
 require_text docs/vstr-api-parity.md 'knifer_go_vstr_golden_fixtures_cover_case_conversion'
 require_text docs/vstr-api-parity.md 'case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode'
@@ -579,22 +592,22 @@ require_text docs/vstr-api-parity.md 'acronym boundaries, number boundaries'
 require_text docs/vstr-api-parity.md 'knifer_go_vstr_golden_fixtures_cover_unicode_escape'
 require_text docs/vstr-api-parity.md 'knifer_go_vstr_golden_fixtures_cover_ant_path_matching'
 require_text docs/vstr-api-parity.md 'knifer_go_vstr_golden_fixtures_cover_similarity'
-require_text src/vstr/tests.rs 'property_style_substring_helpers_keep_scalar_boundaries'
-require_text src/vstr/tests.rs 'property_style_replacement_and_escaping_helpers_are_stable'
-require_text src/vstr/tests.rs 'property_style_reusable_matcher_preserves_match_contracts'
-require_text src/vstr/tests.rs 'reusable_matcher_backend_parity_matrix_locks_public_semantics'
-require_text src/vstr/tests.rs 'property_style_ant_path_literal_patterns_match_themselves'
-require_text src/vstr/tests.rs 'property_style_unicode_width_helpers_respect_display_boundaries'
-require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_case_conversion'
-require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_unicode_escape'
-require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_ant_path_matching'
-require_text src/vstr/tests.rs 'knifer_go_vstr_golden_fixtures_cover_similarity'
-require_text src/vstr/tests.rs 'case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode'
-require_text src/vstr/tests.rs 'struct CaseFixture'
-require_text src/vstr/tests.rs 'numeric acronym suffix'
-require_text src/vstr/tests.rs 'repeated separators'
-require_text src/vstr/tests.rs 'unicode lowercase expansion'
-require_text src/vstr/tests.rs 'cjk prefix'
+require_text src/vstr/tests/property.rs 'property_style_substring_helpers_keep_scalar_boundaries'
+require_text src/vstr/tests/property.rs 'property_style_replacement_and_escaping_helpers_are_stable'
+require_text src/vstr/tests/property.rs 'property_style_reusable_matcher_preserves_match_contracts'
+require_text src/vstr/tests/matcher.rs 'reusable_matcher_backend_parity_matrix_locks_public_semantics'
+require_text src/vstr/tests/property.rs 'property_style_ant_path_literal_patterns_match_themselves'
+require_text src/vstr/tests/property.rs 'property_style_unicode_width_helpers_respect_display_boundaries'
+require_text src/vstr/tests/case.rs 'knifer_go_vstr_golden_fixtures_cover_case_conversion'
+require_text src/vstr/tests/encoding.rs 'knifer_go_vstr_golden_fixtures_cover_unicode_escape'
+require_text src/vstr/tests/path.rs 'knifer_go_vstr_golden_fixtures_cover_ant_path_matching'
+require_text src/vstr/tests/similarity.rs 'knifer_go_vstr_golden_fixtures_cover_similarity'
+require_text src/vstr/tests/case.rs 'case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode'
+require_text src/vstr/tests/case.rs 'struct CaseFixture'
+require_text src/vstr/tests/case.rs 'numeric acronym suffix'
+require_text src/vstr/tests/case.rs 'repeated separators'
+require_text src/vstr/tests/case.rs 'unicode lowercase expansion'
+require_text src/vstr/tests/case.rs 'cjk prefix'
 require_text bench/vstr_bench.rs 'ReportFormat'
 require_text bench/vstr_bench.rs 'REPORT_SCHEMA'
 require_text bench/vstr_bench.rs 'BenchEnvironment'
@@ -790,14 +803,14 @@ require_text fuzz/fuzz_targets/text_boundaries.rs 'wrap_with_indent'
 require_text fuzz/fuzz_targets/text_boundaries.rs 'include_str!("../corpus/text_boundaries.txt")'
 require_text fuzz/fuzz_targets/text_boundaries.rs 'fuzz_target!'
 require_text fuzz/fuzz_targets/text_boundaries.rs 'mask'
-require_text src/vstr/tests.rs 'unicode_segmentation_conformance_fixtures_cover_curated_uax29_subset'
-require_text src/vstr/tests.rs 'emoji modifier'
-require_text src/vstr/tests.rs 'hangul jamo'
-require_text src/vstr/tests.rs 'terminal punctuation'
-require_text src/vstr/tests.rs 'pattern_regex_golden_cases_cover_unicode_empty_and_multibyte_ranges'
-require_text src/vstr/tests.rs 'find_all_patterns("a你好b世界", r"\p{Han}")'
-require_text src/vstr/tests.rs 'replace_pattern("ab", r"", "|")'
-require_text src/vstr/tests.rs 'NotAClass'
+require_text src/vstr/tests/unicode.rs 'unicode_segmentation_conformance_fixtures_cover_curated_uax29_subset'
+require_text src/vstr/tests/unicode.rs 'emoji modifier'
+require_text src/vstr/tests/unicode.rs 'hangul jamo'
+require_text src/vstr/tests/unicode.rs 'terminal punctuation'
+require_text src/vstr/tests/pattern.rs 'pattern_regex_golden_cases_cover_unicode_empty_and_multibyte_ranges'
+require_text src/vstr/tests/pattern.rs 'find_all_patterns("a你好b世界", r"\p{Han}")'
+require_text src/vstr/tests/pattern.rs 'replace_pattern("ab", r"", "|")'
+require_text src/vstr/tests/pattern.rs 'NotAClass'
 
 if grep -R --include='*.rs' -n '\bunsafe\b' src; then
   echo "unsafe Rust is not allowed in src/" >&2
