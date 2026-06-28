@@ -518,6 +518,8 @@ require_text fuzz/PLAN.md 'include_str!'
 require_text docs/vstr-top-string-gap-analysis.md 'fuzz/PLAN.md'
 require_text docs/vstr-top-string-gap-analysis.md 'VSTR-TODO-002: Complete'
 require_text docs/vstr-top-string-gap-analysis.md 'curated UAX #29 conformance fixtures'
+require_text docs/vstr-top-string-gap-analysis.md 'VSTR-TODO-003: Complete'
+require_text docs/vstr-top-string-gap-analysis.md 'regex-backed golden tests cover invalid patterns'
 require_text fuzz/corpus/substring.txt '你好Rust'
 require_text fuzz/corpus/escaping.txt '\uD83D\uDE80'
 require_text fuzz/corpus/path_matching.txt '/api/v1/users'
@@ -547,6 +549,10 @@ require_text src/vstr/tests.rs 'unicode_segmentation_conformance_fixtures_cover_
 require_text src/vstr/tests.rs 'emoji modifier'
 require_text src/vstr/tests.rs 'hangul jamo'
 require_text src/vstr/tests.rs 'terminal punctuation'
+require_text src/vstr/tests.rs 'pattern_regex_golden_cases_cover_unicode_empty_and_multibyte_ranges'
+require_text src/vstr/tests.rs 'find_all_patterns("a你好b世界", r"\p{Han}")'
+require_text src/vstr/tests.rs 'replace_pattern("ab", r"", "|")'
+require_text src/vstr/tests.rs 'NotAClass'
 
 if grep -R --include='*.rs' -n '\bunsafe\b' src; then
   echo "unsafe Rust is not allowed in src/" >&2

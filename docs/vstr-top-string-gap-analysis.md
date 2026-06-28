@@ -72,6 +72,9 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 - Wrap and truncation behavior is locked with golden tests for long words,
   whitespace, CJK, emoji, indentation, and suffix budgets.
 - Regex-backed helpers are available behind `pattern-regex`.
+- `VSTR-TODO-003: Complete` - regex-backed golden tests cover invalid patterns,
+  capture replacement, Unicode classes, empty matches, and multi-byte byte
+  ranges.
 - Reusable literal multi-pattern matching is available through `VStrMatcher`
   with leftmost-first, leftmost-longest, overlap, property, and fuzz smoke
   coverage.
@@ -82,10 +85,7 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
    deterministic smoke targets, then decide whether to add `cargo-fuzz`,
    checked-in corpus seeds, or both. The initial harness strategy is tracked in
    `fuzz/PLAN.md`.
-2. `VSTR-TODO-003` - deepen regex-backed golden tests. Cover invalid patterns,
-   capture replacement, Unicode classes, empty matches, and multi-byte byte
-   ranges.
-3. `VSTR-TODO-004` - define benchmark history operations. Document where
+2. `VSTR-TODO-004` - define benchmark history operations. Document where
    baseline artifacts live, when they are refreshed, and how regression
    thresholds are interpreted.
 
