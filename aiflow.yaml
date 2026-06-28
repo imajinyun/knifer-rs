@@ -20,6 +20,8 @@ workspace:
     - ".github/workflows/*"
     - "src/*"
     - "src/vstr/*"
+    - "src/vstr/basic/*"
+    - "src/vstr/text/*"
     - "bench/*"
     - "bin/*"
     - "docs/*"
