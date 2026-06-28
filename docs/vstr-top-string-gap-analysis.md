@@ -83,6 +83,9 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
   coverage.
 - `VSTR-TODO-001: Complete` - fuzz harness strategy, deterministic smoke
   targets, and checked-in corpus seeds are tracked in `fuzz/PLAN.md`.
+- `VSTR-TODO-005: Complete` - optional `aho-corasick` backend design is tracked
+  in `docs/vstr-matcher-backend-plan.md` without changing the default
+  dependency surface.
 
 ### Next
 
@@ -91,8 +94,6 @@ the `Later` list when the current engineering gates stay green.
 
 ### Later
 
-5. `VSTR-TODO-005` - design an optional `aho-corasick` backend for
-   `VStrMatcher` without changing the default dependency surface.
 6. `VSTR-TODO-006` - implement a `vbytes` MVP for byte strings that may be
    invalid UTF-8.
 7. `VSTR-TODO-007` - implement a `vencoding` MVP for BOM sniffing, UTF-8

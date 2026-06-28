@@ -21,6 +21,7 @@ Current reserved optional feature names:
 - `pattern-regex`
 - `unicode-segmentation`
 - `unicode-width`
+- `matcher-aho-corasick`
 
 ## `vstr` Optional Feature Boundary
 
@@ -59,6 +60,18 @@ standard library is intentionally lower level.
   `unicode-width` feature is enabled.
 - Width-based wrapping and truncation must document CJK, emoji, indentation,
   long-word splitting, and combining mark behavior.
+
+`matcher-aho-corasick` Admission Contract:
+
+- The default build must not depend on `aho-corasick`.
+- `VStrMatcher` signatures, `VStrMatch` byte offsets, empty-needle handling, and
+  replacement fallback semantics must not change.
+- The optional backend must preserve `MatchKind::LeftmostFirst`,
+  `MatchKind::LeftmostLongest`, `find_all`, `find_overlapping`, and
+  `replace_all` behavior.
+- If the backend crate cannot express a tie-break rule exactly, a Safe Rust
+  adapter layer must preserve the `vstr` contract.
+- The detailed backend plan lives in `docs/vstr-matcher-backend-plan.md`.
 
 `vencoding` Admission Contract:
 
