@@ -105,6 +105,10 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
   zero-runtime-dependency default facade split across `vstr`, `vbytes`, and
   `vencoding`, plus a feature flag table for optional regex, segmentation, and
   display-width behavior.
+- `VSTR-TODO-011: Complete` - case conversion compatibility fixtures now use a
+  table-driven matrix for acronym boundaries, number boundaries, repeated
+  separators, Unicode lowercase expansion, and CJK prefix behavior across the
+  public case helpers.
 
 ### Next
 
@@ -113,8 +117,7 @@ the `Later` list when the current engineering gates stay green.
 
 ### Later
 
-11. `VSTR-TODO-011` - extend case conversion compatibility fixtures for acronym,
-    number, separator, and non-ASCII examples.
+There are no remaining `Later` items from the current roadmap.
 
 ## `vbytes` Facade
 

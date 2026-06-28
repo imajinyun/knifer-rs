@@ -167,37 +167,186 @@ fn case_helpers_handle_empty_and_unicode_words() {
 
 #[test]
 fn case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode() {
-    assert_eq!(to_snake_case("XMLHttpRequest2"), "xml_http_request2");
-    assert_eq!(to_kebab_case("HTTPRequest2XX"), "http-request2-xx");
+    struct CaseFixture {
+        name: &'static str,
+        input: &'static str,
+        snake: &'static str,
+        kebab: &'static str,
+        dot: &'static str,
+        path: &'static str,
+        screaming_snake: &'static str,
+        train: &'static str,
+        title: &'static str,
+        sentence: &'static str,
+        camel: &'static str,
+        pascal: &'static str,
+    }
+
+    let fixtures = [
+        CaseFixture {
+            name: "acronym boundary",
+            input: "XMLHttpRequest2",
+            snake: "xml_http_request2",
+            kebab: "xml-http-request2",
+            dot: "xml.http.request2",
+            path: "xml/http/request2",
+            screaming_snake: "XML_HTTP_REQUEST2",
+            train: "Xml-Http-Request2",
+            title: "Xml Http Request2",
+            sentence: "Xml http request2",
+            camel: "xMLHttpRequest2",
+            pascal: "XMLHttpRequest2",
+        },
+        CaseFixture {
+            name: "numeric acronym suffix",
+            input: "HTTPRequest2XX",
+            snake: "http_request2_xx",
+            kebab: "http-request2-xx",
+            dot: "http.request2.xx",
+            path: "http/request2/xx",
+            screaming_snake: "HTTP_REQUEST2_XX",
+            train: "Http-Request2-Xx",
+            title: "Http Request2 Xx",
+            sentence: "Http request2 xx",
+            camel: "hTTPRequest2XX",
+            pascal: "HTTPRequest2XX",
+        },
+        CaseFixture {
+            name: "mixed separators and number",
+            input: "http_server-id 42",
+            snake: "http_server_id_42",
+            kebab: "http-server-id-42",
+            dot: "http.server.id.42",
+            path: "http/server/id/42",
+            screaming_snake: "HTTP_SERVER_ID_42",
+            train: "Http-Server-Id-42",
+            title: "Http Server Id 42",
+            sentence: "Http server id 42",
+            camel: "httpServerId42",
+            pascal: "HttpServerId42",
+        },
+        CaseFixture {
+            name: "repeated separators",
+            input: "already__split--case  ",
+            snake: "already__split__case__",
+            kebab: "already--split--case--",
+            dot: "already..split..case..",
+            path: "already//split//case//",
+            screaming_snake: "ALREADY__SPLIT__CASE__",
+            train: "Already--Split--Case--",
+            title: "Already Split Case",
+            sentence: "Already  split  case  ",
+            camel: "alreadySplitCase",
+            pascal: "AlreadySplitCase",
+        },
+        CaseFixture {
+            name: "unicode lowercase expansion",
+            input: "StraßeHTTP",
+            snake: "straße_http",
+            kebab: "straße-http",
+            dot: "straße.http",
+            path: "straße/http",
+            screaming_snake: "STRASSE_HTTP",
+            train: "Straße-Http",
+            title: "Straße Http",
+            sentence: "Straße http",
+            camel: "straßeHTTP",
+            pascal: "StraßeHTTP",
+        },
+        CaseFixture {
+            name: "cjk prefix",
+            input: "你好_rust-world",
+            snake: "你好_rust_world",
+            kebab: "你好-rust-world",
+            dot: "你好.rust.world",
+            path: "你好/rust/world",
+            screaming_snake: "你好_RUST_WORLD",
+            train: "你好-Rust-World",
+            title: "你好 Rust World",
+            sentence: "你好 rust world",
+            camel: "你好RustWorld",
+            pascal: "你好RustWorld",
+        },
+    ];
+
+    for fixture in fixtures {
+        assert_eq!(
+            to_snake_case(fixture.input),
+            fixture.snake,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_underline_case(fixture.input),
+            fixture.snake,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_kebab_case(fixture.input),
+            fixture.kebab,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(to_dot_case(fixture.input), fixture.dot, "{}", fixture.name);
+        assert_eq!(
+            to_path_case(fixture.input),
+            fixture.path,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_screaming_snake_case(fixture.input),
+            fixture.screaming_snake,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_screaming_kebab_case(fixture.input),
+            fixture.screaming_snake.replace('_', "-"),
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_cobol_case(fixture.input),
+            fixture.screaming_snake.replace('_', "-"),
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_train_case(fixture.input),
+            fixture.train,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_title_case(fixture.input),
+            fixture.title,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_sentence_case(fixture.input),
+            fixture.sentence,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_camel_case(fixture.input),
+            fixture.camel,
+            "{}",
+            fixture.name
+        );
+        assert_eq!(
+            to_pascal_case(fixture.input),
+            fixture.pascal,
+            "{}",
+            fixture.name
+        );
+    }
+
     assert_eq!(to_train_case("userID2FA"), "User-Id2-Fa");
     assert_eq!(to_screaming_snake_case("http2ServerID"), "HTTP2_SERVER_ID");
-
-    assert_eq!(to_camel_case("http_server-id 42"), "httpServerId42");
-    assert_eq!(to_pascal_case("http_server-id 42"), "HttpServerId42");
-    assert_eq!(to_dot_case("http_server-id 42"), "http.server.id.42");
-    assert_eq!(to_path_case("http_server-id 42"), "http/server/id/42");
-
-    assert_eq!(
-        to_snake_case("already__split--case  "),
-        "already__split__case__"
-    );
-    assert_eq!(
-        to_kebab_case("already__split--case  "),
-        "already--split--case--"
-    );
-    assert_eq!(
-        to_title_case("already__split--case  "),
-        "Already Split Case"
-    );
-    assert_eq!(
-        to_sentence_case("already__split--CASE  "),
-        "Already  split  case  "
-    );
-
-    assert_eq!(to_snake_case("StraßeHTTP"), "straße_http");
-    assert_eq!(to_screaming_snake_case("StraßeHTTP"), "STRASSE_HTTP");
-    assert_eq!(to_camel_case("你好_rust-world"), "你好RustWorld");
-    assert_eq!(to_pascal_case("你好_rust-world"), "你好RustWorld");
 }
 
 #[test]

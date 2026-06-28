@@ -8,9 +8,15 @@ borrowing, ownership, and UTF-8 guarantees.
 Golden fixtures are captured as Rust unit tests so behavior remains executable:
 
 - `knifer_go_vstr_golden_fixtures_cover_case_conversion`
+- `case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode`
 - `knifer_go_vstr_golden_fixtures_cover_unicode_escape`
 - `knifer_go_vstr_golden_fixtures_cover_ant_path_matching`
 - `knifer_go_vstr_golden_fixtures_cover_similarity`
+
+The case conversion matrix locks acronym boundaries, number boundaries,
+repeated separators, Unicode lowercase expansion, and CJK prefix behavior
+across snake, kebab, dot, path, screaming, train, title, sentence, camel, and
+Pascal shapes.
 
 ## Compatibility Notes
 
