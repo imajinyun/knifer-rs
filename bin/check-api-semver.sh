@@ -4,6 +4,8 @@ set -euo pipefail
 inventory="docs/public-api-inventory.md"
 signature_start="<!-- public-api-signatures:start -->"
 signature_end="<!-- public-api-signatures:end -->"
+optional_signature_start="<!-- public-api-optional-signatures:start -->"
+optional_signature_end="<!-- public-api-optional-signatures:end -->"
 
 if [[ ! -f "$inventory" ]]; then
   echo "missing required file: $inventory" >&2
@@ -18,12 +20,39 @@ expected_signatures="$(
   ' "$inventory"
 )"
 
+expected_optional_signatures="$(
+  awk -v start="$optional_signature_start" -v end="$optional_signature_end" '
+    $0 == start { inside = 1; next }
+    $0 == end { inside = 0 }
+    inside && $0 != "" { print }
+  ' "$inventory"
+)"
+
 if [[ -z "$expected_signatures" ]]; then
   echo "missing public API signature snapshot in $inventory" >&2
   exit 1
 fi
 
 actual_signatures="$(bash bin/check-public-api-inventory.sh --print-signatures)"
+actual_default_signatures="$(bash bin/check-public-api-inventory.sh --print-default-signatures)"
+actual_optional_signatures="$(
+  comm -13 \
+    <(printf '%s\n' "$actual_default_signatures") \
+    <(printf '%s\n' "$actual_signatures")
+)"
+
+if [[ -z "$expected_optional_signatures" ]]; then
+  echo "missing optional public API signature snapshot in $inventory" >&2
+  exit 1
+fi
+
+if [[ "$actual_optional_signatures" != "$expected_optional_signatures" ]]; then
+  echo "public API semver check failed: optional feature API delta changed" >&2
+  diff -u \
+    <(printf '%s\n' "$expected_optional_signatures") \
+    <(printf '%s\n' "$actual_optional_signatures") >&2 || true
+  exit 1
+fi
 
 expected_paths="$(printf '%s\n' "$expected_signatures" | sed -E 's/ = .*//' | sort -u)"
 actual_paths="$(printf '%s\n' "$actual_signatures" | sed -E 's/ = .*//' | sort -u)"

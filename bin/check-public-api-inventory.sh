@@ -2,8 +2,10 @@
 set -euo pipefail
 
 inventory="docs/public-api-inventory.md"
-signature_start="<!-- public-api-signatures:start -->"
-signature_end="<!-- public-api-signatures:end -->"
+all_features_signature_start="<!-- public-api-signatures:start -->"
+all_features_signature_end="<!-- public-api-signatures:end -->"
+optional_signature_start="<!-- public-api-optional-signatures:start -->"
+optional_signature_end="<!-- public-api-optional-signatures:end -->"
 
 if [[ ! -f "$inventory" ]]; then
   echo "missing required file: $inventory" >&2
@@ -151,8 +153,47 @@ extract_public_signatures() {
   ' "$@" | sort -u
 }
 
-if [[ "${1:-}" == "--print-signatures" ]]; then
-  extract_public_signatures src/lib.rs src/vbytes.rs src/vencoding.rs src/vstr/*.rs
+default_api_files=(
+  src/lib.rs
+  src/vbytes.rs
+  src/vencoding.rs
+  src/vstr/basic.rs
+  src/vstr/case.rs
+  src/vstr/classify.rs
+  src/vstr/emoji.rs
+  src/vstr/encoding.rs
+  src/vstr/matcher.rs
+  src/vstr/mod.rs
+  src/vstr/path.rs
+  src/vstr/similarity.rs
+  src/vstr/text.rs
+)
+
+all_features_api_files=(
+  "${default_api_files[@]}"
+  src/vstr/grapheme.rs
+  src/vstr/pattern.rs
+  src/vstr/width.rs
+)
+
+extract_snapshot() {
+  local start="$1"
+  local end="$2"
+
+  awk -v start="$start" -v end="$end" '
+    $0 == start { inside = 1; next }
+    $0 == end { inside = 0 }
+    inside && $0 != "" { print }
+  ' "$inventory"
+}
+
+if [[ "${1:-}" == "--print-signatures" || "${1:-}" == "--print-all-features-signatures" ]]; then
+  extract_public_signatures "${all_features_api_files[@]}"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--print-default-signatures" ]]; then
+  extract_public_signatures "${default_api_files[@]}"
   exit 0
 fi
 
@@ -164,36 +205,56 @@ while IFS= read -r api; do
     exit 1
   fi
 done < <(
-  grep -R --include='*.rs' -hE '^[[:space:]]*pub (const fn|fn|struct|enum|trait|type|const) [A-Za-z_][A-Za-z0-9_]*|^[[:space:]]*pub mod [A-Za-z_][A-Za-z0-9_]*' src |
+  grep -hE '^[[:space:]]*pub (const fn|fn|struct|enum|trait|type|const) [A-Za-z_][A-Za-z0-9_]*|^[[:space:]]*pub mod [A-Za-z_][A-Za-z0-9_]*' "${all_features_api_files[@]}" |
     sed -E 's/^[[:space:]]*pub (const fn|fn|struct|enum|trait|type|const|mod) ([A-Za-z_][A-Za-z0-9_]*).*/\2/' |
     sort -u
 )
 
-expected_signatures="$(
-  awk -v start="$signature_start" -v end="$signature_end" '
-    $0 == start { inside = 1; next }
-    $0 == end { inside = 0 }
-    inside && $0 != "" { print }
-  ' "$inventory"
+expected_all_features_signatures="$(extract_snapshot "$all_features_signature_start" "$all_features_signature_end")"
+expected_optional_signatures="$(extract_snapshot "$optional_signature_start" "$optional_signature_end")"
+
+actual_default_signatures="$(extract_public_signatures "${default_api_files[@]}")"
+actual_all_features_signatures="$(extract_public_signatures "${all_features_api_files[@]}")"
+actual_optional_signatures="$(
+  comm -13 \
+    <(printf '%s\n' "$actual_default_signatures") \
+    <(printf '%s\n' "$actual_all_features_signatures")
 )"
 
-if [[ -z "$expected_signatures" ]]; then
-  echo "missing public API signature snapshot in $inventory" >&2
-  echo "add lines between $signature_start and $signature_end" >&2
+if [[ -z "$expected_all_features_signatures" ]]; then
+  echo "missing all-features public API signature snapshot in $inventory" >&2
+  echo "add lines between $all_features_signature_start and $all_features_signature_end" >&2
   echo >&2
-  extract_public_signatures src/lib.rs src/vbytes.rs src/vencoding.rs src/vstr/*.rs >&2
+  printf '%s\n' "$actual_all_features_signatures" >&2
   exit 1
 fi
 
-actual_signatures="$(extract_public_signatures src/lib.rs src/vbytes.rs src/vencoding.rs src/vstr/*.rs)"
+if [[ -z "$expected_optional_signatures" ]]; then
+  echo "missing optional public API signature snapshot in $inventory" >&2
+  echo "add lines between $optional_signature_start and $optional_signature_end" >&2
+  if [[ -n "$actual_optional_signatures" ]]; then
+    echo >&2
+    printf '%s\n' "$actual_optional_signatures" >&2
+  fi
+  exit 1
+fi
 
-if [[ "$actual_signatures" != "$expected_signatures" ]]; then
-  echo "public API signature snapshot is out of sync" >&2
+if [[ "$actual_all_features_signatures" != "$expected_all_features_signatures" ]]; then
+  echo "all-features public API signature snapshot is out of sync" >&2
   echo "review the diff for semver impact, then update $inventory if intentional" >&2
   diff -u \
-    <(printf '%s\n' "$expected_signatures") \
-    <(printf '%s\n' "$actual_signatures") >&2 || true
+    <(printf '%s\n' "$expected_all_features_signatures") \
+    <(printf '%s\n' "$actual_all_features_signatures") >&2 || true
   exit 1
 fi
 
-echo "public API inventory is in sync"
+if [[ "$actual_optional_signatures" != "$expected_optional_signatures" ]]; then
+  echo "optional feature public API signature snapshot is out of sync" >&2
+  echo "review feature-gated API changes, then update $inventory if intentional" >&2
+  diff -u \
+    <(printf '%s\n' "$expected_optional_signatures") \
+    <(printf '%s\n' "$actual_optional_signatures") >&2 || true
+  exit 1
+fi
+
+echo "public API inventory is in sync for all-features and optional feature delta"

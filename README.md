@@ -294,11 +294,12 @@ text-boundary target also covers wrap, truncation, abbreviation, masking,
 centering, and whitespace invariants.
 
 Public API checks are intentionally split. `check-public-api-inventory.sh`
-ensures the generated signature snapshot is in sync, while
-`check-api-semver.sh` classifies removed or changed signatures as breaking and
-new signatures as additive inventory work. `check-release-api-semver.sh` keeps
-that fast local check and, when a release baseline is configured, runs
-`cargo-semver-checks check-release`.
+ensures the all-features signature snapshot and optional feature delta are in
+sync, while `check-api-semver.sh` classifies removed or changed signatures as
+breaking and new signatures as additive inventory work. This keeps the default
+zero-runtime-dependency API boundary visible beside the all-features surface.
+`check-release-api-semver.sh` keeps that fast local check and, when a release
+baseline is configured, runs `cargo-semver-checks check-release`.
 
 For release review against a git tag or branch, install `cargo-semver-checks`
 and pass a baseline ref:

@@ -4,7 +4,12 @@ This file tracks the public surface of `knifer_rs` facade modules. It is
 checked by `bin/check-public-api-inventory.sh` and `bin/check-api-semver.sh`;
 update the signature snapshot only after reviewing semver impact.
 
-## Public API Signature Snapshot
+The full signature snapshot below is collected from the all-features API
+surface. The same check also computes the default zero-runtime-dependency API
+surface and verifies that the feature-gated delta matches the optional snapshot
+in this file.
+
+## All-Features Public API Signature Snapshot
 
 <!-- public-api-signatures:start -->
 knifer_rs::vbytes = pub mod vbytes
@@ -230,6 +235,39 @@ knifer_rs::vstr::wrap_with_options = pub fn wrap_with_options(input: &str, optio
 - `pattern-regex`
 - `unicode-segmentation`
 - `unicode-width`
+
+The default build does not expose the following signatures. These APIs appear
+only when the matching optional feature is enabled, while the all-features
+snapshot keeps their release signature stable.
+
+<!-- public-api-optional-signatures:start -->
+knifer_rs::vstr::PatternError = pub struct PatternError
+knifer_rs::vstr::PatternError::message = pub fn message(&self) -> &str
+knifer_rs::vstr::PatternError::pattern = pub fn pattern(&self) -> &str
+knifer_rs::vstr::contains_pattern = pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError>
+knifer_rs::vstr::display_width = pub fn display_width(input: &str) -> usize
+knifer_rs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, pattern: &str) -> Result<Vec<(usize, usize)>, PatternError>
+knifer_rs::vstr::find_pattern = pub fn find_pattern(input: &str, pattern: &str) -> Result<Option<(usize, usize)>, PatternError>
+knifer_rs::vstr::grapheme_len = pub fn grapheme_len(input: &str) -> usize
+knifer_rs::vstr::graphemes = pub fn graphemes(input: &str) -> Vec<&str>
+knifer_rs::vstr::replace_pattern = pub fn replace_pattern(input: &str, pattern: &str, replacement: &str) -> Result<String, PatternError>
+knifer_rs::vstr::split_sentence_bound_indices = pub fn split_sentence_bound_indices(input: &str) -> Vec<(usize, &str)>
+knifer_rs::vstr::split_sentence_bounds = pub fn split_sentence_bounds(input: &str) -> Vec<&str>
+knifer_rs::vstr::split_word_bound_indices = pub fn split_word_bound_indices(input: &str) -> Vec<(usize, &str)>
+knifer_rs::vstr::split_word_bounds = pub fn split_word_bounds(input: &str) -> Vec<&str>
+knifer_rs::vstr::take_graphemes = pub fn take_graphemes(input: &str, count: usize) -> &str
+knifer_rs::vstr::take_width = pub fn take_width(input: &str, max_width: usize) -> &str
+knifer_rs::vstr::truncate_graphemes = pub fn truncate_graphemes(input: &str, max_graphemes: usize, suffix: &str) -> String
+knifer_rs::vstr::truncate_width = pub fn truncate_width(input: &str, max_width: usize, suffix: &str) -> String
+knifer_rs::vstr::unicode_sentence_len = pub fn unicode_sentence_len(input: &str) -> usize
+knifer_rs::vstr::unicode_sentences = pub fn unicode_sentences(input: &str) -> Vec<&str>
+knifer_rs::vstr::unicode_word_indices = pub fn unicode_word_indices(input: &str) -> Vec<(usize, &str)>
+knifer_rs::vstr::unicode_word_len = pub fn unicode_word_len(input: &str) -> usize
+knifer_rs::vstr::unicode_words = pub fn unicode_words(input: &str) -> Vec<&str>
+knifer_rs::vstr::wrap_width = pub fn wrap_width(input: &str, width: usize) -> String
+knifer_rs::vstr::wrap_width_with_indent = pub fn wrap_width_with_indent(input: &str, width: usize, initial_indent: &str, subsequent_indent: &str) -> String
+knifer_rs::vstr::wrap_width_with_options = pub fn wrap_width_with_options(input: &str, options: &WrapOptions<'_>) -> String
+<!-- public-api-optional-signatures:end -->
 
 ## Reserved `pattern-regex` API Shape
 
