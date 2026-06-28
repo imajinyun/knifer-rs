@@ -124,7 +124,7 @@ src/
     encoding.rs HTML and Unicode escaping helpers
     path.rs    Ant-style path matching helpers
     similarity.rs text similarity and fingerprint helpers
-    text.rs    whitespace normalization, truncation, and slug helpers
+    text/      text normalization, truncation, wrapping, and inspection helpers
 ```
 
 ## Development Checks ✅

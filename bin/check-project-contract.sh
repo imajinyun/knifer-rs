@@ -49,6 +49,12 @@ require_file src/vstr/basic/split.rs
 require_file src/vstr/basic/substring.rs
 require_file src/vstr/basic/trim.rs
 require_file src/vstr/basic/value.rs
+require_file src/vstr/text.rs
+require_file src/vstr/text/content.rs
+require_file src/vstr/text/inspect.rs
+require_file src/vstr/text/normalize.rs
+require_file src/vstr/text/transform.rs
+require_file src/vstr/text/wrap.rs
 require_file src/vstr/tests.rs
 require_file src/vstr/tests/basic.rs
 require_file src/vstr/tests/case.rs

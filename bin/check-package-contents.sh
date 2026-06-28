@@ -57,6 +57,12 @@ require_entry src/vstr/basic/split.rs
 require_entry src/vstr/basic/substring.rs
 require_entry src/vstr/basic/trim.rs
 require_entry src/vstr/basic/value.rs
+require_entry src/vstr/text.rs
+require_entry src/vstr/text/content.rs
+require_entry src/vstr/text/inspect.rs
+require_entry src/vstr/text/normalize.rs
+require_entry src/vstr/text/transform.rs
+require_entry src/vstr/text/wrap.rs
 require_entry src/vbytes.rs
 require_entry src/vencoding.rs
 require_entry examples/vstr_daily.rs

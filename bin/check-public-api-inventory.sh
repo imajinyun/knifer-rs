@@ -179,6 +179,11 @@ default_api_files=(
   src/vstr/path.rs
   src/vstr/similarity.rs
   src/vstr/text.rs
+  src/vstr/text/content.rs
+  src/vstr/text/inspect.rs
+  src/vstr/text/normalize.rs
+  src/vstr/text/transform.rs
+  src/vstr/text/wrap.rs
 )
 
 all_features_api_files=(
