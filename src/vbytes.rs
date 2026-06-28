@@ -1,0 +1,351 @@
+//! Byte-slice utilities for data that may not be valid UTF-8.
+//!
+//! All ranges are byte offsets. This facade intentionally stays separate from
+//! [`crate::vstr`] so string helpers keep their valid UTF-8 semantics.
+
+/// Returns the byte length of `input`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::byte_len(b"rust"), 4);
+/// ```
+#[must_use]
+pub const fn byte_len(input: &[u8]) -> usize {
+    input.len()
+}
+
+/// Returns `true` when `input` has no bytes.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert!(vbytes::is_empty(b""));
+/// assert!(!vbytes::is_empty(b" "));
+/// ```
+#[must_use]
+pub const fn is_empty(input: &[u8]) -> bool {
+    input.is_empty()
+}
+
+/// Returns `true` when `input` is valid UTF-8.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert!(vbytes::is_utf8("你好".as_bytes()));
+/// assert!(!vbytes::is_utf8(&[0xff]));
+/// ```
+#[must_use]
+pub const fn is_utf8(input: &[u8]) -> bool {
+    core::str::from_utf8(input).is_ok()
+}
+
+/// Converts `input` to `&str` when it is valid UTF-8.
+///
+/// # Errors
+///
+/// Returns [`core::str::Utf8Error`] when `input` is not valid UTF-8.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::to_str(b"rust").unwrap(), "rust");
+/// assert!(vbytes::to_str(&[0xff]).is_err());
+/// ```
+pub const fn to_str(input: &[u8]) -> Result<&str, core::str::Utf8Error> {
+    core::str::from_utf8(input)
+}
+
+/// Returns a borrowed byte range.
+///
+/// `from_index` is inclusive and `to_index` is exclusive. Negative indexes
+/// count from the end, out-of-range indexes are clamped, and reversed ranges are
+/// normalized.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::sub(b"abcdef", 1, 4), b"bcd");
+/// assert_eq!(vbytes::sub(b"abcdef", -4, -1), b"cde");
+/// assert_eq!(vbytes::sub(b"abcdef", 4, 1), b"bcd");
+/// ```
+#[must_use]
+pub fn sub(input: &[u8], from_index: isize, to_index: isize) -> &[u8] {
+    let len = input.len();
+    if len == 0 {
+        return input;
+    }
+
+    let start = normalize_index(from_index, len);
+    let end = normalize_index(to_index, len);
+    let (start, end) = if start <= end {
+        (start, end)
+    } else {
+        (end, start)
+    };
+
+    &input[start..end]
+}
+
+/// Returns `input` without leading and trailing ASCII whitespace bytes.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::trim_ascii(b" \tdata\n"), b"data");
+/// ```
+#[must_use]
+pub fn trim_ascii(input: &[u8]) -> &[u8] {
+    trim_ascii_end(trim_ascii_start(input))
+}
+
+/// Returns `input` without leading ASCII whitespace bytes.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::trim_ascii_start(b" \tdata\n"), b"data\n");
+/// ```
+#[must_use]
+pub fn trim_ascii_start(input: &[u8]) -> &[u8] {
+    let start = input
+        .iter()
+        .position(|byte| !byte.is_ascii_whitespace())
+        .unwrap_or(input.len());
+    &input[start..]
+}
+
+/// Returns `input` without trailing ASCII whitespace bytes.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::trim_ascii_end(b" \tdata\n"), b" \tdata");
+/// ```
+#[must_use]
+pub fn trim_ascii_end(input: &[u8]) -> &[u8] {
+    let end = input
+        .iter()
+        .rposition(|byte| !byte.is_ascii_whitespace())
+        .map_or(0, |index| index + 1);
+    &input[..end]
+}
+
+/// Returns `true` when `needle` occurs in `input`.
+///
+/// Empty needles always match.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert!(vbytes::contains(b"abc", b"bc"));
+/// assert!(vbytes::contains(b"abc", b""));
+/// ```
+#[must_use]
+pub fn contains(input: &[u8], needle: &[u8]) -> bool {
+    find(input, needle).is_some()
+}
+
+/// Returns the first byte range where `needle` occurs in `input`.
+///
+/// Empty needles return `Some((0, 0))`.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::find(b"abcabc", b"bc"), Some((1, 3)));
+/// ```
+#[must_use]
+pub fn find(input: &[u8], needle: &[u8]) -> Option<(usize, usize)> {
+    if needle.is_empty() {
+        return Some((0, 0));
+    }
+    if needle.len() > input.len() {
+        return None;
+    }
+
+    input
+        .windows(needle.len())
+        .position(|window| window == needle)
+        .map(|start| (start, start + needle.len()))
+}
+
+/// Returns all non-overlapping byte ranges where `needle` occurs in `input`.
+///
+/// Empty needles return an empty vector so callers cannot accidentally loop
+/// forever.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::find_all(b"aaaa", b"aa"), vec![(0, 2), (2, 4)]);
+/// ```
+#[must_use]
+pub fn find_all(input: &[u8], needle: &[u8]) -> Vec<(usize, usize)> {
+    if needle.is_empty() || needle.len() > input.len() {
+        return Vec::new();
+    }
+
+    let mut found = Vec::new();
+    let mut offset = 0usize;
+    while offset + needle.len() <= input.len() {
+        let Some(start) = input[offset..]
+            .windows(needle.len())
+            .position(|window| window == needle)
+            .map(|relative| offset + relative)
+        else {
+            break;
+        };
+        let end = start + needle.len();
+        found.push((start, end));
+        offset = end;
+    }
+    found
+}
+
+/// Returns `input` without `prefix` when it is present.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::strip_prefix(b"abc", b"a"), Some(&b"bc"[..]));
+/// assert_eq!(vbytes::strip_prefix(b"abc", b"x"), None);
+/// ```
+#[must_use]
+pub fn strip_prefix<'src>(input: &'src [u8], prefix: &[u8]) -> Option<&'src [u8]> {
+    input.strip_prefix(prefix)
+}
+
+/// Returns `input` without `suffix` when it is present.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::strip_suffix(b"abc", b"c"), Some(&b"ab"[..]));
+/// assert_eq!(vbytes::strip_suffix(b"abc", b"x"), None);
+/// ```
+#[must_use]
+pub fn strip_suffix<'src>(input: &'src [u8], suffix: &[u8]) -> Option<&'src [u8]> {
+    input.strip_suffix(suffix)
+}
+
+/// Replaces all non-overlapping `from` byte sequences with `to`.
+///
+/// Empty `from` returns `input` unchanged.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::replace_all(b"aaaa", b"aa", b"b"), b"bb");
+/// ```
+#[must_use]
+pub fn replace_all(input: &[u8], from: &[u8], to: &[u8]) -> Vec<u8> {
+    if from.is_empty() {
+        return input.to_vec();
+    }
+
+    let mut output = Vec::with_capacity(input.len());
+    let mut offset = 0usize;
+    while offset < input.len() {
+        let Some((start, end)) =
+            find(&input[offset..], from).map(|(start, end)| (offset + start, offset + end))
+        else {
+            output.extend_from_slice(&input[offset..]);
+            return output;
+        };
+        output.extend_from_slice(&input[offset..start]);
+        output.extend_from_slice(to);
+        offset = end;
+    }
+    output
+}
+
+fn normalize_index(index: isize, len: usize) -> usize {
+    if index < 0 {
+        len.saturating_sub(index.unsigned_abs())
+    } else {
+        usize::try_from(index).map_or(len, |index| index.min(len))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn vbytes_core_helpers_use_byte_semantics() {
+        let invalid = [b'a', 0xff, b'b'];
+
+        assert_eq!(byte_len(&invalid), 3);
+        assert!(!is_empty(&invalid));
+        assert!(!is_utf8(&invalid));
+        assert!(to_str(&invalid).is_err());
+        assert_eq!(to_str("你好".as_bytes()).unwrap(), "你好");
+
+        assert_eq!(sub(&invalid, 1, 2), &[0xff]);
+        assert_eq!(sub(&invalid, -2, -1), &[0xff]);
+        assert_eq!(sub(&invalid, 3, 0), invalid);
+    }
+
+    #[test]
+    fn vbytes_trim_and_prefix_suffix_borrow_input() {
+        let input = b" \tdata\n";
+
+        assert_eq!(trim_ascii(input), b"data");
+        assert_eq!(trim_ascii_start(input), b"data\n");
+        assert_eq!(trim_ascii_end(input), b" \tdata");
+        assert_eq!(trim_ascii(b" \n\t"), b"");
+        assert_eq!(strip_prefix(b"abc", b"a"), Some(&b"bc"[..]));
+        assert_eq!(strip_suffix(b"abc", b"c"), Some(&b"ab"[..]));
+        assert_eq!(strip_prefix(b"abc", b"x"), None);
+        assert_eq!(strip_suffix(b"abc", b"x"), None);
+    }
+
+    #[test]
+    fn vbytes_search_and_replace_are_non_overlapping() {
+        assert!(contains(b"abc", b""));
+        assert!(contains(b"abc", b"bc"));
+        assert!(!contains(b"abc", b"bd"));
+        assert_eq!(find(b"abcabc", b"bc"), Some((1, 3)));
+        assert_eq!(find(b"abc", b""), Some((0, 0)));
+        assert_eq!(find(b"abc", b"d"), None);
+        assert_eq!(find_all(b"aaaa", b"aa"), vec![(0, 2), (2, 4)]);
+        assert_eq!(
+            find_all(b"aaaa", b"a"),
+            vec![(0, 1), (1, 2), (2, 3), (3, 4)]
+        );
+        assert!(find_all(b"abc", b"").is_empty());
+        assert_eq!(replace_all(b"aaaa", b"aa", b"b"), b"bb");
+        assert_eq!(replace_all(b"abc", b"", b"x"), b"abc");
+        assert_eq!(replace_all(&[0xff, b'a', 0xff], &[0xff], b"?"), b"?a?");
+    }
+}

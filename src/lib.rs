@@ -3,4 +3,5 @@
 //! Public APIs are grouped into focused `v*` modules. Start with [`vstr`] for
 //! string helpers.
 
+pub mod vbytes;
 pub mod vstr;

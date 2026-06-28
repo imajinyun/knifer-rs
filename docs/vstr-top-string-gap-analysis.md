@@ -29,8 +29,8 @@ testing, and release discipline while keeping the default crate lightweight.
   artifacts.
 - `VSTR-GAP-007: Complete` - public API inventory uses a generated signature
   snapshot.
-- `VSTR-GAP-008: Complete` - future `vbytes` boundary is documented instead of
-  mixing byte strings into `vstr`.
+- `VSTR-GAP-008: Complete` - `vbytes` is implemented as a separate byte-slice
+  facade instead of mixing byte strings into `vstr`.
 - `VSTR-GAP-009: Complete` - regex-backed optional pattern helpers are exposed
   behind the `pattern-regex` feature.
 - `VSTR-GAP-010: Complete` - knifer-go golden fixtures are represented in unit
@@ -86,6 +86,9 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 - `VSTR-TODO-005: Complete` - optional `aho-corasick` backend design is tracked
   in `docs/vstr-matcher-backend-plan.md` without changing the default
   dependency surface.
+- `VSTR-TODO-006: Complete` - `knifer_rs::vbytes` MVP covers byte length,
+  UTF-8 validation, byte slicing, ASCII trimming, search, prefix/suffix, and
+  replacement without changing `vstr` semantics.
 
 ### Next
 
@@ -94,8 +97,6 @@ the `Later` list when the current engineering gates stay green.
 
 ### Later
 
-6. `VSTR-TODO-006` - implement a `vbytes` MVP for byte strings that may be
-   invalid UTF-8.
 7. `VSTR-TODO-007` - implement a `vencoding` MVP for BOM sniffing, UTF-8
    validation, and lossy decoding.
 8. `VSTR-TODO-008` - expand text layout strategy around word separators,
@@ -107,11 +108,10 @@ the `Later` list when the current engineering gates stay green.
 11. `VSTR-TODO-011` - extend case conversion compatibility fixtures for acronym,
     number, separator, and non-ASCII examples.
 
-## Future `vbytes` Facade Plan
+## `vbytes` Facade
 
-`vbytes` should handle byte strings that may be invalid UTF-8. All byte ranges
-are byte offsets. It should align with `bstr` concepts without making `vstr`
-ambiguous.
+`vbytes` handles byte strings that may be invalid UTF-8. All byte ranges are
+byte offsets. It aligns with `bstr` concepts without making `vstr` ambiguous.
 
 ## Future `vencoding` Facade Plan
 

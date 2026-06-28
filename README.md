@@ -30,8 +30,9 @@ in `docs/vstr-complexity.md`. Dependency admission rules live in
 
 ## Status 🚦
 
-The crate is pre-1.0 and currently exposes one MVP-stable facade:
-`knifer_rs::vstr`. Public API changes are tracked in
+The crate is pre-1.0 and currently exposes two MVP facades:
+`knifer_rs::vstr` for valid UTF-8 strings and `knifer_rs::vbytes` for byte
+slices that may not be valid UTF-8. Public API changes are tracked in
 `docs/public-api-inventory.md`; `vstr` compatibility notes are tracked in
 `docs/vstr-api-parity.md`.
 
@@ -137,11 +138,26 @@ assert_eq!(vstr::levenshtein_distance("kitten", "sitting"), 3);
 assert_eq!(vstr::hamming_distance64(0b1010, 0b0011), 2);
 ```
 
+`vbytes` keeps byte-oriented helpers separate from `vstr` so invalid UTF-8 does
+not complicate string semantics:
+
+```rust
+use knifer_rs::vbytes;
+
+let input = [b'a', 0xff, b'b'];
+assert_eq!(vbytes::byte_len(&input), 3);
+assert!(!vbytes::is_utf8(&input));
+assert_eq!(vbytes::sub(&input, 1, 2), &[0xff]);
+assert_eq!(vbytes::find_all(b"aaaa", b"aa"), vec![(0, 2), (2, 4)]);
+assert_eq!(vbytes::replace_all(&input, &[0xff], b"?"), b"a?b");
+```
+
 ## Project Layout 🧭
 
 ```text
 src/
   lib.rs       crate entry point and public facade exports
+  vbytes.rs    byte-slice helpers for possibly invalid UTF-8
   vstr/
     mod.rs     vstr facade and public re-exports
     basic.rs   common string helpers

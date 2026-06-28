@@ -1,12 +1,27 @@
 # Public API Inventory
 
-This file tracks the public surface of `knifer_rs::vstr`. It is checked by
-`bin/check-public-api-inventory.sh` and `bin/check-api-semver.sh`; update the
-signature snapshot only after reviewing semver impact.
+This file tracks the public surface of `knifer_rs` facade modules. It is
+checked by `bin/check-public-api-inventory.sh` and `bin/check-api-semver.sh`;
+update the signature snapshot only after reviewing semver impact.
 
 ## Public API Signature Snapshot
 
 <!-- public-api-signatures:start -->
+knifer_rs::vbytes = pub mod vbytes
+knifer_rs::vbytes::byte_len = pub const fn byte_len(input: &[u8]) -> usize
+knifer_rs::vbytes::contains = pub fn contains(input: &[u8], needle: &[u8]) -> bool
+knifer_rs::vbytes::find = pub fn find(input: &[u8], needle: &[u8]) -> Option<(usize, usize)>
+knifer_rs::vbytes::find_all = pub fn find_all(input: &[u8], needle: &[u8]) -> Vec<(usize, usize)>
+knifer_rs::vbytes::is_empty = pub const fn is_empty(input: &[u8]) -> bool
+knifer_rs::vbytes::is_utf8 = pub const fn is_utf8(input: &[u8]) -> bool
+knifer_rs::vbytes::replace_all = pub fn replace_all(input: &[u8], from: &[u8], to: &[u8]) -> Vec<u8>
+knifer_rs::vbytes::strip_prefix = pub fn strip_prefix<'src>(input: &'src [u8], prefix: &[u8]) -> Option<&'src [u8]>
+knifer_rs::vbytes::strip_suffix = pub fn strip_suffix<'src>(input: &'src [u8], suffix: &[u8]) -> Option<&'src [u8]>
+knifer_rs::vbytes::sub = pub fn sub(input: &[u8], from_index: isize, to_index: isize) -> &[u8]
+knifer_rs::vbytes::to_str = pub const fn to_str(input: &[u8]) -> Result<&str, core::str::Utf8Error>
+knifer_rs::vbytes::trim_ascii = pub fn trim_ascii(input: &[u8]) -> &[u8]
+knifer_rs::vbytes::trim_ascii_end = pub fn trim_ascii_end(input: &[u8]) -> &[u8]
+knifer_rs::vbytes::trim_ascii_start = pub fn trim_ascii_start(input: &[u8]) -> &[u8]
 knifer_rs::vstr = pub mod vstr
 knifer_rs::vstr::EmojiOptions = pub struct EmojiOptions<'src>
 knifer_rs::vstr::EmojiOptions::new = pub const fn new() -> Self
@@ -207,17 +222,22 @@ Potential types and methods: `VStrMatcher`, `VStrMatch`, `MatchKind`,
 
 Future facades should stay separate from `knifer_rs::vstr`:
 
-- `knifer_rs::vbytes`
 - `knifer_rs::vencoding`
 
-## Reserved `vbytes` API Shape
+## `vbytes` API Shape
 
-All byte ranges are byte offsets. Byte-oriented helpers should not reinterpret
-invalid UTF-8 as `&str`.
+`knifer_rs::vbytes` is implemented as a byte-slice facade for data that may not
+be valid UTF-8. All byte ranges are byte offsets. Byte-oriented helpers should
+not reinterpret invalid UTF-8 as `&str`; use `to_str` only when explicit UTF-8
+validation is desired.
 
 ## Current Function Groups
 
-Core names currently include `EmojiOptions`, `EmojiOptions::with_matcher`,
+Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
+`vbytes::to_str`, `vbytes::sub`, `vbytes::trim_ascii`, `vbytes::find`,
+`vbytes::find_all`, `vbytes::strip_prefix`, `vbytes::strip_suffix`,
+`vbytes::replace_all`,
+`EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
 `replace_pattern`, `graphemes`, `grapheme_len`, `take_graphemes`,

@@ -53,7 +53,21 @@ extract_public_signatures() {
       return value
     }
 
-    function emit_signature(signature, name, path) {
+    function module_path(filename, value) {
+      if (filename == "src/lib.rs") {
+        return ""
+      }
+      if (filename ~ /src\/vstr\//) {
+        return "vstr"
+      }
+
+      value = filename
+      sub(/^src\//, "", value)
+      sub(/\.rs$/, "", value)
+      return value
+    }
+
+    function emit_signature(signature, name, path, module) {
       signature = canonicalize(signature)
       if (signature == "") {
         return
@@ -64,12 +78,13 @@ extract_public_signatures() {
         return
       }
 
-      if (FILENAME == "src/lib.rs") {
+      module = module_path(FILENAME)
+      if (module == "") {
         path = "knifer_rs::" name
       } else if (impl_context != "") {
-        path = "knifer_rs::vstr::" impl_context "::" name
+        path = "knifer_rs::" module "::" impl_context "::" name
       } else {
-        path = "knifer_rs::vstr::" name
+        path = "knifer_rs::" module "::" name
       }
 
       print path " = " signature
@@ -137,7 +152,7 @@ extract_public_signatures() {
 }
 
 if [[ "${1:-}" == "--print-signatures" ]]; then
-  extract_public_signatures src/lib.rs src/vstr/*.rs
+  extract_public_signatures src/lib.rs src/vbytes.rs src/vstr/*.rs
   exit 0
 fi
 
@@ -166,11 +181,11 @@ if [[ -z "$expected_signatures" ]]; then
   echo "missing public API signature snapshot in $inventory" >&2
   echo "add lines between $signature_start and $signature_end" >&2
   echo >&2
-  extract_public_signatures src/lib.rs src/vstr/*.rs >&2
+  extract_public_signatures src/lib.rs src/vbytes.rs src/vstr/*.rs >&2
   exit 1
 fi
 
-actual_signatures="$(extract_public_signatures src/lib.rs src/vstr/*.rs)"
+actual_signatures="$(extract_public_signatures src/lib.rs src/vbytes.rs src/vstr/*.rs)"
 
 if [[ "$actual_signatures" != "$expected_signatures" ]]; then
   echo "public API signature snapshot is out of sync" >&2
