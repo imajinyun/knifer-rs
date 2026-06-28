@@ -186,6 +186,9 @@ default_api_files=(
   src/vstr/text/normalize.rs
   src/vstr/text/transform.rs
   src/vstr/text/wrap.rs
+  src/vstr/text/wrap/basic.rs
+  src/vstr/text/wrap/options.rs
+  src/vstr/text/wrap/options_wrap.rs
 )
 
 all_features_api_files=(

@@ -67,6 +67,10 @@ require_entry src/vstr/text/inspect.rs
 require_entry src/vstr/text/normalize.rs
 require_entry src/vstr/text/transform.rs
 require_entry src/vstr/text/wrap.rs
+require_entry src/vstr/text/wrap/basic.rs
+require_entry src/vstr/text/wrap/options.rs
+require_entry src/vstr/text/wrap/options_wrap.rs
+require_entry src/vstr/text/wrap/tokens.rs
 require_entry src/vstr/width.rs
 require_entry src/vstr/width/measure.rs
 require_entry src/vstr/width/wrap.rs
