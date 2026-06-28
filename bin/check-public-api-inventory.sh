@@ -157,7 +157,19 @@ default_api_files=(
   src/lib.rs
   src/vbytes.rs
   src/vencoding.rs
-  src/vstr/basic.rs
+  src/vstr/basic/affix.rs
+  src/vstr/basic/compare.rs
+  src/vstr/basic/escape.rs
+  src/vstr/basic/format.rs
+  src/vstr/basic/measure.rs
+  src/vstr/basic/mod.rs
+  src/vstr/basic/predicate.rs
+  src/vstr/basic/replace.rs
+  src/vstr/basic/search.rs
+  src/vstr/basic/split.rs
+  src/vstr/basic/substring.rs
+  src/vstr/basic/trim.rs
+  src/vstr/basic/value.rs
   src/vstr/case.rs
   src/vstr/classify.rs
   src/vstr/emoji.rs

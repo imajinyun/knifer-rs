@@ -117,7 +117,7 @@ src/
   vencoding.rs BOM and UTF-8 validation/decoding helpers
   vstr/
     mod.rs     vstr facade and public re-exports
-    basic.rs   common string helpers
+    basic/     common string helpers split by behavior area
     case.rs    case conversion helpers
     classify.rs character classification helpers
     emoji.rs   emoji detection and removal helpers
