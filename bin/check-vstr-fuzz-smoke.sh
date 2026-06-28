@@ -8,6 +8,7 @@ for target in \
   fuzz_escaping \
   fuzz_path_matching \
   fuzz_replacement \
+  fuzz_matcher \
   fuzz_text_boundaries
 do
   cargo run --locked --manifest-path "$manifest" --bin "$target" --quiet
