@@ -49,6 +49,9 @@ testing, and release discipline while keeping the default crate lightweight.
 - `VSTR-GAP-001: Complete` - benchmark reports can be saved as plain text,
   JSON, and Markdown, then compared with a baseline JSON artifact or git ref
   using a regression threshold. The tracked formats are plain, JSON, and Markdown.
+- `VSTR-TODO-004: Complete` - benchmark history operations define artifact
+  locations, baseline selection, refresh rules, and regression threshold policy
+  in `docs/vstr-benchmark-history.md`.
 
 ## Boundary Policy
 
@@ -63,7 +66,7 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 ### Done
 
 - Benchmark reports support plain, JSON, and Markdown output, baseline
-  comparison, and threshold checks.
+  comparison, threshold checks, and documented history operations.
 - Unicode boundary coverage includes scalar golden tests plus optional
   grapheme, word, sentence, and display-width helpers.
 - `VSTR-TODO-002: Complete` - curated UAX #29 conformance fixtures now cover
@@ -78,16 +81,13 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
 - Reusable literal multi-pattern matching is available through `VStrMatcher`
   with leftmost-first, leftmost-longest, overlap, property, and fuzz smoke
   coverage.
+- `VSTR-TODO-001: Complete` - fuzz harness strategy, deterministic smoke
+  targets, and checked-in corpus seeds are tracked in `fuzz/PLAN.md`.
 
 ### Next
 
-1. `VSTR-TODO-001` - introduce a real fuzz harness strategy. Keep the current
-   deterministic smoke targets, then decide whether to add `cargo-fuzz`,
-   checked-in corpus seeds, or both. The initial harness strategy is tracked in
-   `fuzz/PLAN.md`.
-2. `VSTR-TODO-004` - define benchmark history operations. Document where
-   baseline artifacts live, when they are refreshed, and how regression
-   thresholds are interpreted.
+There are no remaining `Next` items from the current P1 roadmap. Continue with
+the `Later` list when the current engineering gates stay green.
 
 ### Later
 

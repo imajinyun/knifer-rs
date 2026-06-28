@@ -204,7 +204,8 @@ bash bin/check-vstr-bench.sh target/vstr-bench-report
 
 When a baseline is present, the script also writes `vstr-bench-compare.json` and
 `vstr-bench-compare.md`, and fails if any benchmark exceeds the configured
-regression threshold.
+regression threshold. Baseline selection, refresh rules, and threshold policy
+are documented in [docs/vstr-benchmark-history.md](docs/vstr-benchmark-history.md).
 
 Fuzz smoke targets live under `fuzz/` as a separate local crate. They cover
 substring boundaries, escaping, Ant-style path matching, and replacement

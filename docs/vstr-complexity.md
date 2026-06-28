@@ -52,6 +52,8 @@ before comparing it with the current checkout.
 
 The manual release benchmark artifact should come from the same script so local
 reports and GitHub Actions artifacts remain comparable.
+The operational baseline selection, refresh rules, and threshold policy are
+tracked in `docs/vstr-benchmark-history.md`.
 
 ## Unicode Boundary Policy
 
