@@ -45,6 +45,26 @@ additive API work. Before a release, run `bin/check-release-api-semver.sh` with
 `API_SEMVER_BASELINE_RUSTDOC` so `cargo-semver-checks` compares against a real
 published or tagged baseline.
 
+## Release Checklist
+
+Before publishing a 0.1.x release, run:
+
+```bash
+cargo fmt --check
+cargo test --locked
+cargo test --locked --no-default-features
+cargo test --locked --all-features
+cargo clippy --all-targets -- -D warnings
+RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
+bash bin/check-docs-rs-ready.sh
+bash bin/check-project-contract.sh
+cargo package --locked --allow-dirty
+```
+
+Review the package output for unexpected warnings, confirm `CHANGELOG.md` explains the release boundary,
+and run `bin/check-release-api-semver.sh` with a real baseline once a previous
+release or release tag exists.
+
 ## Commit Shape
 
 Prefer focused changes:

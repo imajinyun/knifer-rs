@@ -165,24 +165,23 @@ fn case_helpers_handle_empty_and_unicode_words() {
     assert_eq!(swap_case("Straße"), "sTRASSE");
 }
 
-#[test]
-fn case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode() {
-    struct CaseFixture {
-        name: &'static str,
-        input: &'static str,
-        snake: &'static str,
-        kebab: &'static str,
-        dot: &'static str,
-        path: &'static str,
-        screaming_snake: &'static str,
-        train: &'static str,
-        title: &'static str,
-        sentence: &'static str,
-        camel: &'static str,
-        pascal: &'static str,
-    }
+struct CaseFixture {
+    name: &'static str,
+    input: &'static str,
+    snake: &'static str,
+    kebab: &'static str,
+    dot: &'static str,
+    path: &'static str,
+    screaming_snake: &'static str,
+    train: &'static str,
+    title: &'static str,
+    sentence: &'static str,
+    camel: &'static str,
+    pascal: &'static str,
+}
 
-    let fixtures = [
+fn case_conversion_fixtures() -> [CaseFixture; 6] {
+    [
         CaseFixture {
             name: "acronym boundary",
             input: "XMLHttpRequest2",
@@ -267,82 +266,93 @@ fn case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode() 
             camel: "你好RustWorld",
             pascal: "你好RustWorld",
         },
-    ];
+    ]
+}
 
-    for fixture in fixtures {
-        assert_eq!(
-            to_snake_case(fixture.input),
-            fixture.snake,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_underline_case(fixture.input),
-            fixture.snake,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_kebab_case(fixture.input),
-            fixture.kebab,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(to_dot_case(fixture.input), fixture.dot, "{}", fixture.name);
-        assert_eq!(
-            to_path_case(fixture.input),
-            fixture.path,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_screaming_snake_case(fixture.input),
-            fixture.screaming_snake,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_screaming_kebab_case(fixture.input),
-            fixture.screaming_snake.replace('_', "-"),
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_cobol_case(fixture.input),
-            fixture.screaming_snake.replace('_', "-"),
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_train_case(fixture.input),
-            fixture.train,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_title_case(fixture.input),
-            fixture.title,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_sentence_case(fixture.input),
-            fixture.sentence,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_camel_case(fixture.input),
-            fixture.camel,
-            "{}",
-            fixture.name
-        );
-        assert_eq!(
-            to_pascal_case(fixture.input),
-            fixture.pascal,
-            "{}",
-            fixture.name
-        );
+fn assert_separated_case_fixture(fixture: &CaseFixture) {
+    assert_eq!(
+        to_snake_case(fixture.input),
+        fixture.snake,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_underline_case(fixture.input),
+        fixture.snake,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_kebab_case(fixture.input),
+        fixture.kebab,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(to_dot_case(fixture.input), fixture.dot, "{}", fixture.name);
+    assert_eq!(
+        to_path_case(fixture.input),
+        fixture.path,
+        "{}",
+        fixture.name
+    );
+}
+
+fn assert_styled_case_fixture(fixture: &CaseFixture) {
+    assert_eq!(
+        to_screaming_snake_case(fixture.input),
+        fixture.screaming_snake,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_screaming_kebab_case(fixture.input),
+        fixture.screaming_snake.replace('_', "-"),
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_cobol_case(fixture.input),
+        fixture.screaming_snake.replace('_', "-"),
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_train_case(fixture.input),
+        fixture.train,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_title_case(fixture.input),
+        fixture.title,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_sentence_case(fixture.input),
+        fixture.sentence,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_camel_case(fixture.input),
+        fixture.camel,
+        "{}",
+        fixture.name
+    );
+    assert_eq!(
+        to_pascal_case(fixture.input),
+        fixture.pascal,
+        "{}",
+        fixture.name
+    );
+}
+
+#[test]
+fn case_conversion_cross_crate_fixtures_lock_acronym_number_separator_unicode() {
+    for fixture in case_conversion_fixtures() {
+        assert_separated_case_fixture(&fixture);
+        assert_styled_case_fixture(&fixture);
     }
 
     assert_eq!(to_train_case("userID2FA"), "User-Id2-Fa");
