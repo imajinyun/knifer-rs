@@ -27,7 +27,8 @@ but to match their engineering discipline:
   `.gitattributes`
 
 Complexity and allocation notes for `vstr` live in `docs/vstr-complexity.md`.
-Dependency admission rules live in `docs/dependency-policy.md`.
+Dependency admission rules live in `docs/dependency-policy.md`. Public API
+behavior evidence rules live in `docs/api-behavior-contract.md`.
 
 ## Status 🚦
 
@@ -204,7 +205,9 @@ The API stability model is tracked in `docs/public-api-inventory.md`: the
 `core stable facade` is available in the default build, the
 `optional feature facade` appears only behind Cargo features, and
 `experimental-but-public APIs` such as `VStrMatcher` keep tested public
-semantics while pre-1.0 internals can still evolve.
+semantics while pre-1.0 internals can still evolve. The behavior evidence matrix
+in `docs/api-behavior-contract.md` defines the unit, golden, fuzz, benchmark,
+and documentation coverage expected before public signatures are refreshed.
 
 For release review against a git tag or branch, install `cargo-semver-checks`
 and pass a baseline ref:

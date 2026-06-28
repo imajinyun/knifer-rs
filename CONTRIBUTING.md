@@ -32,6 +32,8 @@ bash bin/check-docs-rs-ready.sh
 - Preserve `knifer_rs::v*::*` facade ergonomics.
 - Add doctest examples for public functions.
 - Add unit tests for edge cases and Rust-specific behavior.
+- Classify each new public API in `docs/api-behavior-contract.md` before
+  refreshing the public API inventory.
 - Document intentional differences from `knifer-go` or other benchmark
   libraries.
 - Avoid new dependencies unless they remove real complexity or improve
@@ -44,7 +46,8 @@ bash bin/check-docs-rs-ready.sh
 The minimum supported Rust version is declared in `Cargo.toml` as
 `rust-version`. CI must keep checking that version. Public API changes should be
 reflected in `CHANGELOG.md` and, for `vstr`, in `docs/vstr-api-parity.md`.
-Run `bin/check-api-semver.sh` before refreshing `docs/public-api-inventory.md`;
+Behavior evidence requirements live in `docs/api-behavior-contract.md`. Run
+`bin/check-api-semver.sh` before refreshing `docs/public-api-inventory.md`;
 it reports removed or changed signatures as breaking and new signatures as
 additive API work. Before a release, run `bin/check-release-api-semver.sh` with
 `API_SEMVER_BASELINE_REF`, `API_SEMVER_BASELINE_ROOT`, or

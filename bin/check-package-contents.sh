@@ -52,6 +52,7 @@ require_entry examples/vstr_matcher.rs
 require_entry examples/vstr_benchmark_smoke.rs
 require_entry bench/vstr_bench.rs
 require_entry docs/public-api-inventory.md
+require_entry docs/api-behavior-contract.md
 require_entry docs/dependency-policy.md
 require_entry docs/vstr-complexity.md
 require_entry docs/vstr-benchmark-history.md
