@@ -101,6 +101,10 @@ See `docs/vstr-complexity.md` for scalar-count behavior and
   `bin/check-release-api-semver.sh` and manual CI wiring for
   `cargo-semver-checks` against a configured baseline ref, source tree, or
   rustdoc JSON.
+- `VSTR-TODO-010: Complete` - README first-screen examples now show the
+  zero-runtime-dependency default facade split across `vstr`, `vbytes`, and
+  `vencoding`, plus a feature flag table for optional regex, segmentation, and
+  display-width behavior.
 
 ### Next
 
@@ -109,8 +113,6 @@ the `Later` list when the current engineering gates stay green.
 
 ### Later
 
-10. `VSTR-TODO-010` - keep README first-screen examples and feature flag docs
-    aligned with the growing facade.
 11. `VSTR-TODO-011` - extend case conversion compatibility fixtures for acronym,
     number, separator, and non-ASCII examples.
 

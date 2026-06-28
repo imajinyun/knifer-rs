@@ -52,6 +52,45 @@ MVP builds:
 knifer-rs = { git = "https://github.com/imajinyun/knifer-rs" }
 ```
 
+## Quick Start ⚡
+
+The default build has zero runtime dependencies and keeps the three public
+facades separate:
+
+```rust
+use knifer_rs::{vbytes, vencoding, vstr};
+
+assert_eq!(vstr::trim("  hello  "), "hello");
+assert_eq!(vstr::sub("你好Rust", 0, 3), "你好R");
+assert_eq!(vstr::slugify("Hello, Rust World!"), "hello-rust-world");
+
+let bytes = [b'a', 0xff, b'b'];
+assert!(!vbytes::is_utf8(&bytes));
+assert_eq!(vbytes::replace_all(&bytes, &[0xff], b"?"), b"a?b");
+
+let bom = [0xEF, 0xBB, 0xBF, b'o', b'k'];
+assert_eq!(vencoding::strip_bom(&bom), b"ok");
+```
+
+Enable optional features only for callers that need heavier string semantics:
+
+```toml
+[dependencies]
+knifer-rs = {
+  version = "0.1",
+  features = ["pattern-regex", "unicode-segmentation", "unicode-width"],
+}
+```
+
+## Feature Flags 🧩
+
+| Feature | Adds | Default |
+| --- | --- | --- |
+| `default` | Safe Rust helpers for `vstr`, `vbytes`, and `vencoding` | enabled |
+| `pattern-regex` | regex-backed pattern helpers such as `vstr::find_pattern` | disabled |
+| `unicode-segmentation` | grapheme, word, and sentence boundary helpers | disabled |
+| `unicode-width` | display-cell width, truncation, and wrap helpers | disabled |
+
 ## Current MVP 🧰
 
 The first facade is `vstr`, covering small string helpers:
