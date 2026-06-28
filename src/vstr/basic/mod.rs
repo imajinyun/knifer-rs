@@ -1,3 +1,9 @@
+//! Core scalar-based string helpers.
+//!
+//! This module is split by behavior area while re-exporting a flat `vstr`
+//! facade. Use these helpers for default-build operations that do not require
+//! regex, grapheme, or display-width semantics.
+
 mod affix;
 mod casefold;
 mod compare;

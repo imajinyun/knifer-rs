@@ -85,6 +85,8 @@ commands:
     - bash bin/check-public-api-inventory.sh
     - bash bin/check-api-semver.sh
   release:
+    - bash bin/check-release-ready.sh
+  release-detail:
     - cargo fmt --check
     - cargo test --locked
     - cargo test --locked --no-default-features
@@ -94,7 +96,6 @@ commands:
     - cargo clippy --all-targets --all-features -- -D warnings
     - RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
     - bash bin/check-examples.sh
-    - bash bin/check-release-ready.sh
     - bash bin/check-docs-rs-ready.sh
     - bash bin/check-package-contents.sh
     - bash bin/check-project-contract.sh

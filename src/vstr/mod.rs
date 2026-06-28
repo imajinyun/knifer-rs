@@ -4,6 +4,16 @@
 //! Regex, Unicode segmentation, and display-width helpers are optional feature
 //! facades. [`VStrMatcher`] is public and behavior-tested, while matcher backend
 //! internals can evolve behind the same public semantics.
+//!
+//! Module navigation:
+//!
+//! - `basic` contains everyday scalar-based helpers such as trimming,
+//!   substring, searching, replacement, and literal escaping.
+//! - `text` contains higher-level text cleanup, wrapping, truncation,
+//!   masking, and inspection helpers.
+//! - `matcher` contains the reusable multi-pattern literal matcher facade.
+//! - `width` contains optional display-cell measurement and wrapping helpers
+//!   behind the `unicode-width` feature.
 
 mod basic;
 mod case;

@@ -56,21 +56,19 @@ published or tagged baseline.
 
 ## Release Checklist
 
-Before publishing a 0.1.x release, run:
+Before publishing a 0.1.x release, run the release gate:
 
 ```bash
-cargo fmt --check
-cargo test --locked
-cargo test --locked --no-default-features
-cargo test --locked --all-features
-cargo test --locked --examples
-cargo clippy --all-targets -- -D warnings
-cargo clippy --all-targets --all-features -- -D warnings
-RUSTDOCFLAGS=-Dwarnings cargo doc --no-deps --document-private-items
-bash bin/check-examples.sh
-bash bin/check-docs-rs-ready.sh
-bash bin/check-package-contents.sh
-bash bin/check-project-contract.sh
+bash bin/check-release-ready.sh
+```
+
+`aiflow.yaml` keeps `commands.release` as this single entry point and
+`commands.release-detail` as the expanded command list used by the script.
+Keep those layers aligned when adding or removing release checks.
+
+For package review, the release gate runs:
+
+```bash
 cargo package --locked --allow-dirty
 ```
 
