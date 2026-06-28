@@ -37,7 +37,8 @@ pub fn replace_last(input: &str, from: &str, to: &str) -> String {
 /// Replaces all non-overlapping occurrences of `from`, ignoring Unicode case.
 ///
 /// Matching uses simple scalar-by-scalar case folding, the same compatibility
-/// boundary as [`equals_ignore_case`]. Replaced text is not searched again.
+/// boundary as [`crate::vstr::equals_ignore_case`]. Replaced text is not
+/// searched again.
 ///
 /// # Examples
 ///

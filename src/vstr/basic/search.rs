@@ -213,7 +213,7 @@ pub fn find_all(input: &str, needle: &str) -> Vec<(usize, usize)> {
 /// Returns byte ranges for all non-overlapping case-insensitive matches.
 ///
 /// Matching uses simple scalar-by-scalar case folding, the same compatibility
-/// boundary as [`equals_ignore_case`].
+/// boundary as [`crate::vstr::equals_ignore_case`].
 ///
 /// # Examples
 ///

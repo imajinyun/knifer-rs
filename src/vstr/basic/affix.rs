@@ -31,7 +31,7 @@ pub fn ends_with(input: &str, suffix: &str) -> bool {
 /// Returns `true` when `input` starts with `prefix`, ignoring Unicode case.
 ///
 /// This uses the same simple scalar-by-scalar case folding as
-/// [`equals_ignore_case`].
+/// [`crate::vstr::equals_ignore_case`].
 ///
 /// # Examples
 ///
@@ -49,7 +49,7 @@ pub fn starts_with_ignore_case(input: &str, prefix: &str) -> bool {
 /// Returns `true` when `input` ends with `suffix`, ignoring Unicode case.
 ///
 /// This uses the same simple scalar-by-scalar case folding as
-/// [`equals_ignore_case`].
+/// [`crate::vstr::equals_ignore_case`].
 ///
 /// # Examples
 ///
