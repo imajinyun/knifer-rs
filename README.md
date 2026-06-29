@@ -142,7 +142,9 @@ and release evidence smoke gates. It runs formatting,
 default/no-default/all-features tests, examples, default clippy and
 all-features clippy, rustdoc, docs.rs readiness, package contents, API inventory, semver,
 benchmark smoke, and fuzz smoke gates. The expanded command list lives in
-`CONTRIBUTING.md` and `aiflow.yaml` under `release-detail`.
+`CONTRIBUTING.md` and `aiflow.yaml` under `release-detail`. The
+`bin/check-release-gate-layers.sh` guard keeps `release-detail` aligned with
+the `vet`, `publish-readiness`, and `release-evidence` profiles.
 
 Benchmark smoke and benchmark suite have different jobs. The smoke command is a
 fast CI coverage check that proves expensive `vstr` paths still execute and emit

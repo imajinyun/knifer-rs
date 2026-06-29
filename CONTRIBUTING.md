@@ -75,7 +75,11 @@ The expanded release gate is grouped into three layers:
 
 Keep `commands.vet`, `commands.publish-readiness`,
 `commands.release-evidence`, `commands.release`, `commands.release-detail`, and
-`bin/check-release-ready.sh` aligned when adding or removing release checks.
+`bin/check-release-ready.sh` aligned when adding or removing release checks. The
+`bin/check-release-gate-layers.sh` guard verifies that `commands.release-detail`
+is exactly `commands.vet` plus `commands.publish-readiness` plus
+`commands.release-evidence`, and that `bin/check-release-ready.sh` runs the same
+command sequence.
 
 For package review, the release gate runs:
 

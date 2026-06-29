@@ -91,6 +91,7 @@ require_entry docs/dependency-policy.md
 require_entry docs/vstr-complexity.md
 require_entry docs/vstr-benchmark-history.md
 require_entry bin/check-docs-rs-ready.sh
+require_entry bin/check-release-gate-layers.sh
 
 forbid_prefix .aiflow
 forbid_prefix target

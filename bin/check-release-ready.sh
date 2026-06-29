@@ -14,6 +14,7 @@ bash bin/check-examples.sh
 bash bin/check-project-contract.sh
 bash bin/check-public-api-inventory.sh
 bash bin/check-api-semver.sh
+bash bin/check-release-gate-layers.sh
 
 echo "== publish readiness gates =="
 bash bin/check-docs-rs-ready.sh
