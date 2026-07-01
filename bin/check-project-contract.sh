@@ -799,6 +799,8 @@ require_text bin/check-package-contents.sh 'require_entry LICENSE'
 require_text bin/check-package-contents.sh 'require_entry aiflow.yaml'
 require_text bin/check-package-contents.sh 'require_entry bin/check-release-gate-layers.sh'
 require_text bin/check-package-contents.sh 'require_entry bench/vstr_bench.rs'
+require_text bin/check-package-contents.sh "find src -name '*.rs'"
+require_text bin/check-package-contents.sh 'require_entry "$file"'
 require_text bin/check-package-contents.sh 'forbid_prefix .aiflow'
 require_text bin/check-package-contents.sh 'forbid_prefix target'
 require_text bin/check-package-contents.sh 'forbid_prefix fuzz/target'

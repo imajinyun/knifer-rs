@@ -41,44 +41,15 @@ require_entry SECURITY.md
 require_entry CONTRIBUTING.md
 require_entry aiflow.yaml
 require_entry .github/workflows/ci.yml
-require_entry src/lib.rs
-require_entry src/vstr/mod.rs
-require_entry src/vstr/basic/mod.rs
-require_entry src/vstr/basic/affix.rs
-require_entry src/vstr/basic/casefold.rs
-require_entry src/vstr/basic/compare.rs
-require_entry src/vstr/basic/escape.rs
-require_entry src/vstr/basic/format.rs
-require_entry src/vstr/basic/measure.rs
-require_entry src/vstr/basic/predicate.rs
-require_entry src/vstr/basic/replace.rs
-require_entry src/vstr/basic/search.rs
-require_entry src/vstr/basic/split.rs
-require_entry src/vstr/basic/substring.rs
-require_entry src/vstr/basic/trim.rs
-require_entry src/vstr/basic/value.rs
-require_entry src/vstr/matcher.rs
-require_entry src/vstr/matcher/backend.rs
-require_entry src/vstr/matcher/search.rs
-require_entry src/vstr/matcher/types.rs
-require_entry src/vstr/text.rs
-require_entry src/vstr/text/content.rs
-require_entry src/vstr/text/inspect.rs
-require_entry src/vstr/text/normalize.rs
-require_entry src/vstr/text/transform.rs
-require_entry src/vstr/text/wrap.rs
-require_entry src/vstr/text/wrap/basic.rs
-require_entry src/vstr/text/wrap/options.rs
-require_entry src/vstr/text/wrap/options_wrap.rs
-require_entry src/vstr/text/wrap/tokens.rs
-require_entry src/vstr/width.rs
-require_entry src/vstr/width/measure.rs
-require_entry src/vstr/width/wrap.rs
-require_entry src/vstr/width/wrap/basic.rs
-require_entry src/vstr/width/wrap/options_wrap.rs
-require_entry src/vstr/width/wrap/tokens.rs
-require_entry src/vbytes.rs
-require_entry src/vencoding.rs
+
+# Every source file on disk must ship in the package. This coverage is derived
+# from src/ instead of a curated list, so a new module cannot be dropped from
+# the crate (for example by a stray Cargo.toml exclude) without detection.
+while IFS= read -r file; do
+  [[ -z "$file" ]] && continue
+  require_entry "$file"
+done < <(find src -name '*.rs' | sort)
+
 require_entry examples/vstr_daily.rs
 require_entry examples/vstr_unicode.rs
 require_entry examples/vbytes_encoding.rs
