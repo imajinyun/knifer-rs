@@ -902,6 +902,50 @@ require_fuzz_names_match \
 require_fuzz_names_match \
   bin/check-vstr-fuzz.sh \
   "$(fuzz_names_from_list bin/check-vstr-fuzz.sh '/targets=(/,/^)/p')"
+
+# Every gate script must be executed by a runner surface: aiflow.yaml, the CI
+# workflow, or bin/check-release-ready.sh (which chains gates). Otherwise a new
+# bin/check-*.sh could sit orphaned and never run. Exceptions must be explicit.
+gate_runner_surfaces=(
+  aiflow.yaml
+  .github/workflows/ci.yml
+  bin/check-release-ready.sh
+)
+# Gates intentionally not wired into a daily runner. Each needs a reason.
+exempt_gates=(
+  # Opt-in long-running fuzzing; documented in README/fuzz and requires
+  # cargo-fuzz. bin/check-vstr-fuzz-smoke.sh provides the daily coverage.
+  bin/check-vstr-fuzz.sh
+  # It is a runner itself, executed by aiflow/CI directly rather than chained.
+  bin/check-release-ready.sh
+)
+
+is_exempt_gate() {
+  local candidate="$1"
+  local gate
+  for gate in "${exempt_gates[@]}"; do
+    [[ "$gate" == "$candidate" ]] && return 0
+  done
+  return 1
+}
+
+for gate in bin/check-*.sh; do
+  is_exempt_gate "$gate" && continue
+  name="$(basename "$gate")"
+  run=""
+  for surface in "${gate_runner_surfaces[@]}"; do
+    if grep -qE "bash bin/$name( |\$)" "$surface"; then
+      run="$surface"
+      break
+    fi
+  done
+  if [[ -z "$run" ]]; then
+    echo "gate not executed by any runner: $gate" >&2
+    echo "wire it into aiflow.yaml, .github/workflows/ci.yml, or bin/check-release-ready.sh, or add it to exempt_gates in $0" >&2
+    exit 1
+  fi
+done
+
 require_text examples/vstr_daily.rs 'vstr::between'
 require_text examples/vstr_daily.rs 'vstr::split_once_last'
 require_text examples/vstr_daily.rs 'vstr::to_train_case'
