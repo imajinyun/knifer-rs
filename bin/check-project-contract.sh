@@ -915,6 +915,47 @@ if [[ "$declared_test_mods" != "$disk_test_mods" ]]; then
   exit 1
 fi
 
+# Every optional feature declared in Cargo.toml must be documented across the
+# feature-facing surfaces and reflected in the benchmark feature-set reporter.
+# The literal require_text lines above pin each known feature, but only this
+# derived check guarantees a new feature cannot be added without documenting it.
+cargo_features="$(
+  sed -n '/^\[features\]/,/^\[/p' Cargo.toml |
+    grep -E '^[a-z]' |
+    grep -vE '^default' |
+    sed -E 's/ *=.*//' |
+    sort -u
+)"
+if [[ -z "$cargo_features" ]]; then
+  echo "no optional features found in Cargo.toml [features]" >&2
+  exit 1
+fi
+
+while IFS= read -r feature; do
+  [[ -z "$feature" ]] && continue
+
+  if ! grep -Fq "| \`$feature\` |" README.md; then
+    echo "feature '$feature' is missing from the README feature-flags table" >&2
+    exit 1
+  fi
+  if ! grep -Fq "$feature" CHANGELOG.md; then
+    echo "feature '$feature' is missing from CHANGELOG.md" >&2
+    exit 1
+  fi
+  if ! grep -Fq "$feature" docs/dependency-policy.md; then
+    echo "feature '$feature' is missing from docs/dependency-policy.md" >&2
+    exit 1
+  fi
+  if ! grep -Fq "$feature" docs/api-behavior-contract.md; then
+    echo "feature '$feature' is missing from docs/api-behavior-contract.md" >&2
+    exit 1
+  fi
+  if ! grep -Fq "cfg!(feature = \"$feature\")" bench/vstr_bench.rs; then
+    echo "feature '$feature' is missing from the benchmark feature-set reporter in bench/vstr_bench.rs" >&2
+    exit 1
+  fi
+done <<<"$cargo_features"
+
 # Every gate script must be executed by a runner surface: aiflow.yaml, the CI
 # workflow, or bin/check-release-ready.sh (which chains gates). Otherwise a new
 # bin/check-*.sh could sit orphaned and never run. Exceptions must be explicit.
