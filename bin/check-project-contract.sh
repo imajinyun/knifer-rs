@@ -903,6 +903,18 @@ require_fuzz_names_match \
   bin/check-vstr-fuzz.sh \
   "$(fuzz_names_from_list bin/check-vstr-fuzz.sh '/targets=(/,/^)/p')"
 
+# Every test file under src/vstr/tests/ must be declared as a mod in
+# src/vstr/tests.rs, or its tests silently never compile or run. Compare the
+# module declarations against the files on disk.
+declared_test_mods="$(grep -oE 'mod [a-z_]+;' src/vstr/tests.rs | sed -E 's/mod ([a-z_]+);/\1/' | sort -u)"
+disk_test_mods="$(find src/vstr/tests -maxdepth 1 -name '*.rs' | sed -E 's#.*/##; s/\.rs$//' | sort -u)"
+if [[ "$declared_test_mods" != "$disk_test_mods" ]]; then
+  echo "src/vstr/tests.rs module declarations are not aligned with test files on disk" >&2
+  diff <(printf '%s\n' "$declared_test_mods") <(printf '%s\n' "$disk_test_mods") >&2 || true
+  echo "add a 'mod <name>;' line to src/vstr/tests.rs for each test file" >&2
+  exit 1
+fi
+
 # Every gate script must be executed by a runner surface: aiflow.yaml, the CI
 # workflow, or bin/check-release-ready.sh (which chains gates). Otherwise a new
 # bin/check-*.sh could sit orphaned and never run. Exceptions must be explicit.
