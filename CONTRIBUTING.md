@@ -82,7 +82,9 @@ is exactly `commands.vet` plus `commands.publish-readiness` plus
 command sequence, and that the CI jobs in `.github/workflows/ci.yml` run every
 command in all three layers (the `vet` and `release-evidence` layers run in the
 stable job; the `publish-readiness` layer spans the stable and package jobs).
-This keeps the local release gate and CI from drifting apart when a layer
+The guard also asserts that every command used in an aiflow profile is present
+in `commands.allowlist`, since aiflow rejects any non-allowlisted command at run
+time. This keeps the local release gate and CI from drifting apart when a layer
 command is added or removed.
 
 For package review, the release gate runs:

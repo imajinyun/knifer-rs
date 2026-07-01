@@ -14,6 +14,24 @@ extract_aiflow_profile() {
   ' aiflow.yaml
 }
 
+# Profiles under commands: whose entries are gate commands that aiflow executes.
+# The allowlist is the union bound; git diff/git status are agent tooling that
+# lives in the allowlist without belonging to any gate profile.
+executable_profiles() {
+  awk '
+    $0 == "commands:" { in_commands = 1; next }
+    in_commands && /^[a-z]/ { in_commands = 0 }
+    in_commands && /^  [A-Za-z0-9_-]+:/ {
+      name = $0
+      sub(/^  /, "", name)
+      sub(/:.*/, "", name)
+      if (name != "allowlist") {
+        print name
+      }
+    }
+  ' aiflow.yaml
+}
+
 extract_release_ready_commands() {
   awk '
     /^echo / { next }
@@ -107,6 +125,30 @@ assert_ci_runs_layer() {
   return "$status"
 }
 
+# aiflow rejects any profile command that is not in commands.allowlist at run
+# time. Assert that invariant at review time so a new profile command cannot be
+# added without also allowlisting it.
+assert_profiles_within_allowlist() {
+  local allowlist="$1"
+  local status=0
+  local profile
+
+  while IFS= read -r profile; do
+    [[ -z "$profile" ]] && continue
+
+    while IFS= read -r command; do
+      [[ -z "$command" ]] && continue
+
+      if ! grep -Fxq "$command" "$allowlist"; then
+        echo "aiflow ${profile} command is not in commands.allowlist: $command" >&2
+        status=1
+      fi
+    done < <(extract_aiflow_profile "$profile")
+  done < <(executable_profiles)
+
+  return "$status"
+}
+
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/knifer-rs-release-gates.XXXXXX")"
 trap 'rm -rf "$tmp_dir"' EXIT
 
@@ -115,6 +157,7 @@ extract_aiflow_profile release-detail >"$tmp_dir/aiflow-release-detail"
 extract_release_ready_commands >"$tmp_dir/release-ready"
 extract_ci_stable_run_commands >"$tmp_dir/ci-stable"
 extract_ci_all_run_commands >"$tmp_dir/ci-all"
+extract_aiflow_profile allowlist >"$tmp_dir/allowlist"
 
 assert_same "aiflow release-detail must equal vet + publish-readiness + release-evidence" \
   "$tmp_dir/expected-release-detail" \
@@ -131,5 +174,7 @@ assert_same "bin/check-release-ready.sh must equal aiflow release-detail" \
 assert_ci_runs_layer vet "$tmp_dir/ci-stable" "CI stable job"
 assert_ci_runs_layer publish-readiness "$tmp_dir/ci-all" "CI workflow"
 assert_ci_runs_layer release-evidence "$tmp_dir/ci-stable" "CI stable job"
+
+assert_profiles_within_allowlist "$tmp_dir/allowlist"
 
 echo "release gate layer check passed"
