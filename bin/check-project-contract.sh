@@ -253,21 +253,16 @@ if awk '
 fi
 require_text .github/workflows/ci.yml 'workflow_dispatch:'
 require_text .github/workflows/ci.yml 'macos-latest'
-# The CI stable job's vet-layer commands (no-default/all-features tests,
-# all-features clippy, examples, public API inventory, and local semver checks)
-# are verified structurally by bin/check-release-gate-layers.sh, which asserts
-# the CI stable job runs the full vet layer. Keep only the gate-layers step,
-# publish-readiness, release-evidence, and structural workflow checks here to
-# avoid duplicating that machine-verified coverage.
+# CI coverage of the vet, publish-readiness, and release-evidence command layers
+# is verified structurally by bin/check-release-gate-layers.sh, which asserts the
+# CI jobs run each aiflow profile's commands. Keep the gate-layers step assertion
+# as a bootstrap anchor (the guard cannot verify its own invocation) plus the
+# structural workflow wiring (conditional inputs, env, and artifact steps) that
+# are not commands in any layer.
 require_text .github/workflows/ci.yml 'bash bin/check-release-gate-layers.sh'
-require_text .github/workflows/ci.yml 'bash bin/check-release-api-semver.sh'
 require_text .github/workflows/ci.yml 'run_release_api_semver'
 require_text .github/workflows/ci.yml 'api_semver_baseline_ref'
 require_text .github/workflows/ci.yml 'API_SEMVER_BASELINE_REF'
-require_text .github/workflows/ci.yml 'bash bin/check-vstr-benchmark-smoke.sh'
-require_text .github/workflows/ci.yml 'bash bin/check-vstr-fuzz-smoke.sh'
-require_text .github/workflows/ci.yml 'bash bin/check-docs-rs-ready.sh'
-require_text .github/workflows/ci.yml 'bash bin/check-package-contents.sh'
 require_text .github/workflows/ci.yml 'run_release_bench'
 require_text .github/workflows/ci.yml 'benchmark_base_ref'
 require_text .github/workflows/ci.yml 'benchmark_max_regression_pct'
@@ -879,7 +874,10 @@ require_text bin/check-release-api-semver.sh 'check-release'
 require_text bin/check-release-gate-layers.sh 'extract_aiflow_profile'
 require_text bin/check-release-gate-layers.sh 'extract_release_ready_commands'
 require_text bin/check-release-gate-layers.sh 'extract_ci_stable_run_commands'
-require_text bin/check-release-gate-layers.sh 'assert_ci_runs_vet_layer'
+require_text bin/check-release-gate-layers.sh 'extract_ci_all_run_commands'
+require_text bin/check-release-gate-layers.sh 'assert_ci_runs_layer vet'
+require_text bin/check-release-gate-layers.sh 'assert_ci_runs_layer publish-readiness'
+require_text bin/check-release-gate-layers.sh 'assert_ci_runs_layer release-evidence'
 require_text bin/check-release-gate-layers.sh 'ci_wrapper_covered'
 require_text bin/check-release-gate-layers.sh 'write_expected_release_detail'
 require_text bin/check-release-gate-layers.sh 'release gate layer check passed'

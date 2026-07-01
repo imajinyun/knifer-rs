@@ -35,6 +35,15 @@ extract_ci_stable_run_commands() {
   ' .github/workflows/ci.yml
 }
 
+extract_ci_all_run_commands() {
+  awk '
+    /^ +run: / {
+      sub(/^ +run: /, "")
+      print
+    }
+  ' .github/workflows/ci.yml
+}
+
 write_expected_release_detail() {
   extract_aiflow_profile vet
   extract_aiflow_profile publish-readiness
@@ -68,8 +77,13 @@ ci_wrapper_covered() {
   return 1
 }
 
-assert_ci_runs_vet_layer() {
-  local ci_commands="$1"
+# Assert every command in the given aiflow profile is executed by the CI run
+# commands captured in "$ci_commands". "$scope_label" names the CI surface for
+# error messages so drift points to the exact missing gate.
+assert_ci_runs_layer() {
+  local profile="$1"
+  local ci_commands="$2"
+  local scope_label="$3"
   local status=0
   local wrapper
 
@@ -78,17 +92,17 @@ assert_ci_runs_vet_layer() {
 
     if wrapper="$(ci_wrapper_covered "$command")"; then
       if ! grep -Fxq "$wrapper" "$ci_commands"; then
-        echo "CI stable job must run '$wrapper' to cover vet command: $command" >&2
+        echo "${scope_label} must run '$wrapper' to cover ${profile}-layer command: $command" >&2
         status=1
       fi
       continue
     fi
 
     if ! grep -Fxq "$command" "$ci_commands"; then
-      echo "CI stable job is missing vet-layer command: $command" >&2
+      echo "${scope_label} is missing ${profile}-layer command: $command" >&2
       status=1
     fi
-  done < <(extract_aiflow_profile vet)
+  done < <(extract_aiflow_profile "$profile")
 
   return "$status"
 }
@@ -100,6 +114,7 @@ write_expected_release_detail >"$tmp_dir/expected-release-detail"
 extract_aiflow_profile release-detail >"$tmp_dir/aiflow-release-detail"
 extract_release_ready_commands >"$tmp_dir/release-ready"
 extract_ci_stable_run_commands >"$tmp_dir/ci-stable"
+extract_ci_all_run_commands >"$tmp_dir/ci-all"
 
 assert_same "aiflow release-detail must equal vet + publish-readiness + release-evidence" \
   "$tmp_dir/expected-release-detail" \
@@ -109,6 +124,12 @@ assert_same "bin/check-release-ready.sh must equal aiflow release-detail" \
   "$tmp_dir/aiflow-release-detail" \
   "$tmp_dir/release-ready"
 
-assert_ci_runs_vet_layer "$tmp_dir/ci-stable"
+# The vet layer runs in the CI stable job. The publish-readiness layer spans the
+# stable and package jobs (docs.rs readiness and package contents run in the
+# dedicated package job), so it is checked against every CI run command. The
+# release-evidence smoke layer runs in the CI stable job.
+assert_ci_runs_layer vet "$tmp_dir/ci-stable" "CI stable job"
+assert_ci_runs_layer publish-readiness "$tmp_dir/ci-all" "CI workflow"
+assert_ci_runs_layer release-evidence "$tmp_dir/ci-stable" "CI stable job"
 
 echo "release gate layer check passed"

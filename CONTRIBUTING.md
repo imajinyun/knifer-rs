@@ -79,9 +79,11 @@ Keep `commands.vet`, `commands.publish-readiness`,
 `bin/check-release-gate-layers.sh` guard verifies that `commands.release-detail`
 is exactly `commands.vet` plus `commands.publish-readiness` plus
 `commands.release-evidence`, that `bin/check-release-ready.sh` runs the same
-command sequence, and that the CI stable job in `.github/workflows/ci.yml` runs
-the full `commands.vet` layer. This keeps the local release gate and CI from
-drifting apart when a vet-layer check is added or removed.
+command sequence, and that the CI jobs in `.github/workflows/ci.yml` run every
+command in all three layers (the `vet` and `release-evidence` layers run in the
+stable job; the `publish-readiness` layer spans the stable and package jobs).
+This keeps the local release gate and CI from drifting apart when a layer
+command is added or removed.
 
 For package review, the release gate runs:
 
