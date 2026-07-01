@@ -223,6 +223,24 @@ if [[ "${1:-}" == "--print-default-signatures" ]]; then
   exit 0
 fi
 
+# The signature arrays above are curated by hand. Guard the invariant that they
+# cover every source file which declares a public item, so a new module cannot
+# add public API that silently escapes the inventory snapshot. Test modules are
+# excluded because they never expose crate API.
+covered_files="$(printf '%s\n' "${all_features_api_files[@]}" | sort -u)"
+while IFS= read -r file; do
+  [[ -z "$file" ]] && continue
+  if ! grep -Fxq "$file" <<<"$covered_files"; then
+    echo "public API source file not covered by $inventory arrays: $file" >&2
+    echo "add it to default_api_files or all_features_api_files in $0" >&2
+    exit 1
+  fi
+done < <(
+  grep -rlE '^[[:space:]]*pub (const fn|fn|struct|enum|trait|type|const|mod) ' src --include='*.rs' |
+    grep -vE '(^|/)tests(/|\.rs$)' |
+    sort -u
+)
+
 while IFS= read -r api; do
   if ! grep -Fq "\`$api\`" "$inventory" &&
     ! grep -Fq "::$api\`" "$inventory" &&

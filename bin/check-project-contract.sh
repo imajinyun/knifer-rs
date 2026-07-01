@@ -242,6 +242,8 @@ require_text bin/check-public-api-inventory.sh '  src/vstr/width/measure.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/width/wrap.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/width/wrap/basic.rs'
 require_text bin/check-public-api-inventory.sh '  src/vstr/width/wrap/options_wrap.rs'
+require_text bin/check-public-api-inventory.sh 'public API source file not covered by'
+require_text bin/check-public-api-inventory.sh "grep -vE '(^|/)tests(/|\\.rs\$)'"
 if awk '
   /^\[dependencies\]$/ { in_deps = 1; next }
   /^\[/ { in_deps = 0 }

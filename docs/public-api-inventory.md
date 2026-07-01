@@ -9,6 +9,12 @@ surface. The same check also computes the default zero-runtime-dependency API
 surface and verifies that the feature-gated delta matches the optional snapshot
 in this file.
 
+`bin/check-public-api-inventory.sh` keeps curated file arrays for the default
+and all-features surfaces. It also guards that those arrays cover every non-test
+source file which declares a public item, so a new module cannot add public API
+that silently escapes this inventory. When adding such a module, add it to
+`default_api_files` or `all_features_api_files` in that script.
+
 ## API Stability Classes
 
 `knifer-rs` is still pre-1.0, but public APIs are classified so callers know
