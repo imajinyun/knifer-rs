@@ -144,7 +144,9 @@ all-features clippy, rustdoc, docs.rs readiness, package contents, API inventory
 benchmark smoke, and fuzz smoke gates. The expanded command list lives in
 `CONTRIBUTING.md` and `aiflow.yaml` under `release-detail`. The
 `bin/check-release-gate-layers.sh` guard keeps `release-detail` aligned with
-the `vet`, `publish-readiness`, and `release-evidence` profiles.
+the `vet`, `publish-readiness`, and `release-evidence` profiles, and also
+verifies that the CI stable job runs the full `vet` layer so local and CI
+gates cannot drift apart.
 
 Benchmark smoke and benchmark suite have different jobs. The smoke command is a
 fast CI coverage check that proves expensive `vstr` paths still execute and emit

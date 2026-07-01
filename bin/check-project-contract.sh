@@ -253,12 +253,13 @@ if awk '
 fi
 require_text .github/workflows/ci.yml 'workflow_dispatch:'
 require_text .github/workflows/ci.yml 'macos-latest'
-require_text .github/workflows/ci.yml 'cargo test --locked --no-default-features'
-require_text .github/workflows/ci.yml 'cargo test --locked --all-features'
-require_text .github/workflows/ci.yml 'cargo clippy --all-targets --all-features -- -D warnings'
-require_text .github/workflows/ci.yml 'bash bin/check-examples.sh'
-require_text .github/workflows/ci.yml 'bash bin/check-public-api-inventory.sh'
-require_text .github/workflows/ci.yml 'bash bin/check-api-semver.sh'
+# The CI stable job's vet-layer commands (no-default/all-features tests,
+# all-features clippy, examples, public API inventory, and local semver checks)
+# are verified structurally by bin/check-release-gate-layers.sh, which asserts
+# the CI stable job runs the full vet layer. Keep only the gate-layers step,
+# publish-readiness, release-evidence, and structural workflow checks here to
+# avoid duplicating that machine-verified coverage.
+require_text .github/workflows/ci.yml 'bash bin/check-release-gate-layers.sh'
 require_text .github/workflows/ci.yml 'bash bin/check-release-api-semver.sh'
 require_text .github/workflows/ci.yml 'run_release_api_semver'
 require_text .github/workflows/ci.yml 'api_semver_baseline_ref'
@@ -877,6 +878,9 @@ require_text bin/check-release-api-semver.sh 'API_SEMVER_REQUIRED'
 require_text bin/check-release-api-semver.sh 'check-release'
 require_text bin/check-release-gate-layers.sh 'extract_aiflow_profile'
 require_text bin/check-release-gate-layers.sh 'extract_release_ready_commands'
+require_text bin/check-release-gate-layers.sh 'extract_ci_stable_run_commands'
+require_text bin/check-release-gate-layers.sh 'assert_ci_runs_vet_layer'
+require_text bin/check-release-gate-layers.sh 'ci_wrapper_covered'
 require_text bin/check-release-gate-layers.sh 'write_expected_release_detail'
 require_text bin/check-release-gate-layers.sh 'release gate layer check passed'
 require_text bin/check-release-ready.sh '== fast vet gates =='

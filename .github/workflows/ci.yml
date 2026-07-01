@@ -88,6 +88,9 @@ jobs:
       - name: Public API semver check
         run: bash bin/check-api-semver.sh
 
+      - name: Release gate layers
+        run: bash bin/check-release-gate-layers.sh
+
       - name: Release API semver check
         if: github.event_name == 'workflow_dispatch' && inputs.run_release_api_semver == 'true'
         run: bash bin/check-release-api-semver.sh
