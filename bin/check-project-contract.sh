@@ -817,6 +817,49 @@ require_text bench/vstr_bench.rs 'bench_find_all'
 require_text bench/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
 require_text examples/vstr_benchmark_smoke.rs 'levenshtein_distance'
+
+# The benchmark name list is duplicated across the bench suite, the smoke
+# example, and both benchmark gates. bench/vstr_bench.rs is the source of
+# truth; the other three must list exactly the same names or a new benchmark
+# could escape smoke coverage or the two suites could silently diverge.
+bench_names_from_run_case() {
+  grep -oE 'run_case\("[a-z_]+"' "$1" | sed -E 's/run_case\("([a-z_]+)"/\1/' | sort -u
+}
+
+bench_names_from_for_loop() {
+  sed -n '/for name in/,/^do$/p' "$1" |
+    grep -vE 'for name in|^do$' |
+    tr -d '\\ ' |
+    grep -E '^[a-z_]+$' |
+    sort -u
+}
+
+bench_source_names="$(bench_names_from_run_case bench/vstr_bench.rs)"
+if [[ -z "$bench_source_names" ]]; then
+  echo "no benchmark names found in bench/vstr_bench.rs" >&2
+  exit 1
+fi
+
+require_bench_names_match() {
+  local label="$1"
+  local actual="$2"
+
+  if [[ "$actual" != "$bench_source_names" ]]; then
+    echo "benchmark names in $label are not aligned with bench/vstr_bench.rs" >&2
+    diff <(printf '%s\n' "$bench_source_names") <(printf '%s\n' "$actual") >&2 || true
+    exit 1
+  fi
+}
+
+require_bench_names_match \
+  examples/vstr_benchmark_smoke.rs \
+  "$(bench_names_from_run_case examples/vstr_benchmark_smoke.rs)"
+require_bench_names_match \
+  bin/check-vstr-bench.sh \
+  "$(bench_names_from_for_loop bin/check-vstr-bench.sh)"
+require_bench_names_match \
+  bin/check-vstr-benchmark-smoke.sh \
+  "$(bench_names_from_for_loop bin/check-vstr-benchmark-smoke.sh)"
 require_text examples/vstr_daily.rs 'vstr::between'
 require_text examples/vstr_daily.rs 'vstr::split_once_last'
 require_text examples/vstr_daily.rs 'vstr::to_train_case'
