@@ -51,6 +51,24 @@ fn text_helpers_normalize_truncate_and_slugify() {
     );
     assert_eq!(slugify("---Hello---"), "hello");
     assert_eq!(slugify_with_separator("Hello Rust", 'x'), "hello-rust");
+    assert_eq!(slugify("Crème Brûlée"), "creme-brulee");
+    assert_eq!(slugify_with_separator("Déjà Vu", '_'), "deja_vu");
+}
+
+#[test]
+fn deburr_folds_latin_diacritics_and_ligatures() {
+    assert_eq!(deburr("déjà vu"), "deja vu");
+    assert_eq!(deburr("Crème Brûlée"), "Creme Brulee");
+    assert_eq!(deburr("Æther Œuvre ß"), "Aether Oeuvre ss");
+    assert_eq!(deburr("Þór þing"), "Thor thing");
+    // Decomposed accents: base letter plus combining mark folds to the base.
+    assert_eq!(deburr("e\u{0301}"), "e");
+    assert_eq!(deburr("A\u{0300}B\u{0308}"), "AB");
+    // Non-Latin scripts, digits, and emoji are preserved unchanged.
+    assert_eq!(deburr("你好 café 123 🚀"), "你好 cafe 123 🚀");
+    assert_eq!(deburr("Ω Σ Д"), "Ω Σ Д");
+    assert_eq!(deburr(""), "");
+    assert_eq!(remove_accents("Crème Brûlée"), "Creme Brulee");
 }
 
 #[test]

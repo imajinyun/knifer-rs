@@ -149,6 +149,7 @@ knifer_rs::vstr::contains_ignore_case = pub fn contains_ignore_case(input: &str,
 knifer_rs::vstr::contains_none = pub fn contains_none<'src, I>(input: &str, needles: I) -> bool where I: IntoIterator<Item = &'src str>
 knifer_rs::vstr::contains_pattern = pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError>
 knifer_rs::vstr::count_matches = pub fn count_matches(input: &str, needle: &str) -> usize
+knifer_rs::vstr::deburr = pub fn deburr(input: &str) -> String
 knifer_rs::vstr::dedent = pub fn dedent(input: &str) -> String
 knifer_rs::vstr::default_if_blank = pub fn default_if_blank<'src>(input: &'src str, default: &'src str) -> &'src str
 knifer_rs::vstr::default_if_empty = pub fn default_if_empty<'src>(input: &'src str, default: &'src str) -> &'src str
@@ -203,6 +204,7 @@ knifer_rs::vstr::normalize_whitespace = pub fn normalize_whitespace(input: &str)
 knifer_rs::vstr::pad_left = pub fn pad_left(input: &str, target_len: usize, pad: char) -> String
 knifer_rs::vstr::pad_right = pub fn pad_right(input: &str, target_len: usize, pad: char) -> String
 knifer_rs::vstr::quote_meta = pub fn quote_meta(input: &str) -> String
+knifer_rs::vstr::remove_accents = pub fn remove_accents(input: &str) -> String
 knifer_rs::vstr::remove_ascii_punctuation = pub fn remove_ascii_punctuation(input: &str) -> String
 knifer_rs::vstr::remove_emoji = pub fn remove_emoji(input: &str) -> String
 knifer_rs::vstr::remove_emoji_with_options = pub fn remove_emoji_with_options(input: &str, options: &EmojiOptions<'_>) -> String

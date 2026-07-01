@@ -33,6 +33,10 @@ side.
   byte sequences.
 - Case conversion intentionally follows a daily-business utility shape rather
   than trying to expose every behavior from `heck` or `convert-case`.
+- `deburr` / `remove_accents` fold common Latin diacritics and ligatures to
+  ASCII with a dependency-free table (`intentional-diff` vs full `unidecode`):
+  non-Latin scripts such as CJK, Greek, and Cyrillic are preserved, not
+  transliterated. `slugify` folds through `deburr` before slugging.
 - Ant path helpers are route/path utilities, not filesystem canonicalization.
 
 ## Open Compatibility Work

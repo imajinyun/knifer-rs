@@ -29,9 +29,10 @@ pub fn collapse_repeated_char(input: &str, ch: char) -> String {
 
 /// Converts text into a dependency-free Unicode slug separated by `-`.
 ///
-/// Letters and decimal digits are lower-cased and preserved. Other runs of
-/// characters become one separator. This function intentionally does not
-/// transliterate non-ASCII text.
+/// Latin diacritics and ligatures are folded to ASCII first (for example `é`
+/// becomes `e`), then letters and decimal digits are lower-cased and preserved.
+/// Other runs of characters become one separator. Non-Latin scripts such as CJK
+/// are preserved rather than transliterated.
 ///
 /// # Examples
 ///
@@ -39,6 +40,7 @@ pub fn collapse_repeated_char(input: &str, ch: char) -> String {
 /// use knifer_rs::vstr;
 ///
 /// assert_eq!(vstr::slugify("Hello, Rust World!"), "hello-rust-world");
+/// assert_eq!(vstr::slugify("Crème Brûlée"), "creme-brulee");
 /// assert_eq!(vstr::slugify("你好 Rust"), "你好-rust");
 /// ```
 #[must_use]
@@ -48,7 +50,8 @@ pub fn slugify(input: &str) -> String {
 
 /// Converts text into a dependency-free Unicode slug with a custom separator.
 ///
-/// If `separator` is alphanumeric or whitespace, `-` is used instead.
+/// If `separator` is alphanumeric or whitespace, `-` is used instead. Like
+/// [`slugify`], Latin diacritics are folded to ASCII before slugging.
 ///
 /// # Examples
 ///
@@ -56,6 +59,7 @@ pub fn slugify(input: &str) -> String {
 /// use knifer_rs::vstr;
 ///
 /// assert_eq!(vstr::slugify_with_separator("Hello, Rust World!", '_'), "hello_rust_world");
+/// assert_eq!(vstr::slugify_with_separator("Déjà Vu", '_'), "deja_vu");
 /// ```
 #[must_use]
 pub fn slugify_with_separator(input: &str, separator: char) -> String {
@@ -65,10 +69,11 @@ pub fn slugify_with_separator(input: &str, separator: char) -> String {
         separator
     };
 
-    let mut output = String::with_capacity(input.len());
+    let folded = super::deburr(input);
+    let mut output = String::with_capacity(folded.len());
     let mut pending_separator = false;
 
-    for ch in input.chars() {
+    for ch in folded.chars() {
         if super::super::is_letter_or_digit(ch) {
             if pending_separator && !output.is_empty() {
                 output.push(separator);

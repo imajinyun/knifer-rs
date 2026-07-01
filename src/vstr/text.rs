@@ -7,12 +7,14 @@
 //! helpers live behind the `unicode-width` feature.
 
 mod content;
+mod fold;
 mod inspect;
 mod normalize;
 mod transform;
 mod wrap;
 
 pub use content::*;
+pub use fold::*;
 pub use inspect::*;
 pub use normalize::*;
 pub use transform::*;
