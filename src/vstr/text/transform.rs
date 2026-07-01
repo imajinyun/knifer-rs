@@ -212,6 +212,47 @@ pub fn unsurround<'src>(input: &'src str, left: &str, right: &str) -> Option<&'s
     inner.strip_suffix(right)
 }
 
+/// Wraps `input` with `marker` on both sides only where it is missing.
+///
+/// This mirrors Apache Commons `StringUtils.wrapIfMissing` for a symmetric
+/// marker: the prefix marker is added only when absent and the suffix marker is
+/// added only when absent, so an already-wrapped value is returned unchanged. An
+/// empty input or empty marker is returned unchanged.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::wrap_if_missing("path", "/"), "/path/");
+/// assert_eq!(vstr::wrap_if_missing("/path/", "/"), "/path/");
+/// assert_eq!(vstr::wrap_if_missing("/path", "/"), "/path/");
+/// assert_eq!(vstr::wrap_if_missing("/", "/"), "/");
+/// ```
+#[must_use]
+pub fn wrap_if_missing(input: &str, marker: &str) -> String {
+    if input.is_empty() || marker.is_empty() {
+        return input.to_owned();
+    }
+
+    let wrap_start = !input.starts_with(marker);
+    let wrap_end = !input.ends_with(marker);
+    if !wrap_start && !wrap_end {
+        return input.to_owned();
+    }
+
+    let extra = usize::from(wrap_start) + usize::from(wrap_end);
+    let mut output = String::with_capacity(input.len() + marker.len() * extra);
+    if wrap_start {
+        output.push_str(marker);
+    }
+    output.push_str(input);
+    if wrap_end {
+        output.push_str(marker);
+    }
+    output
+}
+
 fn leading_ascii_spaces(line: &str) -> usize {
     line.bytes().take_while(|byte| *byte == b' ').count()
 }

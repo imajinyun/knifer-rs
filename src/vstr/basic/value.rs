@@ -16,6 +16,52 @@ pub fn repeat(input: &str, count: usize) -> String {
     input.repeat(count)
 }
 
+/// Rotates `input` by `shift` Unicode scalar values.
+///
+/// This mirrors Apache Commons `StringUtils.rotate`: a positive `shift` moves
+/// characters to the right (the tail wraps to the front) and a negative `shift`
+/// moves them to the left. The shift is taken modulo the scalar length, so large
+/// magnitudes wrap cleanly and empty input is returned unchanged.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::rotate("abcdefg", 2), "fgabcde");
+/// assert_eq!(vstr::rotate("abcdefg", -2), "cdefgab");
+/// assert_eq!(vstr::rotate("你好世界", 1), "界你好世");
+/// ```
+#[must_use]
+pub fn rotate(input: &str, shift: isize) -> String {
+    let len = char_len(input);
+    if len == 0 {
+        return input.to_owned();
+    }
+
+    let magnitude = shift.unsigned_abs() % len;
+    let normalized = if magnitude == 0 {
+        0
+    } else if shift >= 0 {
+        magnitude
+    } else {
+        len - magnitude
+    };
+    if normalized == 0 {
+        return input.to_owned();
+    }
+
+    let split = len - normalized;
+    let boundary = input
+        .char_indices()
+        .nth(split)
+        .map_or(input.len(), |(index, _)| index);
+    let mut output = String::with_capacity(input.len());
+    output.push_str(&input[boundary..]);
+    output.push_str(&input[..boundary]);
+    output
+}
+
 /// Pads `input` on the left until it reaches `target_len` Unicode scalar values.
 ///
 /// # Examples

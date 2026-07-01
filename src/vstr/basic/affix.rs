@@ -177,3 +177,53 @@ pub fn add_suffix_if_not(input: &str, suffix: &str) -> String {
         output
     }
 }
+
+/// Adds `prefix` when `input` does not already start with it, ignoring case.
+///
+/// The existing casing of `input` is preserved when it already carries the
+/// prefix under simple Unicode case folding.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::add_prefix_if_not_ignore_case("Path", "/"), "/Path");
+/// assert_eq!(vstr::add_prefix_if_not_ignore_case("HTTP://x", "http://"), "HTTP://x");
+/// ```
+#[must_use]
+pub fn add_prefix_if_not_ignore_case(input: &str, prefix: &str) -> String {
+    if starts_with_ignore_case(input, prefix) {
+        input.to_owned()
+    } else {
+        let mut output = String::with_capacity(prefix.len() + input.len());
+        output.push_str(prefix);
+        output.push_str(input);
+        output
+    }
+}
+
+/// Adds `suffix` when `input` does not already end with it, ignoring case.
+///
+/// The existing casing of `input` is preserved when it already carries the
+/// suffix under simple Unicode case folding.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::add_suffix_if_not_ignore_case("report", ".TXT"), "report.TXT");
+/// assert_eq!(vstr::add_suffix_if_not_ignore_case("report.TXT", ".txt"), "report.TXT");
+/// ```
+#[must_use]
+pub fn add_suffix_if_not_ignore_case(input: &str, suffix: &str) -> String {
+    if ends_with_ignore_case(input, suffix) {
+        input.to_owned()
+    } else {
+        let mut output = String::with_capacity(input.len() + suffix.len());
+        output.push_str(input);
+        output.push_str(suffix);
+        output
+    }
+}

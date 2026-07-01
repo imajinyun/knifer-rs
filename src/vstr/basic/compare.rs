@@ -44,3 +44,80 @@ pub fn equals_ignore_case(left: &str, right: &str) -> bool {
 pub fn reverse(input: &str) -> String {
     input.chars().rev().collect()
 }
+
+/// Returns the longest common leading substring of `left` and `right`.
+///
+/// The result borrows from `left` and always ends on a Unicode scalar boundary,
+/// so it never splits a multi-byte character.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::common_prefix("knifer-rs", "knifer-go"), "knifer-");
+/// assert_eq!(vstr::common_prefix("你好世界", "你好朋友"), "你好");
+/// assert_eq!(vstr::common_prefix("abc", "xyz"), "");
+/// ```
+#[must_use]
+pub fn common_prefix<'src>(left: &'src str, right: &str) -> &'src str {
+    let mut end = 0;
+    for ((index, left_char), right_char) in left.char_indices().zip(right.chars()) {
+        if left_char != right_char {
+            break;
+        }
+        end = index + left_char.len_utf8();
+    }
+    &left[..end]
+}
+
+/// Returns the longest common trailing substring of `left` and `right`.
+///
+/// The result borrows from `left` and always starts on a Unicode scalar
+/// boundary, so it never splits a multi-byte character.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::common_suffix("knifer-rs", "wrapper-rs"), "er-rs");
+/// assert_eq!(vstr::common_suffix("读写世界", "编写世界"), "写世界");
+/// assert_eq!(vstr::common_suffix("abc", "xyz"), "");
+/// ```
+#[must_use]
+pub fn common_suffix<'src>(left: &'src str, right: &str) -> &'src str {
+    let mut start = left.len();
+    let mut left_chars = left.char_indices().rev();
+    let mut right_chars = right.chars().rev();
+    loop {
+        match (left_chars.next(), right_chars.next()) {
+            (Some((index, left_char)), Some(right_char)) if left_char == right_char => {
+                start = index;
+            }
+            _ => break,
+        }
+    }
+    &left[start..]
+}
+
+/// Returns the part of `right` that differs after the common prefix with `left`.
+///
+/// This mirrors Apache Commons `StringUtils.difference`: when the strings share
+/// a leading run, the shared run is dropped from `right`. The result borrows
+/// from `right` and always starts on a Unicode scalar boundary.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vstr;
+///
+/// assert_eq!(vstr::difference("i am a machine", "i am a robot"), "robot");
+/// assert_eq!(vstr::difference("", "abc"), "abc");
+/// assert_eq!(vstr::difference("abc", "abc"), "");
+/// ```
+#[must_use]
+pub fn difference<'src>(left: &str, right: &'src str) -> &'src str {
+    let shared = common_prefix(right, left).len();
+    &right[shared..]
+}

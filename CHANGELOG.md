@@ -11,6 +11,10 @@ in the relevant parity documents.
 ### Added
 
 - Added the `vstr` facade for Safe Rust string and text utilities.
+- Added Apache Commons `StringUtils`-style classics to `vstr`: `common_prefix`,
+  `common_suffix`, `difference`, `rotate`, `wrap_if_missing`, and the ignore-case
+  `add_prefix_if_not_ignore_case` / `add_suffix_if_not_ignore_case` helpers, with
+  cross-crate golden fixtures.
 - Added empty/blank predicates, trimming, splitting, substring, padding,
   defaulting, contains, prefix/suffix, length, formatting, case conversion,
   escaping, classification, Ant path matching, emoji, and similarity helpers.

@@ -251,6 +251,73 @@ fn prefix_and_suffix_helpers_handle_existing_markers() {
     assert_eq!(add_prefix_if_not("/path", "/"), "/path");
     assert_eq!(add_suffix_if_not("path", "/"), "path/");
     assert_eq!(add_suffix_if_not("path/", "/"), "path/");
+    assert_eq!(add_prefix_if_not_ignore_case("Path", "/"), "/Path");
+    assert_eq!(
+        add_prefix_if_not_ignore_case("HTTP://x", "http://"),
+        "HTTP://x"
+    );
+    assert_eq!(
+        add_suffix_if_not_ignore_case("report", ".TXT"),
+        "report.TXT"
+    );
+    assert_eq!(
+        add_suffix_if_not_ignore_case("report.TXT", ".txt"),
+        "report.TXT"
+    );
+}
+
+#[test]
+fn common_prefix_and_suffix_are_scalar_safe() {
+    assert_eq!(common_prefix("knifer-rs", "knifer-go"), "knifer-");
+    assert_eq!(common_prefix("你好世界", "你好朋友"), "你好");
+    assert_eq!(common_prefix("abc", "xyz"), "");
+    assert_eq!(common_prefix("", "abc"), "");
+    assert_eq!(common_prefix("abc", "abcdef"), "abc");
+    // A shared byte prefix that splits a multi-byte scalar must not leak.
+    assert_eq!(common_prefix("é", "e"), "");
+    assert_eq!(common_suffix("knifer-rs", "wrapper-rs"), "er-rs");
+    assert_eq!(common_suffix("读写世界", "编写世界"), "写世界");
+    assert_eq!(common_suffix("abc", "xyz"), "");
+    assert_eq!(common_suffix("abc", ""), "");
+    assert_eq!(common_suffix("abcdef", "def"), "def");
+}
+
+#[test]
+fn difference_returns_the_diverging_tail_of_the_right_side() {
+    assert_eq!(difference("i am a machine", "i am a robot"), "robot");
+    assert_eq!(difference("", "abc"), "abc");
+    assert_eq!(difference("abc", ""), "");
+    assert_eq!(difference("abc", "abc"), "");
+    assert_eq!(difference("abc", "ab"), "");
+    assert_eq!(difference("ab", "abxyz"), "xyz");
+    assert_eq!(difference("你好世界", "你好朋友"), "朋友");
+}
+
+#[test]
+fn rotate_wraps_by_scalar_positions_in_both_directions() {
+    assert_eq!(rotate("abcdefg", 0), "abcdefg");
+    assert_eq!(rotate("abcdefg", 2), "fgabcde");
+    assert_eq!(rotate("abcdefg", -2), "cdefgab");
+    assert_eq!(rotate("abcdefg", 7), "abcdefg");
+    assert_eq!(rotate("abcdefg", 9), "fgabcde");
+    assert_eq!(rotate("abcdefg", -9), "cdefgab");
+    assert_eq!(rotate("你好世界", 1), "界你好世");
+    assert_eq!(rotate("你好世界", -1), "好世界你");
+    assert_eq!(rotate("", 3), "");
+    assert_eq!(rotate("a", 5), "a");
+}
+
+#[test]
+fn wrap_if_missing_only_adds_absent_markers() {
+    assert_eq!(wrap_if_missing("path", "/"), "/path/");
+    assert_eq!(wrap_if_missing("/path/", "/"), "/path/");
+    assert_eq!(wrap_if_missing("/path", "/"), "/path/");
+    assert_eq!(wrap_if_missing("path/", "/"), "/path/");
+    assert_eq!(wrap_if_missing("/", "/"), "/");
+    assert_eq!(wrap_if_missing("", "/"), "");
+    assert_eq!(wrap_if_missing("path", ""), "path");
+    assert_eq!(wrap_if_missing("value", "**"), "**value**");
+    assert_eq!(wrap_if_missing("**value**", "**"), "**value**");
 }
 
 #[test]
@@ -261,4 +328,31 @@ fn length_helpers_make_byte_and_char_counts_explicit() {
     assert_eq!(char_len("你好"), 2);
     assert_eq!(length("你好"), 2);
     assert_eq!(rune_len("你好"), 2);
+}
+
+#[test]
+fn commons_string_utils_classics_lock_cross_crate_shape() {
+    // These fixtures track Apache Commons Lang `StringUtils` behavior so the
+    // classics keep a familiar shape. Rust adds scalar-safety and borrowing:
+    // `common_prefix`/`common_suffix`/`difference` return borrowed `&str`.
+    // covered: Commons `getCommonPrefix` returns the shared leading run.
+    assert_eq!(common_prefix("i am a machine", "i am a robot"), "i am a ");
+    assert_eq!(common_prefix("abc", "abc"), "abc");
+    assert_eq!(common_prefix("abc", "def"), "");
+    // covered-rust-shape: Commons has no `getCommonSuffix`; symmetric helper.
+    assert_eq!(common_suffix("running", "jumping"), "ing");
+    // covered: Commons `difference("i am a machine", "i am a robot")` -> "robot".
+    assert_eq!(difference("i am a machine", "i am a robot"), "robot");
+    assert_eq!(difference("foo", "foo"), "");
+    assert_eq!(difference("", "abc"), "abc");
+    // covered: Commons `rotate("abcdefg", 2)` -> "fgabcde".
+    assert_eq!(rotate("abcdefg", 2), "fgabcde");
+    assert_eq!(rotate("abcdefg", -2), "cdefgab");
+    // covered: Commons `wrapIfMissing("path", "/")` -> "/path/".
+    assert_eq!(wrap_if_missing("path", "/"), "/path/");
+    assert_eq!(wrap_if_missing("/path/", "/"), "/path/");
+    assert_eq!(wrap_if_missing("", "/"), "");
+    // covered-rust-shape: `appendIfMissing`/`prependIfMissing` ignore-case.
+    assert_eq!(add_suffix_if_not_ignore_case("a.TXT", ".txt"), "a.TXT");
+    assert_eq!(add_prefix_if_not_ignore_case("A", "a"), "A");
 }
