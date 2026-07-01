@@ -810,6 +810,9 @@ require_text bin/check-examples.sh 'cargo run --locked --example vbytes_encoding
 require_text bin/check-examples.sh 'cargo run --locked --example vstr_matcher'
 require_text bin/check-examples.sh 'cargo run --locked --all-features --example vstr_unicode'
 require_text bin/check-examples.sh 'cargo test --locked --all-features --examples'
+require_text bin/check-examples.sh 'example not executed by any gate'
+require_text bin/check-examples.sh 'delegated_examples=('
+require_text bin/check-examples.sh "find examples -maxdepth 1 -name '*.rs'"
 require_text bench/vstr_bench.rs 'bench_find_all'
 require_text bench/vstr_bench.rs 'bench_levenshtein'
 require_text examples/vstr_benchmark_smoke.rs 'replace_many'
