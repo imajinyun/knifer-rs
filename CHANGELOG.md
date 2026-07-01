@@ -19,6 +19,9 @@ in the relevant parity documents.
   map common Latin diacritics and ligatures to ASCII (for example `é` to `e` and
   `Æ` to `Ae`) while preserving non-Latin scripts. `slugify` now folds through
   `deburr` so accented input produces ASCII slugs.
+- Added a dependency-free humanize family to `vstr`: `pluralize`, `ordinalize`,
+  `number_format`, `human_bytes` (binary IEC units), and `human_duration`, using
+  integer-only arithmetic for deterministic output.
 - Added empty/blank predicates, trimming, splitting, substring, padding,
   defaulting, contains, prefix/suffix, length, formatting, case conversion,
   escaping, classification, Ant path matching, emoji, and similarity helpers.

@@ -9,6 +9,7 @@
 //!
 //! - `basic` contains everyday scalar-based helpers such as trimming,
 //!   substring, searching, replacement, and literal escaping.
+//! - `humanize` contains locale-neutral count, size, and duration formatting.
 //! - `text` contains higher-level text cleanup, wrapping, truncation,
 //!   masking, inspection helpers, and a split `text/wrap` file family for
 //!   scalar layout policy.
@@ -25,6 +26,7 @@ mod emoji;
 mod encoding;
 #[cfg(feature = "unicode-segmentation")]
 mod grapheme;
+mod humanize;
 mod matcher;
 mod path;
 #[cfg(feature = "pattern-regex")]
@@ -41,6 +43,7 @@ pub use emoji::*;
 pub use encoding::*;
 #[cfg(feature = "unicode-segmentation")]
 pub use grapheme::*;
+pub use humanize::*;
 pub use matcher::*;
 pub use path::*;
 #[cfg(feature = "pattern-regex")]

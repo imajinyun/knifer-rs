@@ -3,6 +3,7 @@ mod case;
 mod classify;
 mod emoji;
 mod encoding;
+mod humanize;
 mod matcher;
 mod path;
 #[cfg(feature = "pattern-regex")]

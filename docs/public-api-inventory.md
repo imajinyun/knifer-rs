@@ -175,6 +175,8 @@ knifer_rs::vstr::graphemes = pub fn graphemes(input: &str) -> Vec<&str>
 knifer_rs::vstr::hamming_distance64 = pub const fn hamming_distance64(left: u64, right: u64) -> u32
 knifer_rs::vstr::has_blank = pub fn has_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 knifer_rs::vstr::has_empty = pub fn has_empty<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
+knifer_rs::vstr::human_bytes = pub fn human_bytes(bytes: u64) -> String
+knifer_rs::vstr::human_duration = pub fn human_duration(duration: Duration) -> String
 knifer_rs::vstr::indent = pub fn indent(input: &str, prefix: &str) -> String
 knifer_rs::vstr::initials = pub fn initials(input: &str) -> String
 knifer_rs::vstr::is_all_blank = pub fn is_all_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
@@ -201,8 +203,11 @@ knifer_rs::vstr::ngram_similarity = pub fn ngram_similarity(left: &str, right: &
 knifer_rs::vstr::non_blank_lines = pub fn non_blank_lines(input: &str) -> Vec<&str>
 knifer_rs::vstr::normalize_newlines = pub fn normalize_newlines(input: &str) -> String
 knifer_rs::vstr::normalize_whitespace = pub fn normalize_whitespace(input: &str) -> String
+knifer_rs::vstr::number_format = pub fn number_format(value: i64) -> String
+knifer_rs::vstr::ordinalize = pub fn ordinalize(value: i64) -> String
 knifer_rs::vstr::pad_left = pub fn pad_left(input: &str, target_len: usize, pad: char) -> String
 knifer_rs::vstr::pad_right = pub fn pad_right(input: &str, target_len: usize, pad: char) -> String
+knifer_rs::vstr::pluralize = pub fn pluralize(word: &str, count: i64) -> String
 knifer_rs::vstr::quote_meta = pub fn quote_meta(input: &str) -> String
 knifer_rs::vstr::remove_accents = pub fn remove_accents(input: &str) -> String
 knifer_rs::vstr::remove_ascii_punctuation = pub fn remove_ascii_punctuation(input: &str) -> String
