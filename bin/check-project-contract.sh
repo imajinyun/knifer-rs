@@ -860,6 +860,48 @@ require_bench_names_match \
 require_bench_names_match \
   bin/check-vstr-benchmark-smoke.sh \
   "$(bench_names_from_for_loop bin/check-vstr-benchmark-smoke.sh)"
+
+# The fuzz-target names are duplicated in three places: the [[bin]] entries in
+# fuzz/Cargo.toml (which cargo actually builds) and the target lists in both
+# fuzz gates. fuzz/Cargo.toml is the source of truth; the smoke gate and the
+# optional long-run gate must list exactly the same targets or a new fuzz
+# target could escape smoke coverage or the long-run gate.
+fuzz_names_from_manifest() {
+  grep -oE 'name = "(fuzz_[a-z_]+)"' "$1" |
+    sed -E 's/name = "(fuzz_[a-z_]+)"/\1/' |
+    sort -u
+}
+
+fuzz_names_from_list() {
+  sed -n "$2" "$1" |
+    tr -d '\\ ' |
+    grep -E '^fuzz_[a-z_]+$' |
+    sort -u
+}
+
+fuzz_source_names="$(fuzz_names_from_manifest fuzz/Cargo.toml)"
+if [[ -z "$fuzz_source_names" ]]; then
+  echo "no fuzz targets found in fuzz/Cargo.toml" >&2
+  exit 1
+fi
+
+require_fuzz_names_match() {
+  local label="$1"
+  local actual="$2"
+
+  if [[ "$actual" != "$fuzz_source_names" ]]; then
+    echo "fuzz targets in $label are not aligned with fuzz/Cargo.toml" >&2
+    diff <(printf '%s\n' "$fuzz_source_names") <(printf '%s\n' "$actual") >&2 || true
+    exit 1
+  fi
+}
+
+require_fuzz_names_match \
+  bin/check-vstr-fuzz-smoke.sh \
+  "$(fuzz_names_from_list bin/check-vstr-fuzz-smoke.sh '/for target in/,/^do$/p')"
+require_fuzz_names_match \
+  bin/check-vstr-fuzz.sh \
+  "$(fuzz_names_from_list bin/check-vstr-fuzz.sh '/targets=(/,/^)/p')"
 require_text examples/vstr_daily.rs 'vstr::between'
 require_text examples/vstr_daily.rs 'vstr::split_once_last'
 require_text examples/vstr_daily.rs 'vstr::to_train_case'
