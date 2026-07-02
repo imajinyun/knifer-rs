@@ -29,6 +29,11 @@ in the relevant parity documents.
   `common_suffix`, `difference`, `rotate`, `wrap_if_missing`, and the ignore-case
   `add_prefix_if_not_ignore_case` / `add_suffix_if_not_ignore_case` helpers, with
   cross-crate golden fixtures.
+- Added a dependency-free position/index search family to `vstr`: `index_of`,
+  `index_of_ignore_case`, `last_index_of`, `ordinal_index_of` (one-based Nth,
+  non-overlapping), `index_of_any` (earliest of a needle set), and
+  `index_of_difference` (first diverging byte, Apache Commons parity). Results
+  are byte indexes that always land on Unicode scalar boundaries.
 - Added dependency-free ASCII folding to `vstr`: `deburr` and `remove_accents`
   map common Latin diacritics and ligatures to ASCII (for example `é` to `e` and
   `Æ` to `Ae`) while preserving non-Latin scripts. `slugify` now folds through

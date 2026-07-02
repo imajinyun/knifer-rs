@@ -121,3 +121,30 @@ pub fn difference<'src>(left: &str, right: &'src str) -> &'src str {
     let shared = common_prefix(right, left).len();
     &right[shared..]
 }
+
+/// Returns the byte index at which `left` and `right` first differ.
+///
+/// This mirrors Apache Commons `StringUtils.indexOfDifference`: `None` is
+/// returned when the strings are equal, and when one string is a prefix of the
+/// other the index is the length of the shorter string. The result always lands
+/// on a Unicode scalar boundary.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::index_of_difference("i am a machine", "i am a robot"), Some(7));
+/// assert_eq!(vstr::index_of_difference("abc", "abc"), None);
+/// assert_eq!(vstr::index_of_difference("abc", "abcdef"), Some(3));
+/// assert_eq!(vstr::index_of_difference("你好世界", "你好朋友"), Some(6));
+/// ```
+#[must_use]
+pub fn index_of_difference(left: &str, right: &str) -> Option<usize> {
+    let shared = common_prefix(left, right).len();
+    if shared == left.len() && shared == right.len() {
+        None
+    } else {
+        Some(shared)
+    }
+}

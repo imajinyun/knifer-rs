@@ -32,7 +32,8 @@ Core stable areas:
 - `kniferrs::vstr`: trim, blank/empty predicates, substring helpers, scalar
   text helpers, case conversion, English word/identifier inflection
   (`pluralize`/`singularize`, `ordinalize`/`deordinalize`, `humanize`,
-  `titleize`, `camelize`), replacement, literal search, escaping, Ant
+  `titleize`, `camelize`), replacement, literal search (span and byte-index
+  lookups, including `ordinal_index_of`/`index_of_difference`), escaping, Ant
   path matching, emoji helpers, and similarity helpers (Levenshtein, Jaro,
   Jaro-Winkler, Damerau, optimal string alignment, Sørensen-Dice, Jaccard,
   n-gram, and `SimHash`).
@@ -225,6 +226,10 @@ kniferrs::vstr::human_count = pub fn human_count(value: i64) -> String
 kniferrs::vstr::human_duration = pub fn human_duration(duration: Duration) -> String
 kniferrs::vstr::humanize = pub fn humanize(input: &str) -> String
 kniferrs::vstr::indent = pub fn indent(input: &str, prefix: &str) -> String
+kniferrs::vstr::index_of = pub fn index_of(input: &str, needle: &str) -> Option<usize>
+kniferrs::vstr::index_of_any = pub fn index_of_any<'needle, I>(input: &str, needles: I) -> Option<usize> where I: IntoIterator<Item = &'needle str>
+kniferrs::vstr::index_of_difference = pub fn index_of_difference(left: &str, right: &str) -> Option<usize>
+kniferrs::vstr::index_of_ignore_case = pub fn index_of_ignore_case(input: &str, needle: &str) -> Option<usize>
 kniferrs::vstr::initials = pub fn initials(input: &str) -> String
 kniferrs::vstr::is_all_blank = pub fn is_all_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 kniferrs::vstr::is_all_empty = pub fn is_all_empty<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
@@ -245,6 +250,7 @@ kniferrs::vstr::is_palindrome = pub fn is_palindrome(input: &str) -> bool
 kniferrs::vstr::jaccard_similarity = pub fn jaccard_similarity(left: &str, right: &str) -> f64
 kniferrs::vstr::jaro_similarity = pub fn jaro_similarity(left: &str, right: &str) -> f64
 kniferrs::vstr::jaro_winkler_similarity = pub fn jaro_winkler_similarity(left: &str, right: &str) -> f64
+kniferrs::vstr::last_index_of = pub fn last_index_of(input: &str, needle: &str) -> Option<usize>
 kniferrs::vstr::length = pub fn length(input: &str) -> usize
 kniferrs::vstr::levenshtein_distance = pub fn levenshtein_distance(left: &str, right: &str) -> usize
 kniferrs::vstr::levenshtein_similarity = pub fn levenshtein_similarity(left: &str, right: &str) -> f64
@@ -264,6 +270,7 @@ kniferrs::vstr::number_format = pub fn number_format(value: i64) -> String
 kniferrs::vstr::number_format_float = pub fn number_format_float(value: f64, decimals: usize) -> String
 kniferrs::vstr::number_format_with = pub fn number_format_with(value: i64, separator: char) -> String
 kniferrs::vstr::optimal_string_alignment = pub fn optimal_string_alignment(left: &str, right: &str) -> usize
+kniferrs::vstr::ordinal_index_of = pub fn ordinal_index_of(input: &str, needle: &str, ordinal: usize) -> Option<usize>
 kniferrs::vstr::ordinalize = pub fn ordinalize(value: i64) -> String
 kniferrs::vstr::pad_left = pub fn pad_left(input: &str, target_len: usize, pad: char) -> String
 kniferrs::vstr::pad_right = pub fn pad_right(input: &str, target_len: usize, pad: char) -> String
@@ -488,7 +495,9 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
 `swap_case`, `normalize_whitespace`, `remove_whitespace`, `between`,
 `contains_none`, `contains_any_ignore_case`, `find_any`, `count_matches`,
-`find_all`, `find_all_ignore_case`, `replace_first`, `replace_last`,
+`find_all`, `find_all_ignore_case`, `index_of`, `index_of_ignore_case`,
+`last_index_of`, `ordinal_index_of`, `index_of_any`, `index_of_difference`,
+`replace_first`, `replace_last`,
 `replace_ignore_case`, `replace_many`, `escape_regex`, `quote_meta`,
 `split_once_last`, `strip_prefix_ignore_case`, `slugify_with_separator`,
 `take_chars`, `drop_chars`, `normalize_newlines`, `trim_lines`,

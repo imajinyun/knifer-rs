@@ -165,6 +165,127 @@ where
     best
 }
 
+/// Returns the byte index of the first occurrence of `needle` in `input`.
+///
+/// This mirrors [`str::find`] with an explicit `vstr` name for the classics
+/// layer. Searching for an empty needle returns `Some(0)`, matching Apache
+/// Commons `StringUtils.indexOf`.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::index_of("knifer-rs", "rs"), Some(7));
+/// assert_eq!(vstr::index_of("knifer-rs", "go"), None);
+/// assert_eq!(vstr::index_of("你好世界", "世界"), Some(6));
+/// ```
+#[must_use]
+pub fn index_of(input: &str, needle: &str) -> Option<usize> {
+    input.find(needle)
+}
+
+/// Returns the byte index of the first case-insensitive occurrence of `needle`.
+///
+/// Matching uses simple scalar-by-scalar case folding, the same compatibility
+/// boundary as [`crate::vstr::equals_ignore_case`]. An empty needle returns
+/// `Some(0)`.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::index_of_ignore_case("Knifer-RS", "rs"), Some(7));
+/// assert_eq!(vstr::index_of_ignore_case("abc\u{212A}", "k"), Some(3));
+/// assert_eq!(vstr::index_of_ignore_case("abc", "z"), None);
+/// ```
+#[must_use]
+pub fn index_of_ignore_case(input: &str, needle: &str) -> Option<usize> {
+    let mut remaining = input;
+    let mut offset = 0;
+
+    loop {
+        if prefix_end_ignore_case(remaining, needle).is_some() {
+            return Some(offset);
+        }
+        let ch = remaining.chars().next()?;
+        remaining = &remaining[ch.len_utf8()..];
+        offset += ch.len_utf8();
+    }
+}
+
+/// Returns the byte index of the last occurrence of `needle` in `input`.
+///
+/// This mirrors [`str::rfind`] with an explicit `vstr` name. Searching for an
+/// empty needle returns `Some(input.len())`, matching Apache Commons
+/// `StringUtils.lastIndexOf`.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::last_index_of("go go go", "go"), Some(6));
+/// assert_eq!(vstr::last_index_of("go go go", "x"), None);
+/// assert_eq!(vstr::last_index_of("abc", ""), Some(3));
+/// ```
+#[must_use]
+pub fn last_index_of(input: &str, needle: &str) -> Option<usize> {
+    input.rfind(needle)
+}
+
+/// Returns the byte index of the `ordinal`-th occurrence of `needle`.
+///
+/// `ordinal` is one-based, so `1` finds the first match. Matches are counted
+/// non-overlapping, consistent with [`count_matches`] and [`find_all`]. An
+/// `ordinal` of `0` and an empty needle both return `None` to avoid surprising
+/// infinite-match semantics.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::ordinal_index_of("a.b.c.d", ".", 1), Some(1));
+/// assert_eq!(vstr::ordinal_index_of("a.b.c.d", ".", 3), Some(5));
+/// assert_eq!(vstr::ordinal_index_of("a.b.c.d", ".", 4), None);
+/// assert_eq!(vstr::ordinal_index_of("a.b.c.d", ".", 0), None);
+/// ```
+#[must_use]
+pub fn ordinal_index_of(input: &str, needle: &str, ordinal: usize) -> Option<usize> {
+    if needle.is_empty() || ordinal == 0 {
+        return None;
+    }
+
+    input
+        .match_indices(needle)
+        .nth(ordinal - 1)
+        .map(|(start, _)| start)
+}
+
+/// Returns the smallest byte index at which any non-empty needle occurs.
+///
+/// The returned index is the earliest match across all needles. Empty needles
+/// are ignored, matching [`find_any`]. Returns `None` when no needle is found.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::index_of_any("hello rust", ["go", "rust"]), Some(6));
+/// assert_eq!(vstr::index_of_any("hello rust", ["z", "l"]), Some(2));
+/// assert_eq!(vstr::index_of_any("hello", ["x", "y"]), None);
+/// ```
+#[must_use]
+pub fn index_of_any<'needle, I>(input: &str, needles: I) -> Option<usize>
+where
+    I: IntoIterator<Item = &'needle str>,
+{
+    find_any(input, needles).map(|(_, start, _)| start)
+}
+
 /// Counts non-overlapping matches of `needle` in `input`.
 ///
 /// Empty needles return zero to avoid surprising infinite-match semantics.

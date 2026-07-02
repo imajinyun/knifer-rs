@@ -171,6 +171,36 @@ fn contains_helpers_support_single_any_and_all() {
 }
 
 #[test]
+fn index_family_returns_byte_positions() {
+    // covered: Commons `indexOf` / `lastIndexOf` / `ordinalIndexOf`.
+    assert_eq!(index_of("knifer-rs", "rs"), Some(7));
+    assert_eq!(index_of("knifer-rs", "go"), None);
+    assert_eq!(index_of("你好世界", "世界"), Some(6));
+    assert_eq!(index_of("abc", ""), Some(0));
+
+    assert_eq!(index_of_ignore_case("Knifer-RS", "rs"), Some(7));
+    assert_eq!(index_of_ignore_case("abc\u{212A}", "k"), Some(3));
+    assert_eq!(index_of_ignore_case("abc", "z"), None);
+    assert_eq!(index_of_ignore_case("abc", ""), Some(0));
+
+    assert_eq!(last_index_of("go go go", "go"), Some(6));
+    assert_eq!(last_index_of("go go go", "x"), None);
+    assert_eq!(last_index_of("abc", ""), Some(3));
+
+    assert_eq!(ordinal_index_of("a.b.c.d", ".", 1), Some(1));
+    assert_eq!(ordinal_index_of("a.b.c.d", ".", 3), Some(5));
+    assert_eq!(ordinal_index_of("a.b.c.d", ".", 4), None);
+    assert_eq!(ordinal_index_of("a.b.c.d", ".", 0), None);
+    assert_eq!(ordinal_index_of("aaaa", "aa", 2), Some(2));
+    assert_eq!(ordinal_index_of("abc", "", 1), None);
+
+    assert_eq!(index_of_any("hello rust", ["go", "rust"]), Some(6));
+    assert_eq!(index_of_any("hello rust", ["z", "l"]), Some(2));
+    assert_eq!(index_of_any("hello", ["x", "y"]), None);
+    assert_eq!(index_of_any("hello", ["", "l"]), Some(2));
+}
+
+#[test]
 fn equality_and_reverse_helpers_are_unicode_aware() {
     assert!(equals_ignore_case("Knifer-RS", "knifer-rs"));
     assert!(equals_ignore_case("Straße", "straße"));
@@ -291,6 +321,21 @@ fn difference_returns_the_diverging_tail_of_the_right_side() {
     assert_eq!(difference("abc", "ab"), "");
     assert_eq!(difference("ab", "abxyz"), "xyz");
     assert_eq!(difference("你好世界", "你好朋友"), "朋友");
+}
+
+#[test]
+fn index_of_difference_returns_first_diverging_byte() {
+    // covered: Commons `indexOfDifference`.
+    assert_eq!(
+        index_of_difference("i am a machine", "i am a robot"),
+        Some(7)
+    );
+    assert_eq!(index_of_difference("abc", "abc"), None);
+    assert_eq!(index_of_difference("abc", "abcdef"), Some(3));
+    assert_eq!(index_of_difference("abcdef", "abc"), Some(3));
+    assert_eq!(index_of_difference("", "abc"), Some(0));
+    assert_eq!(index_of_difference("", ""), None);
+    assert_eq!(index_of_difference("你好世界", "你好朋友"), Some(6));
 }
 
 #[test]
