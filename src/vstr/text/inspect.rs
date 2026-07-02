@@ -40,7 +40,8 @@ pub fn non_blank_lines(input: &str) -> Vec<&str> {
 /// run. Punctuation stays attached to the surrounding word, and scripts without
 /// spaces (such as CJK) are returned as a single token. For UAX #29
 /// word-boundary tokenization that splits punctuation and CJK, use the
-/// feature-gated [`unicode_words`](crate::vstr::unicode_words).
+/// feature-gated `unicode_words` (enabled by the `unicode-segmentation`
+/// feature).
 ///
 /// # Examples
 ///
@@ -170,8 +171,8 @@ pub fn remove_ascii_punctuation(input: &str) -> String {
 ///
 /// Uses the same whitespace-only tokenization as [`words`], so it counts
 /// whitespace-free runs, not UAX #29 word boundaries. For a boundary-aware
-/// count, use the feature-gated
-/// [`unicode_word_len`](crate::vstr::unicode_word_len).
+/// count, use the feature-gated `unicode_word_len` (enabled by the
+/// `unicode-segmentation` feature).
 ///
 /// # Examples
 ///
