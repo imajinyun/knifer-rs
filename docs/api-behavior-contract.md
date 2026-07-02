@@ -36,6 +36,8 @@ Current core stable areas:
   byte search, prefix/suffix stripping, and byte replacement
 - `kniferrs::vencoding`: BOM detection, BOM stripping, UTF-8 validation, and
   lossy UTF-8 decoding boundaries
+- `kniferrs::vrand`: the seedable non-cryptographic `VRand` generator and the
+  thread-local `random_*` string/token helpers
 
 ### Optional Feature Facade
 
@@ -62,6 +64,7 @@ Current optional feature areas:
 - `matcher-aho-corasick`
 - `search-memchr`
 - `encoding`
+- `random-secure`
 
 ### Experimental-But-Public Facade
 
@@ -94,6 +97,7 @@ Current experimental-but-public areas:
 | `vstr` Ant path matching | Core Stable Facade | unit tests, knifer-go parity fixtures, fuzz smoke |
 | `vbytes` | Core Stable Facade | unit tests for valid UTF-8, invalid UTF-8, empty input, and byte boundaries |
 | `vencoding` | Core Stable Facade | unit tests for BOM variants, invalid UTF-8, and lossy decoding |
+| `vrand` non-crypto PRNG | Core Stable Facade | unit tests for seed reproducibility, range/bounds, alphabet coverage, and permutation shuffle |
 | regex-backed pattern helpers | Optional Feature Facade | all-features tests, default feature absence, dependency policy |
 | Unicode segmentation helpers | Optional Feature Facade | all-features tests, Unicode boundary fixtures, dependency policy |
 | Unicode normalization helpers | Optional Feature Facade | all-features tests, UAX #15 NFC/NFD/NFKC/NFKD golden fixtures, dependency policy |
@@ -102,6 +106,7 @@ Current experimental-but-public areas:
 | matcher backend | Experimental-But-Public Facade | parity tests, overlap tests, replacement tests, fuzz smoke |
 | vbytes search backend | Optional Feature Facade | naive-oracle parity tests in default and `search-memchr` builds, dependency policy |
 | legacy encoding conversion | Optional Feature Facade | all-features tests, default feature absence, GBK/Shift_JIS/windows-1252/ISO-8859-1 parity and round-trip fixtures, dependency policy |
+| secure random helpers | Optional Feature Facade | all-features tests, default feature absence, length/alphabet and fail-closed `SecureError` coverage, dependency policy |
 
 ## Change Rules
 

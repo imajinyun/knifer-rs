@@ -24,9 +24,10 @@ See `docs/vstr-complexity.md` for `vstr` complexity and allocation notes,
 
 ## 🚦 Status
 
-Pre-1.0, with three MVP facades: `kniferrs::vstr` for valid UTF-8 strings,
-`kniferrs::vbytes` for byte slices that may not be valid UTF-8, and
-`kniferrs::vencoding` for BOM and UTF-8 boundaries. API changes are tracked in
+Pre-1.0, with four MVP facades: `kniferrs::vstr` for valid UTF-8 strings,
+`kniferrs::vbytes` for byte slices that may not be valid UTF-8,
+`kniferrs::vencoding` for BOM and UTF-8 boundaries, and `kniferrs::vrand` for
+random string and token generation. API changes are tracked in
 `docs/public-api-inventory.md`; `vstr` compatibility notes live in
 `docs/vstr-api-parity.md`.
 
@@ -78,10 +79,11 @@ knifer-rs = {
 
 | Feature | Adds | Default |
 | --- | --- | --- |
-| `default` | Safe Rust helpers for `vstr`, `vbytes`, and `vencoding` | enabled |
+| `default` | Safe Rust helpers for `vstr`, `vbytes`, `vencoding`, and `vrand` | enabled |
 | `encoding` | WHATWG legacy encoding decode/encode `vencoding::decode`/`encode` (GBK, Shift_JIS, windows-1252, ...) | disabled |
 | `matcher-aho-corasick` | optional automaton backend for `VStrMatcher` internals | disabled |
 | `pattern-regex` | regex-backed pattern helpers such as `vstr::find_pattern` | disabled |
+| `random-secure` | cryptographically secure, fail-closed random helpers `vrand::secure_bytes`/`secure_string`/`secure_hex` | disabled |
 | `search-memchr` | SIMD-accelerated literal byte search backend for `vbytes` | disabled |
 | `transliterate` | full ASCII transliteration `vstr::transliterate`/`slugify_ascii` (CJK, Cyrillic, ...) | disabled |
 | `unicode-normalization` | UAX #15 normalization forms `vstr::nfc`/`nfd`/`nfkc`/`nfkd` | disabled |
@@ -109,6 +111,7 @@ src/
   lib.rs       crate entry point and public facade exports
   vbytes.rs    byte-slice helpers for possibly invalid UTF-8
   vencoding.rs BOM and UTF-8 validation/decoding helpers
+  vrand/       seedable non-crypto PRNG and optional secure random helpers
   vstr/
     mod.rs     vstr facade and public re-exports
     basic/     common string helpers split by behavior area

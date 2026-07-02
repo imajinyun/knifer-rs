@@ -10,6 +10,17 @@ in the relevant parity documents.
 
 ### Added
 
+- Added the `vrand` facade for random string, token, and value generation. The
+  default zero-dependency tier exposes the seedable, reproducible,
+  **non-cryptographic** `VRand` generator (`SplitMix64`) with `next_u64`,
+  `next_u32`, `below`, `range`, `bool`, `string`/`string_from`, `choose`, and
+  `shuffle`, plus thread-local free helpers `random_string`,
+  `random_string_from`, `random_digits`, `random_hex`, and alphabet constants
+  (`DIGITS`, `LOWERCASE`, `UPPERCASE`, `ALPHANUMERIC`, `HEX`, `URL_SAFE`). The
+  optional `random-secure` feature adds fail-closed, cryptographically secure
+  helpers (`secure_bytes`, `secure_string`, `secure_string_from`, `secure_hex`,
+  and the re-exported `SecureError`) backed by the operating system CSPRNG
+  through `getrandom`. Both tiers use unbiased rejection sampling.
 - Added the `vstr` facade for Safe Rust string and text utilities.
 - Added a dependency-free string-similarity metric suite to `vstr`:
   `optimal_string_alignment` (restricted Damerau-Levenshtein),

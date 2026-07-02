@@ -36,6 +36,8 @@ require_file docs/dependency-policy.md
 require_file src/vbytes.rs
 require_file src/vencoding/mod.rs
 require_file src/vencoding/conversion.rs
+require_file src/vrand/mod.rs
+require_file src/vrand/secure.rs
 require_file src/vstr/basic/mod.rs
 require_file src/vstr/basic/affix.rs
 require_file src/vstr/basic/casefold.rs

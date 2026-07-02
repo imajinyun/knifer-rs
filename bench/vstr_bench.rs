@@ -543,6 +543,9 @@ fn active_feature_set() -> String {
     if cfg!(feature = "pattern-regex") {
         features.push("pattern-regex");
     }
+    if cfg!(feature = "random-secure") {
+        features.push("random-secure");
+    }
     if cfg!(feature = "search-memchr") {
         features.push("search-memchr");
     }

@@ -65,6 +65,9 @@ extract_public_signatures() {
       if (filename ~ /src\/vencoding\//) {
         return "vencoding"
       }
+      if (filename ~ /src\/vrand\//) {
+        return "vrand"
+      }
 
       value = filename
       sub(/^src\//, "", value)
@@ -160,6 +163,7 @@ default_api_files=(
   src/lib.rs
   src/vbytes.rs
   src/vencoding/mod.rs
+  src/vrand/mod.rs
   src/vstr/basic/affix.rs
   src/vstr/basic/compare.rs
   src/vstr/basic/escape.rs
@@ -202,6 +206,7 @@ default_api_files=(
 all_features_api_files=(
   "${default_api_files[@]}"
   src/vencoding/conversion.rs
+  src/vrand/secure.rs
   src/vstr/grapheme.rs
   src/vstr/normalize.rs
   src/vstr/pattern.rs

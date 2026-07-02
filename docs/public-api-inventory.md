@@ -44,6 +44,12 @@ Core stable areas:
   (`chars`, `char_indices`), and byte line/field splitting (`lines`, `fields`).
 - `kniferrs::vencoding`: BOM detection, BOM stripping, UTF-8 validation, and
   lossy UTF-8 decoding boundaries.
+- `kniferrs::vrand`: the seedable, reproducible, **non-cryptographic**
+  `SplitMix64` generator `VRand` (`next_u64`/`next_u32`, `below`, `range`,
+  `bool`, `string`/`string_from`, `choose`, `shuffle`), the thread-local free
+  helpers (`random_string`, `random_string_from`, `random_digits`,
+  `random_hex`), and the alphabet constants (`DIGITS`, `LOWERCASE`, `UPPERCASE`,
+  `ALPHANUMERIC`, `HEX`, `URL_SAFE`). These are not for secrets.
 
 ### Optional Feature Facade
 
@@ -69,6 +75,9 @@ Optional feature areas:
 - `encoding`: WHATWG legacy encoding conversion in `vencoding` — `encoding_name`,
   `decode` (lossy, BOM-sniffing), `decode_strict` (rejects malformed input), and
   `encode`, with the crate-local `EncodingError` and `EncodingErrorKind`.
+- `random-secure`: cryptographically secure, fail-closed random helpers in
+  `vrand` — `secure_bytes`, `secure_string`, `secure_string_from`, `secure_hex`,
+  and the re-exported `SecureError` — backed by the operating system CSPRNG.
 
 ### Experimental-But-Public Facade
 
@@ -124,6 +133,34 @@ kniferrs::vencoding::scan_bom = pub fn scan_bom(input: &[u8]) -> BomScan<'_>
 kniferrs::vencoding::strip_bom = pub fn strip_bom(input: &[u8]) -> &[u8]
 kniferrs::vencoding::validate_utf8 = pub const fn validate_utf8(input: &[u8]) -> Result<&str, core::str::Utf8Error>
 kniferrs::vencoding::validate_utf8_without_bom = pub fn validate_utf8_without_bom(input: &[u8]) -> Result<&str, core::str::Utf8Error>
+kniferrs::vrand = pub mod vrand
+kniferrs::vrand::ALPHANUMERIC = pub const ALPHANUMERIC: &str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+kniferrs::vrand::DIGITS = pub const DIGITS: &str = "0123456789"
+kniferrs::vrand::HEX = pub const HEX: &str = "0123456789abcdef"
+kniferrs::vrand::LOWERCASE = pub const LOWERCASE: &str = "abcdefghijklmnopqrstuvwxyz"
+kniferrs::vrand::SecureError = pub type SecureError = getrandom::Error
+kniferrs::vrand::UPPERCASE = pub const UPPERCASE: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+kniferrs::vrand::URL_SAFE = pub const URL_SAFE: &str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
+kniferrs::vrand::VRand = pub struct VRand
+kniferrs::vrand::VRand::below = pub fn below(&mut self, bound: u64) -> u64
+kniferrs::vrand::VRand::bool = pub fn bool(&mut self) -> bool
+kniferrs::vrand::VRand::choose = pub fn choose<'items, T>(&mut self, items: &'items [T]) -> Option<&'items T>
+kniferrs::vrand::VRand::from_entropy = pub fn from_entropy() -> Self
+kniferrs::vrand::VRand::next_u32 = pub fn next_u32(&mut self) -> u32
+kniferrs::vrand::VRand::next_u64 = pub fn next_u64(&mut self) -> u64
+kniferrs::vrand::VRand::range = pub fn range(&mut self, low: i64, high: i64) -> i64
+kniferrs::vrand::VRand::seeded = pub const fn seeded(seed: u64) -> Self
+kniferrs::vrand::VRand::shuffle = pub fn shuffle<T>(&mut self, items: &mut [T])
+kniferrs::vrand::VRand::string = pub fn string(&mut self, len: usize) -> String
+kniferrs::vrand::VRand::string_from = pub fn string_from(&mut self, alphabet: &str, len: usize) -> String
+kniferrs::vrand::random_digits = pub fn random_digits(len: usize) -> String
+kniferrs::vrand::random_hex = pub fn random_hex(len: usize) -> String
+kniferrs::vrand::random_string = pub fn random_string(len: usize) -> String
+kniferrs::vrand::random_string_from = pub fn random_string_from(alphabet: &str, len: usize) -> String
+kniferrs::vrand::secure_bytes = pub fn secure_bytes(len: usize) -> Result<Vec<u8>, SecureError>
+kniferrs::vrand::secure_hex = pub fn secure_hex(len: usize) -> Result<String, SecureError>
+kniferrs::vrand::secure_string = pub fn secure_string(len: usize) -> Result<String, SecureError>
+kniferrs::vrand::secure_string_from = pub fn secure_string_from(alphabet: &str, len: usize) -> Result<String, SecureError>
 kniferrs::vstr = pub mod vstr
 kniferrs::vstr::EmojiOptions = pub struct EmojiOptions<'src>
 kniferrs::vstr::EmojiOptions::new = pub const fn new() -> Self
@@ -390,6 +427,7 @@ kniferrs::vstr::wrap_with_options = pub fn wrap_with_options(input: &str, option
 ## Optional Feature Inventory
 
 - `pattern-regex`
+- `random-secure`
 - `unicode-normalization`
 - `unicode-segmentation`
 - `unicode-width`
@@ -407,6 +445,11 @@ kniferrs::vencoding::decode = pub fn decode<'src>(input: &'src [u8], label: &str
 kniferrs::vencoding::decode_strict = pub fn decode_strict<'src>(input: &'src [u8], label: &str) -> Result<Cow<'src, str>, EncodingError>
 kniferrs::vencoding::encode = pub fn encode<'src>(input: &'src str, label: &str) -> Result<Cow<'src, [u8]>, EncodingError>
 kniferrs::vencoding::encoding_name = pub fn encoding_name(label: &str) -> Option<&'static str>
+kniferrs::vrand::SecureError = pub type SecureError = getrandom::Error
+kniferrs::vrand::secure_bytes = pub fn secure_bytes(len: usize) -> Result<Vec<u8>, SecureError>
+kniferrs::vrand::secure_hex = pub fn secure_hex(len: usize) -> Result<String, SecureError>
+kniferrs::vrand::secure_string = pub fn secure_string(len: usize) -> Result<String, SecureError>
+kniferrs::vrand::secure_string_from = pub fn secure_string_from(alphabet: &str, len: usize) -> Result<String, SecureError>
 kniferrs::vstr::PatternError = pub struct PatternError
 kniferrs::vstr::PatternError::message = pub fn message(&self) -> &str
 kniferrs::vstr::PatternError::pattern = pub fn pattern(&self) -> &str
@@ -521,6 +564,17 @@ WHATWG-labeled `decode`, `decode_strict`, `encode`, and `encoding_name` helpers
 over `encoding_rs`, surfacing failures through the crate-local `EncodingError`
 and `EncodingErrorKind` types instead of the backend's error shapes.
 
+## `vrand` API Shape
+
+`kniferrs::vrand` is a random-value facade split into two tiers. The default
+build exposes the seedable `VRand` generator (a `SplitMix64` PRNG) and the
+thread-local `random_*` helpers; these are fast and reproducible but **not**
+cryptographically secure and must never be used for secrets, tokens, or nonces.
+When the optional `random-secure` feature is enabled, the `secure` submodule adds
+fail-closed CSPRNG helpers (`secure_bytes`, `secure_string`, `secure_string_from`,
+`secure_hex`) backed by the operating system entropy source through `getrandom`,
+returning `SecureError` rather than substituting predictable data on failure.
+
 ## Current Function Groups
 
 Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
@@ -532,6 +586,11 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `vencoding::decode_utf8_lossy`,
 `vencoding::encoding_name`, `vencoding::decode`, `vencoding::decode_strict`,
 `vencoding::encode`, `vencoding::EncodingError`, `vencoding::EncodingErrorKind`,
+`vrand`, `vrand::VRand`, `vrand::VRand::next_u64`, `vrand::VRand::below`,
+`vrand::VRand::range`, `vrand::VRand::string`, `vrand::VRand::choose`,
+`vrand::VRand::shuffle`, `vrand::random_string`, `vrand::random_string_from`,
+`vrand::random_digits`, `vrand::random_hex`, `vrand::secure_bytes`,
+`vrand::secure_string`, `vrand::secure_hex`, `vrand::SecureError`,
 `EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,

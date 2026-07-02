@@ -18,6 +18,7 @@ name = "kniferrs"
 aho-corasick = { version = "1", optional = true }
 deunicode = { version = "1", optional = true }
 encoding_rs = { version = "0.8", optional = true }
+getrandom = { version = "0.3", optional = true }
 memchr = { version = "2", optional = true }
 regex = { version = "1", optional = true }
 unicode-normalization = { version = "0.1", optional = true }
@@ -29,6 +30,7 @@ default = []
 encoding = ["dep:encoding_rs"]
 matcher-aho-corasick = ["dep:aho-corasick"]
 pattern-regex = ["dep:regex"]
+random-secure = ["dep:getrandom"]
 search-memchr = ["dep:memchr"]
 transliterate = ["dep:deunicode"]
 unicode-normalization = ["dep:unicode-normalization"]

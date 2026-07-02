@@ -19,6 +19,7 @@ utility crate without pulling in a dependency graph.
 Current reserved optional feature names:
 
 - `pattern-regex`
+- `random-secure`
 - `unicode-normalization`
 - `unicode-segmentation`
 - `unicode-width`
@@ -138,3 +139,26 @@ standard library is intentionally lower level.
   below the crate policy with only `cfg-if` as a transitive dependency.
 - Parity and round-trip fixtures must cover GBK, Shift_JIS, windows-1252, and
   ISO-8859-1 in both the default and `encoding` builds.
+
+## `vrand` Optional Feature Boundary
+
+`vrand` is a random-value facade. Its default surface must stay zero-runtime-
+dependency and clearly separated from cryptographic randomness.
+
+`random-secure` Admission Contract:
+
+- The default build must not depend on `getrandom` or any other entropy crate.
+  The default `VRand` generator is a `SplitMix64` PRNG seeded from standard
+  library state only, and it is explicitly documented as **non-cryptographic**.
+- Cryptographically secure helpers (`secure_bytes`, `secure_string`,
+  `secure_string_from`, `secure_hex`) are gated behind the `random-secure`
+  feature and live in the `vrand::secure` submodule, never in the default facade.
+- Secure helpers must **fail closed**: entropy failures surface through the
+  re-exported `SecureError` type as `Result::Err`, never a silent fallback to the
+  non-crypto PRNG.
+- `getrandom` is admitted because it is the de-facto standard OS entropy shim,
+  exposes a Safe-Rust API (`getrandom::fill`), has an MSRV at or below the crate
+  policy (1.85), and pulls only platform entropy backends (`libc`, `r-efi`,
+  `wasip2`) plus `rand_core` as transitive dependencies.
+- Alphabet sampling in both tiers must use unbiased rejection sampling so no
+  character is over-represented.
