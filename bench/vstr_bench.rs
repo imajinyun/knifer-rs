@@ -543,6 +543,9 @@ fn active_feature_set() -> String {
     if cfg!(feature = "search-memchr") {
         features.push("search-memchr");
     }
+    if cfg!(feature = "transliterate") {
+        features.push("transliterate");
+    }
     if cfg!(feature = "unicode-normalization") {
         features.push("unicode-normalization");
     }

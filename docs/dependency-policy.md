@@ -22,6 +22,7 @@ Current reserved optional feature names:
 - `unicode-normalization`
 - `unicode-segmentation`
 - `unicode-width`
+- `transliterate`
 - `matcher-aho-corasick`
 - `search-memchr`
 
@@ -79,6 +80,17 @@ standard library is intentionally lower level.
   long-word splitting, and combining mark behavior.
   `wrap_width_with_options` must reuse the scalar `WrapOptions` policy type
   while measuring budgets in display cells.
+
+`transliterate` Admission Contract:
+
+- The default build must not depend on `deunicode`.
+- Full ASCII transliteration must be feature-gated and expose `transliterate`
+  for readable ASCII conversion of non-Latin scripts, plus `slugify_ascii` and
+  `slugify_ascii_with_separator` for ASCII slugs from any script.
+- The default `slugify` must keep its diacritic-folding-only behavior and must
+  not route through `deunicode`; full transliteration is an explicit opt-in.
+- `deunicode` is admitted because it provides a maintained, zero-transitive-dep
+  transliteration table with an MSRV within the crate policy.
 
 `matcher-aho-corasick` Admission Contract:
 

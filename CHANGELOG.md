@@ -57,6 +57,11 @@ in the relevant parity documents.
   `unicode-normalization` feature, following Unicode Standard Annex #15.
 - Added optional display-width helpers for CJK, combining marks, and emoji ZWJ
   text behind the `unicode-width` feature.
+- Added optional full ASCII transliteration behind the `transliterate` feature:
+  `transliterate` maps non-Latin scripts such as CJK and Cyrillic to readable
+  ASCII, while `slugify_ascii` and `slugify_ascii_with_separator` produce ASCII
+  slugs from any script. The default `slugify` keeps its diacritic-folding-only
+  behavior, so callers opt in to full transliteration explicitly.
 - Added `WrapOptions`, `WhitespaceMode`, and `LongWordPolicy` for configurable
   scalar wrapping without changing the existing `wrap` and `wrap_with_indent`
   behavior.

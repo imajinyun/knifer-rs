@@ -20,6 +20,8 @@
 //!   optional backend adapter.
 //! - `normalize` contains optional Unicode normalization form helpers (NFC,
 //!   NFD, NFKC, NFKD) behind the `unicode-normalization` feature.
+//! - `transliterate` contains optional full ASCII transliteration helpers
+//!   (`transliterate`, `slugify_ascii`) behind the `transliterate` feature.
 //! - `width` contains optional display-cell measurement and wrapping helpers
 //!   behind the `unicode-width` feature, including a split `width/wrap` file
 //!   family for display-cell layout policy.
@@ -41,6 +43,8 @@ mod path;
 mod pattern;
 mod similarity;
 mod text;
+#[cfg(feature = "transliterate")]
+mod transliterate;
 #[cfg(feature = "unicode-width")]
 mod width;
 
@@ -61,6 +65,8 @@ pub use path::*;
 pub use pattern::*;
 pub use similarity::*;
 pub use text::*;
+#[cfg(feature = "transliterate")]
+pub use transliterate::*;
 #[cfg(feature = "unicode-width")]
 pub use width::*;
 

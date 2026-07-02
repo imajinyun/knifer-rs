@@ -13,4 +13,6 @@ mod property;
 mod similarity;
 mod support;
 mod text;
+#[cfg(feature = "transliterate")]
+mod transliterate;
 mod unicode;

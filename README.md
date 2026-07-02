@@ -82,6 +82,7 @@ knifer-rs = {
 | `matcher-aho-corasick` | optional automaton backend for `VStrMatcher` internals | disabled |
 | `pattern-regex` | regex-backed pattern helpers such as `vstr::find_pattern` | disabled |
 | `search-memchr` | SIMD-accelerated literal byte search backend for `vbytes` | disabled |
+| `transliterate` | full ASCII transliteration `vstr::transliterate`/`slugify_ascii` (CJK, Cyrillic, ...) | disabled |
 | `unicode-normalization` | UAX #15 normalization forms `vstr::nfc`/`nfd`/`nfkc`/`nfkd` | disabled |
 | `unicode-segmentation` | grapheme, word, and sentence boundary helpers | disabled |
 | `unicode-width` | display-cell width, truncation, and wrap helpers | disabled |
@@ -259,6 +260,16 @@ wrapping/truncation for CJK, combining marks, and emoji ZWJ text:
 knifer-rs = { version = "0.1", features = ["unicode-width"] }
 ```
 
+Optional `transliterate` helpers add full ASCII transliteration so non-Latin
+scripts such as CJK and Cyrillic become readable ASCII, and `slugify_ascii`
+produces ASCII slugs from any script. The default `slugify` keeps its
+diacritic-folding-only behavior:
+
+```toml
+[dependencies]
+knifer-rs = { version = "0.1", features = ["transliterate"] }
+```
+
 The docs.rs readiness check is the local publish gate. It verifies crate
 metadata, builds rustdoc with the docs.rs configuration and all features, and
 runs `cargo package --locked --allow-dirty`.
@@ -276,5 +287,5 @@ examples, benchmark entry points, and governance docs while excluding local
 - Dependencies: zero runtime dependencies in the default feature set; optional
   features add focused crates such as `regex`, `unicode-normalization`,
   `unicode-segmentation`, and `unicode-width`; `matcher-aho-corasick` adds
-  `aho-corasick` and `search-memchr` adds `memchr`, each only for its own
-  internals.
+  `aho-corasick`, `search-memchr` adds `memchr`, and `transliterate` adds
+  `deunicode`, each only for its own internals.

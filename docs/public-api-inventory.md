@@ -56,6 +56,9 @@ Optional feature areas:
 - `unicode-normalization`: UAX #15 normalization forms `nfc`, `nfd`, `nfkc`,
   `nfkd` and quick-check predicates `is_nfc`, `is_nfd`, `is_nfkc`, `is_nfkd`.
 - `unicode-width`: display-cell width, width truncation, and width wrapping.
+- `transliterate`: full ASCII transliteration `transliterate` for non-Latin
+  scripts, plus `slugify_ascii` and `slugify_ascii_with_separator` for ASCII
+  slugs from any script (the default `slugify` keeps diacritic folding only).
 
 ### Experimental-But-Public Facade
 
@@ -268,6 +271,8 @@ kniferrs::vstr::rune_len = pub fn rune_len(input: &str) -> usize
 kniferrs::vstr::sim_hash = pub fn sim_hash(input: &str) -> u64
 kniferrs::vstr::singularize = pub fn singularize(word: &str) -> String
 kniferrs::vstr::slugify = pub fn slugify(input: &str) -> String
+kniferrs::vstr::slugify_ascii = pub fn slugify_ascii(input: &str) -> String
+kniferrs::vstr::slugify_ascii_with_separator = pub fn slugify_ascii_with_separator(input: &str, separator: char) -> String
 kniferrs::vstr::slugify_with_separator = pub fn slugify_with_separator(input: &str, separator: char) -> String
 kniferrs::vstr::sorensen_dice = pub fn sorensen_dice(left: &str, right: &str) -> f64
 kniferrs::vstr::split = pub fn split<'src>(input: &'src str, separator: &str) -> Vec<&'src str>
@@ -304,6 +309,7 @@ kniferrs::vstr::to_snake_case = pub fn to_snake_case(input: &str) -> String
 kniferrs::vstr::to_title_case = pub fn to_title_case(input: &str) -> String
 kniferrs::vstr::to_train_case = pub fn to_train_case(input: &str) -> String
 kniferrs::vstr::to_underline_case = pub fn to_underline_case(input: &str) -> String
+kniferrs::vstr::transliterate = pub fn transliterate(input: &str) -> String
 kniferrs::vstr::trim = pub fn trim(input: &str) -> &str
 kniferrs::vstr::trim_blank_lines = pub fn trim_blank_lines(input: &str) -> &str
 kniferrs::vstr::trim_end = pub fn trim_end(input: &str) -> &str
@@ -376,12 +382,15 @@ kniferrs::vstr::nfd = pub fn nfd(input: &str) -> String
 kniferrs::vstr::nfkc = pub fn nfkc(input: &str) -> String
 kniferrs::vstr::nfkd = pub fn nfkd(input: &str) -> String
 kniferrs::vstr::replace_pattern = pub fn replace_pattern(input: &str, pattern: &str, replacement: &str) -> Result<String, PatternError>
+kniferrs::vstr::slugify_ascii = pub fn slugify_ascii(input: &str) -> String
+kniferrs::vstr::slugify_ascii_with_separator = pub fn slugify_ascii_with_separator(input: &str, separator: char) -> String
 kniferrs::vstr::split_sentence_bound_indices = pub fn split_sentence_bound_indices(input: &str) -> Vec<(usize, &str)>
 kniferrs::vstr::split_sentence_bounds = pub fn split_sentence_bounds(input: &str) -> Vec<&str>
 kniferrs::vstr::split_word_bound_indices = pub fn split_word_bound_indices(input: &str) -> Vec<(usize, &str)>
 kniferrs::vstr::split_word_bounds = pub fn split_word_bounds(input: &str) -> Vec<&str>
 kniferrs::vstr::take_graphemes = pub fn take_graphemes(input: &str, count: usize) -> &str
 kniferrs::vstr::take_width = pub fn take_width(input: &str, max_width: usize) -> &str
+kniferrs::vstr::transliterate = pub fn transliterate(input: &str) -> String
 kniferrs::vstr::truncate_graphemes = pub fn truncate_graphemes(input: &str, max_graphemes: usize, suffix: &str) -> String
 kniferrs::vstr::truncate_width = pub fn truncate_width(input: &str, max_width: usize, suffix: &str) -> String
 kniferrs::vstr::unicode_sentence_len = pub fn unicode_sentence_len(input: &str) -> usize
@@ -456,7 +465,8 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `optimal_string_alignment`, `damerau_levenshtein_distance`, `jaro_similarity`,
 `jaro_winkler_similarity`, `sorensen_dice`, `pluralize`, `singularize`,
 `ordinalize`, `deordinalize`, `humanize`, `titleize`, `camelize`,
-`number_format_with`, `number_format_float`, and `human_count`.
+`number_format_with`, `number_format_float`, `human_count`, `transliterate`,
+`slugify_ascii`, and `slugify_ascii_with_separator`.
 
 Generic iterator APIs use forms such as `where I: IntoIterator`.
 
