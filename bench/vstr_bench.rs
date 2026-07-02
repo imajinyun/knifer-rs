@@ -540,6 +540,9 @@ fn active_feature_set() -> String {
     if cfg!(feature = "pattern-regex") {
         features.push("pattern-regex");
     }
+    if cfg!(feature = "search-memchr") {
+        features.push("search-memchr");
+    }
     if cfg!(feature = "unicode-normalization") {
         features.push("unicode-normalization");
     }

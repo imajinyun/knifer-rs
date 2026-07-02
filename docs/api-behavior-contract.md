@@ -59,6 +59,7 @@ Current optional feature areas:
 - `unicode-segmentation`
 - `unicode-width`
 - `matcher-aho-corasick`
+- `search-memchr`
 
 ### Experimental-But-Public Facade
 
@@ -96,6 +97,7 @@ Current experimental-but-public areas:
 | Unicode normalization helpers | Optional Feature Facade | all-features tests, UAX #15 NFC/NFD/NFKC/NFKD golden fixtures, dependency policy |
 | Unicode width helpers | Optional Feature Facade | all-features tests, mixed-width fixtures, dependency policy |
 | matcher backend | Experimental-But-Public Facade | parity tests, overlap tests, replacement tests, fuzz smoke |
+| vbytes search backend | Optional Feature Facade | naive-oracle parity tests in default and `search-memchr` builds, dependency policy |
 
 ## Change Rules
 

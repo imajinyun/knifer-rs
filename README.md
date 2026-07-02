@@ -91,6 +91,7 @@ knifer-rs = {
 | `default` | Safe Rust helpers for `vstr`, `vbytes`, and `vencoding` | enabled |
 | `matcher-aho-corasick` | optional automaton backend for `VStrMatcher` internals | disabled |
 | `pattern-regex` | regex-backed pattern helpers such as `vstr::find_pattern` | disabled |
+| `search-memchr` | SIMD-accelerated literal byte search backend for `vbytes` | disabled |
 | `unicode-normalization` | UAX #15 normalization forms `vstr::nfc`/`nfd`/`nfkc`/`nfkd` | disabled |
 | `unicode-segmentation` | grapheme, word, and sentence boundary helpers | disabled |
 | `unicode-width` | display-cell width, truncation, and wrap helpers | disabled |
@@ -285,4 +286,5 @@ examples, benchmark entry points, and governance docs while excluding local
 - Dependencies: zero runtime dependencies in the default feature set; optional
 features add focused crates such as `regex`, `unicode-normalization`,
   `unicode-segmentation`, and `unicode-width`; `matcher-aho-corasick` adds
-  `aho-corasick` only for matcher internals.
+  `aho-corasick` only for matcher internals, and `search-memchr` adds `memchr`
+  only for the `vbytes` literal search backend.

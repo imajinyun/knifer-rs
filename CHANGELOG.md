@@ -51,6 +51,11 @@ in the relevant parity documents.
 - Added `bstr`-style lax-UTF-8 traversal to `vbytes`: `chars` and `char_indices`
   decode with the Unicode maximal-subpart replacement rule, while `lines` and
   `fields` split byte data without requiring valid UTF-8.
+- Added the optional `search-memchr` backend for the `vbytes` literal search
+  path: `find` and `find_all` route through SIMD-accelerated `memchr::memmem`
+  when enabled while preserving the default zero-runtime-dependency scan and
+  identical leftmost, non-overlapping results (pinned by a naive-oracle parity
+  test that runs in both feature builds).
 - Added the `vencoding` facade for BOM detection, BOM stripping, UTF-8
   validation, and lossy UTF-8 decoding boundaries.
 - Documented the `words` / `word_count` whitespace-tokenization contract (CJK and

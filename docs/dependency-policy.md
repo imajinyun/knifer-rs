@@ -23,6 +23,7 @@ Current reserved optional feature names:
 - `unicode-segmentation`
 - `unicode-width`
 - `matcher-aho-corasick`
+- `search-memchr`
 
 ## `vstr` Optional Feature Boundary
 
@@ -92,6 +93,18 @@ standard library is intentionally lower level.
 - If the backend crate cannot express a tie-break rule exactly, a Safe Rust
   adapter layer must preserve the `vstr` contract.
 - The detailed backend plan lives in `docs/vstr-matcher-backend-plan.md`.
+
+`search-memchr` Admission Contract:
+
+- The default build must not depend on `memchr`.
+- `search-memchr` may enable the optional `memchr` dependency for the `vbytes`
+  literal byte search backend only.
+- `vbytes::find`, `vbytes::find_all`, and `vbytes::contains` signatures,
+  empty-needle handling, and leftmost non-overlapping semantics must not change.
+- The backend selects a single internal literal searcher (`raw_find`); no public
+  `vbytes` API is added, removed, or altered when the feature is toggled.
+- A naive-oracle parity test must confirm identical results in both the default
+  and `search-memchr` builds.
 
 `vencoding` Admission Contract:
 

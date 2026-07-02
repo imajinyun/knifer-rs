@@ -22,6 +22,7 @@ name = "knifer-rs"
 version = "0.1.0"
 dependencies = [
  "aho-corasick",
+ "memchr",
  "regex",
  "serde_json",
  "unicode-normalization",

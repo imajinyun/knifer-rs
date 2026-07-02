@@ -13,6 +13,7 @@ categories = ["development-tools", "text-processing"]
 
 [dependencies]
 aho-corasick = { version = "1", optional = true }
+memchr = { version = "2", optional = true }
 regex = { version = "1", optional = true }
 unicode-normalization = { version = "0.1", optional = true }
 unicode-segmentation = { version = "1", optional = true }
@@ -22,6 +23,7 @@ unicode-width = { version = "0.2", optional = true }
 default = []
 matcher-aho-corasick = ["dep:aho-corasick"]
 pattern-regex = ["dep:regex"]
+search-memchr = ["dep:memchr"]
 unicode-normalization = ["dep:unicode-normalization"]
 unicode-segmentation = ["dep:unicode-segmentation"]
 unicode-width = ["dep:unicode-width"]

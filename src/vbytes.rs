@@ -169,6 +169,10 @@ pub fn contains(input: &[u8], needle: &[u8]) -> bool {
 ///
 /// Empty needles return `Some((0, 0))`.
 ///
+/// The literal scan is shared with [`find_all`]. Enabling the `search-memchr`
+/// feature routes it through the SIMD-accelerated `memchr::memmem` searcher
+/// without changing any results.
+///
 /// # Examples
 ///
 /// ```
@@ -181,20 +185,17 @@ pub fn find(input: &[u8], needle: &[u8]) -> Option<(usize, usize)> {
     if needle.is_empty() {
         return Some((0, 0));
     }
-    if needle.len() > input.len() {
-        return None;
-    }
 
-    input
-        .windows(needle.len())
-        .position(|window| window == needle)
-        .map(|start| (start, start + needle.len()))
+    raw_find(input, needle).map(|start| (start, start + needle.len()))
 }
 
 /// Returns all non-overlapping byte ranges where `needle` occurs in `input`.
 ///
 /// Empty needles return an empty vector so callers cannot accidentally loop
 /// forever.
+///
+/// Like [`find`], this uses the shared literal scan and honors the optional
+/// `search-memchr` backend.
 ///
 /// # Examples
 ///
@@ -205,25 +206,41 @@ pub fn find(input: &[u8], needle: &[u8]) -> Option<(usize, usize)> {
 /// ```
 #[must_use]
 pub fn find_all(input: &[u8], needle: &[u8]) -> Vec<(usize, usize)> {
-    if needle.is_empty() || needle.len() > input.len() {
+    if needle.is_empty() {
         return Vec::new();
     }
 
     let mut found = Vec::new();
     let mut offset = 0usize;
-    while offset + needle.len() <= input.len() {
-        let Some(start) = input[offset..]
-            .windows(needle.len())
-            .position(|window| window == needle)
-            .map(|relative| offset + relative)
-        else {
-            break;
-        };
+    while let Some(relative) = raw_find(&input[offset..], needle) {
+        let start = offset + relative;
         let end = start + needle.len();
         found.push((start, end));
         offset = end;
     }
     found
+}
+
+/// Returns the first start index of a non-empty `needle` within `haystack`.
+///
+/// This is the single literal byte searcher shared by [`find`] and [`find_all`].
+/// The default build scans with the standard library; the `search-memchr`
+/// feature swaps in the SIMD-accelerated `memchr::memmem::find` searcher while
+/// producing identical leftmost results. Callers guarantee `needle` is
+/// non-empty.
+#[cfg(not(feature = "search-memchr"))]
+fn raw_find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
+    if needle.len() > haystack.len() {
+        return None;
+    }
+    haystack
+        .windows(needle.len())
+        .position(|window| window == needle)
+}
+
+#[cfg(feature = "search-memchr")]
+fn raw_find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
+    memchr::memmem::find(haystack, needle)
 }
 
 /// Returns `input` without `prefix` when it is present.
@@ -526,5 +543,63 @@ mod tests {
         assert_eq!(fields(&[0xff, b' ', 0xfe]), vec![&[0xff][..], &[0xfe][..]]);
         assert!(fields(b" \t\n").is_empty());
         assert!(fields(b"").is_empty());
+    }
+
+    // Independent naive oracle for the shared literal byte searcher. It never
+    // uses `raw_find`, so it validates both the default scan and the optional
+    // `search-memchr` backend against the same leftmost, non-overlapping rule.
+    fn oracle_find_all(haystack: &[u8], needle: &[u8]) -> Vec<(usize, usize)> {
+        if needle.is_empty() {
+            return Vec::new();
+        }
+        let mut ranges = Vec::new();
+        let mut offset = 0usize;
+        while offset + needle.len() <= haystack.len() {
+            if &haystack[offset..offset + needle.len()] == needle {
+                ranges.push((offset, offset + needle.len()));
+                offset += needle.len();
+            } else {
+                offset += 1;
+            }
+        }
+        ranges
+    }
+
+    #[test]
+    fn vbytes_literal_search_matches_naive_oracle() {
+        let cases: &[(&[u8], &[u8])] = &[
+            (b"", b"a"),
+            (b"abc", b""),
+            (b"abcabcabc", b"abc"),
+            (b"aaaa", b"aa"),
+            (b"aaaaa", b"aa"),
+            (b"the quick brown fox", b"o"),
+            (b"mississippi", b"issi"),
+            (&[0xff, b'a', 0xff, 0xfe, b'a', 0xff], &[0xff]),
+            (&[0x00, 0x01, 0x00, 0x01, 0x00], &[0x00, 0x01]),
+            (b"needle", b"needle"),
+            (b"short", b"longer-needle"),
+        ];
+
+        for (haystack, needle) in cases {
+            let expected = oracle_find_all(haystack, needle);
+            assert_eq!(
+                find_all(haystack, needle),
+                expected,
+                "find_all mismatch for {haystack:?} / {needle:?}"
+            );
+
+            let expected_find = if needle.is_empty() {
+                Some((0, 0))
+            } else {
+                expected.first().copied()
+            };
+            assert_eq!(
+                find(haystack, needle),
+                expected_find,
+                "find mismatch for {haystack:?} / {needle:?}"
+            );
+            assert_eq!(contains(haystack, needle), find(haystack, needle).is_some());
+        }
     }
 }
