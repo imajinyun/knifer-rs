@@ -5,7 +5,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::trim("  hello  "), "hello");
 /// ```
@@ -21,7 +21,7 @@ pub fn trim(input: &str) -> &str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::trim_start("  hello  "), "hello  ");
 /// ```
@@ -37,7 +37,7 @@ pub fn trim_start(input: &str) -> &str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::trim_end("  hello  "), "  hello");
 /// ```
@@ -53,7 +53,7 @@ pub fn trim_end(input: &str) -> &str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// let value = String::from("  hello  ");
 /// assert_eq!(vstr::trim_to_string(&value), "hello");
@@ -72,7 +72,7 @@ pub fn trim_to_string(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::trim_to_empty("  hello  "), "hello");
 /// assert_eq!(vstr::trim_to_empty("   "), "");

@@ -19,7 +19,7 @@ impl PatternError {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr;
+    /// use kniferrs::vstr;
     ///
     /// let err = vstr::contains_pattern("rust", "[").unwrap_err();
     /// assert_eq!(err.pattern(), "[");
@@ -37,7 +37,7 @@ impl PatternError {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr;
+    /// use kniferrs::vstr;
     ///
     /// let err = vstr::find_pattern("rust", "[").unwrap_err();
     /// assert!(!err.message().is_empty());
@@ -90,7 +90,7 @@ impl From<regex::Error> for PatternError {
 /// ```
 /// # #[cfg(feature = "pattern-regex")]
 /// # {
-/// use knifer_rs::vstr::VRegex;
+/// use kniferrs::vstr::VRegex;
 ///
 /// let digits = VRegex::new(r"\d+").unwrap();
 /// assert!(digits.is_match("ticket-42"));
@@ -115,7 +115,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// assert!(VRegex::new(r"\d+").is_ok());
     /// assert_eq!(VRegex::new("[").unwrap_err().pattern(), "[");
@@ -134,7 +134,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// assert_eq!(VRegex::new(r"\d+").unwrap().as_str(), r"\d+");
     /// # }
@@ -152,7 +152,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// assert_eq!(VRegex::new(r"(\d{4})-(\d{2})").unwrap().capture_count(), 3);
     /// # }
@@ -169,7 +169,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// let digits = VRegex::new(r"\d+").unwrap();
     /// assert!(digits.is_match("ticket-42"));
@@ -188,7 +188,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// let digits = VRegex::new(r"\d+").unwrap();
     /// assert_eq!(digits.find("ticket-42"), Some((7, 9)));
@@ -209,7 +209,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// let digits = VRegex::new(r"\d+").unwrap();
     /// assert_eq!(digits.find_all("a1 b22 c333"), vec![(1, 2), (4, 6), (8, 11)]);
@@ -234,7 +234,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// let date = VRegex::new(r"(\d{4})-(\d{2})-(\d{2})").unwrap();
     /// assert_eq!(
@@ -264,7 +264,7 @@ impl VRegex {
     /// ```
     /// # #[cfg(feature = "pattern-regex")]
     /// # {
-    /// use knifer_rs::vstr::VRegex;
+    /// use kniferrs::vstr::VRegex;
     ///
     /// let digits = VRegex::new(r"\d+").unwrap();
     /// assert_eq!(digits.replace_all("ticket-42 user-7", "#"), "ticket-# user-#");
@@ -293,7 +293,7 @@ impl VRegex {
 /// ```
 /// # #[cfg(feature = "pattern-regex")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_pattern("ticket-42", r"\d+").unwrap());
 /// assert!(!vstr::contains_pattern("ticket", r"\d+").unwrap());
@@ -317,7 +317,7 @@ pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError
 /// ```
 /// # #[cfg(feature = "pattern-regex")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::find_pattern("ticket-42", r"\d+").unwrap(), Some((7, 9)));
 /// # }
@@ -339,7 +339,7 @@ pub fn find_pattern(input: &str, pattern: &str) -> Result<Option<(usize, usize)>
 /// ```
 /// # #[cfg(feature = "pattern-regex")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::find_all_patterns("a1 b22 c333", r"\d+").unwrap(),
@@ -368,7 +368,7 @@ pub fn find_all_patterns(input: &str, pattern: &str) -> Result<Vec<(usize, usize
 /// ```
 /// # #[cfg(feature = "pattern-regex")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::replace_pattern("ticket-42 user-7", r"\d+", "#").unwrap(),

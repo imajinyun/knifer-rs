@@ -5,7 +5,7 @@ use super::trim::trim;
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_empty(""));
 /// assert!(!vstr::is_empty(" "));
@@ -20,7 +20,7 @@ pub const fn is_empty(input: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_not_empty(" "));
 /// assert!(!vstr::is_not_empty(""));
@@ -35,7 +35,7 @@ pub const fn is_not_empty(input: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_blank(" \n\t"));
 /// assert!(!vstr::is_blank("knifer-rs"));
@@ -50,7 +50,7 @@ pub fn is_blank(input: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_not_blank("knifer-rs"));
 /// assert!(!vstr::is_not_blank(" \n\t"));
@@ -65,7 +65,7 @@ pub fn is_not_blank(input: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::has_empty(["a", ""]));
 /// assert!(!vstr::has_empty(["a", " "]));
@@ -83,7 +83,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::has_blank(["a", " "]));
 /// assert!(!vstr::has_blank(["a", "b"]));
@@ -103,7 +103,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_all_empty(["", ""]));
 /// assert!(!vstr::is_all_empty(["", " "]));
@@ -123,7 +123,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_all_blank(["", " ", "\n"]));
 /// assert!(!vstr::is_all_blank(["", "knifer-rs"]));

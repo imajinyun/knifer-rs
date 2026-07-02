@@ -26,32 +26,32 @@ fn run_case(name: &str, input: &str, case: fn(&str) -> usize) {
 }
 
 fn bench_contains(input: &str) -> usize {
-    usize::from(knifer_rs::vstr::contains(input, "rust"))
-        + usize::from(knifer_rs::vstr::contains_any(input, ["java", "rust"]))
+    usize::from(kniferrs::vstr::contains(input, "rust"))
+        + usize::from(kniferrs::vstr::contains_any(input, ["java", "rust"]))
 }
 
 fn bench_find_all(input: &str) -> usize {
-    knifer_rs::vstr::find_all(input, "rust").len()
-        + knifer_rs::vstr::find_all_ignore_case(input, "knifer-rs").len()
+    kniferrs::vstr::find_all(input, "rust").len()
+        + kniferrs::vstr::find_all_ignore_case(input, "knifer-rs").len()
 }
 
 fn bench_replace_many(input: &str) -> usize {
-    knifer_rs::vstr::replace_many(input, [("rust", "rs"), ("world", "team")]).len()
+    kniferrs::vstr::replace_many(input, [("rust", "rs"), ("world", "team")]).len()
 }
 
 fn bench_to_snake_case(input: &str) -> usize {
-    knifer_rs::vstr::to_snake_case(input).len()
+    kniferrs::vstr::to_snake_case(input).len()
 }
 
 fn bench_wrap(input: &str) -> usize {
-    knifer_rs::vstr::wrap(input, 80).len()
+    kniferrs::vstr::wrap(input, 80).len()
 }
 
 fn bench_levenshtein(input: &str) -> usize {
-    let left = knifer_rs::vstr::truncate(input, 64);
-    knifer_rs::vstr::levenshtein_distance(left, "Knifer-RS hello rust utility")
+    let left = kniferrs::vstr::truncate(input, 64);
+    kniferrs::vstr::levenshtein_distance(left, "Knifer-RS hello rust utility")
 }
 
 fn bench_ant_path(path: &str) -> usize {
-    usize::from(knifer_rs::vstr::ant_path_match("/api/**/users/?*", path))
+    usize::from(kniferrs::vstr::ant_path_match("/api/**/users/?*", path))
 }

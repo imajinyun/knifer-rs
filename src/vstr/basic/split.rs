@@ -7,7 +7,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::split("a,b", ","), vec!["a", "b"]);
 /// assert!(vstr::split("", ",").is_empty());
@@ -26,7 +26,7 @@ pub fn split<'src>(input: &'src str, separator: &str) -> Vec<&'src str> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::split_trim(" a, ,b ", ","), vec!["a", "b"]);
 /// ```
@@ -47,7 +47,7 @@ pub fn split_trim<'src>(input: &'src str, separator: &str) -> Vec<&'src str> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::split_once("a=b=c", "="), Some(("a", "b=c")));
 /// assert_eq!(vstr::split_once("abc", "="), None);
@@ -71,7 +71,7 @@ pub fn split_once<'src>(input: &'src str, separator: &str) -> Option<(&'src str,
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::split_once_last("a=b=c", "="), Some(("a=b", "c")));
 /// assert_eq!(vstr::split_once_last("abc", "="), None);

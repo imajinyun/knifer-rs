@@ -9,7 +9,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::wrap("hello rust world", 10), "hello rust\nworld");
 /// ```
@@ -36,7 +36,7 @@ pub fn wrap(input: &str, width: usize) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::wrap_with_indent("hello rust world", 12, "* ", "  "),

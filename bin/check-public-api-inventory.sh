@@ -82,11 +82,11 @@ extract_public_signatures() {
 
       module = module_path(FILENAME)
       if (module == "") {
-        path = "knifer_rs::" name
+        path = "kniferrs::" name
       } else if (impl_context != "") {
-        path = "knifer_rs::" module "::" impl_context "::" name
+        path = "kniferrs::" module "::" impl_context "::" name
       } else {
-        path = "knifer_rs::" module "::" name
+        path = "kniferrs::" module "::" name
       }
 
       print path " = " signature

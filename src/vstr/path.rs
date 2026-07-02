@@ -7,7 +7,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::ant_path_match("/api/**", "/api/v1/users"));
 /// assert!(vstr::ant_path_match("/api/?/users", "/api/v/users"));
@@ -25,7 +25,7 @@ pub fn ant_path_match(pattern: &str, path: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::ant_path_match_with_separator("a.**.d", "a.b.c.d", "."));
 /// assert!(!vstr::ant_path_match_with_separator("a.*.d", "a.b.c.d", "."));

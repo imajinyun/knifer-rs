@@ -1,6 +1,6 @@
 #![cfg_attr(fuzzing, no_main)]
 
-use knifer_rs::vstr;
+use kniferrs::vstr;
 
 #[cfg(fuzzing)]
 use libfuzzer_sys::fuzz_target;

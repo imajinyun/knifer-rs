@@ -7,7 +7,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::sub("abcdef", 1, 4), "bcd");
 /// assert_eq!(vstr::sub("你好世界", 1, -1), "好世");
@@ -40,7 +40,7 @@ pub fn sub(input: &str, from_index: isize, to_index: isize) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::sub_before("a/b/c", "/", false), "a");
 /// assert_eq!(vstr::sub_before("a/b/c", "/", true), "a/b");
@@ -69,7 +69,7 @@ pub fn sub_before<'src>(input: &'src str, separator: &str, use_last_separator: b
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::sub_after("a/b/c", "/", false), "b/c");
 /// assert_eq!(vstr::sub_after("a/b/c", "/", true), "c");
@@ -97,7 +97,7 @@ pub fn sub_after<'src>(input: &'src str, separator: &str, use_last_separator: bo
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::before("a/b/c", "/"), "a");
 /// assert_eq!(vstr::before("a/b/c", "|"), "a/b/c");
@@ -112,7 +112,7 @@ pub fn before<'src>(input: &'src str, separator: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::before_last("a/b/c", "/"), "a/b");
 /// ```
@@ -128,7 +128,7 @@ pub fn before_last<'src>(input: &'src str, separator: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::after("a/b/c", "/"), "b/c");
 /// assert_eq!(vstr::after("a/b/c", "|"), "");
@@ -143,7 +143,7 @@ pub fn after<'src>(input: &'src str, separator: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::after_last("a/b/c", "/"), "c");
 /// ```
@@ -160,7 +160,7 @@ pub fn after_last<'src>(input: &'src str, separator: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::between("id=[42]", "[", "]"), Some("42"));
 /// assert_eq!(vstr::between("id=42", "[", "]"), None);

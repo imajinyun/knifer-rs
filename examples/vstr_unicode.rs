@@ -1,7 +1,7 @@
 //! Optional Unicode helpers for grapheme, word, sentence, and display width.
 
 #[cfg(any(feature = "unicode-segmentation", feature = "unicode-width"))]
-use knifer_rs::vstr;
+use kniferrs::vstr;
 
 fn main() {
     #[cfg(feature = "unicode-segmentation")]

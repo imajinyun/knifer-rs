@@ -3,7 +3,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_blank_char(' '));
 /// ```
@@ -21,7 +21,7 @@ pub fn is_blank_char(ch: char) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_letter('你'));
 /// assert!(vstr::is_letter('A'));
@@ -41,7 +41,7 @@ pub fn is_letter(ch: char) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_digit('9'));
 /// assert!(vstr::is_digit('٣'));
@@ -123,7 +123,7 @@ pub fn is_digit(ch: char) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_ascii('A'));
 /// assert!(!vstr::is_ascii('你'));
@@ -138,7 +138,7 @@ pub const fn is_ascii(ch: char) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_letter_or_digit('A'));
 /// assert!(vstr::is_letter_or_digit('9'));

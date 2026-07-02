@@ -8,7 +8,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::byte_len(b"rust"), 4);
 /// ```
@@ -22,7 +22,7 @@ pub const fn byte_len(input: &[u8]) -> usize {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert!(vbytes::is_empty(b""));
 /// assert!(!vbytes::is_empty(b" "));
@@ -37,7 +37,7 @@ pub const fn is_empty(input: &[u8]) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert!(vbytes::is_utf8("你好".as_bytes()));
 /// assert!(!vbytes::is_utf8(&[0xff]));
@@ -56,7 +56,7 @@ pub const fn is_utf8(input: &[u8]) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::to_str(b"rust").unwrap(), "rust");
 /// assert!(vbytes::to_str(&[0xff]).is_err());
@@ -74,7 +74,7 @@ pub const fn to_str(input: &[u8]) -> Result<&str, core::str::Utf8Error> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::sub(b"abcdef", 1, 4), b"bcd");
 /// assert_eq!(vbytes::sub(b"abcdef", -4, -1), b"cde");
@@ -103,7 +103,7 @@ pub fn sub(input: &[u8], from_index: isize, to_index: isize) -> &[u8] {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::trim_ascii(b" \tdata\n"), b"data");
 /// ```
@@ -117,7 +117,7 @@ pub fn trim_ascii(input: &[u8]) -> &[u8] {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::trim_ascii_start(b" \tdata\n"), b"data\n");
 /// ```
@@ -135,7 +135,7 @@ pub fn trim_ascii_start(input: &[u8]) -> &[u8] {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::trim_ascii_end(b" \tdata\n"), b" \tdata");
 /// ```
@@ -155,7 +155,7 @@ pub fn trim_ascii_end(input: &[u8]) -> &[u8] {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert!(vbytes::contains(b"abc", b"bc"));
 /// assert!(vbytes::contains(b"abc", b""));
@@ -176,7 +176,7 @@ pub fn contains(input: &[u8], needle: &[u8]) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::find(b"abcabc", b"bc"), Some((1, 3)));
 /// ```
@@ -200,7 +200,7 @@ pub fn find(input: &[u8], needle: &[u8]) -> Option<(usize, usize)> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::find_all(b"aaaa", b"aa"), vec![(0, 2), (2, 4)]);
 /// ```
@@ -248,7 +248,7 @@ fn raw_find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::strip_prefix(b"abc", b"a"), Some(&b"bc"[..]));
 /// assert_eq!(vbytes::strip_prefix(b"abc", b"x"), None);
@@ -263,7 +263,7 @@ pub fn strip_prefix<'src>(input: &'src [u8], prefix: &[u8]) -> Option<&'src [u8]
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::strip_suffix(b"abc", b"c"), Some(&b"ab"[..]));
 /// assert_eq!(vbytes::strip_suffix(b"abc", b"x"), None);
@@ -280,7 +280,7 @@ pub fn strip_suffix<'src>(input: &'src [u8], suffix: &[u8]) -> Option<&'src [u8]
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::replace_all(b"aaaa", b"aa", b"b"), b"bb");
 /// ```
@@ -316,7 +316,7 @@ pub fn replace_all(input: &[u8], from: &[u8], to: &[u8]) -> Vec<u8> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::chars(b"ab"), vec!['a', 'b']);
 /// assert_eq!(vbytes::chars(&[b'a', 0xff, b'b']), vec!['a', '\u{fffd}', 'b']);
@@ -343,7 +343,7 @@ pub fn chars(input: &[u8]) -> Vec<char> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(
 ///     vbytes::char_indices("é".as_bytes()),
@@ -384,7 +384,7 @@ pub fn char_indices(input: &[u8]) -> Vec<(usize, usize, char)> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(vbytes::lines(b"a\nb\n"), vec![&b"a"[..], &b"b"[..]]);
 /// assert_eq!(vbytes::lines(b"a\r\nb"), vec![&b"a"[..], &b"b"[..]]);
@@ -420,7 +420,7 @@ pub fn lines(input: &[u8]) -> Vec<&[u8]> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vbytes;
+/// use kniferrs::vbytes;
 ///
 /// assert_eq!(
 ///     vbytes::fields(b"  a\tb \n c "),

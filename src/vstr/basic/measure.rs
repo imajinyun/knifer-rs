@@ -5,7 +5,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::byte_len("你好"), 6);
 /// ```
@@ -19,7 +19,7 @@ pub const fn byte_len(input: &str) -> usize {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::char_len("你好"), 2);
 /// ```
@@ -36,7 +36,7 @@ pub fn char_len(input: &str) -> usize {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::length("你好"), 2);
 /// ```
@@ -53,7 +53,7 @@ pub fn length(input: &str) -> usize {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::rune_len("你好"), 2);
 /// ```

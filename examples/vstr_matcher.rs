@@ -1,6 +1,6 @@
 //! Search, replacement, matcher, path, and similarity helpers.
 
-use knifer_rs::vstr;
+use kniferrs::vstr;
 
 fn main() {
     assert!(vstr::contains_any("knifer-rs", ["go", "rs"]));

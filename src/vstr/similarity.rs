@@ -8,7 +8,7 @@ use std::collections::BTreeSet;
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::jaccard_similarity("abc", "abc"), 1.0);
 /// assert_eq!(vstr::jaccard_similarity("", " \n"), 1.0);
@@ -28,7 +28,7 @@ pub fn jaccard_similarity(left: &str, right: &str) -> f64 {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::ngram_similarity("abcd", "abce", 2), 0.5);
 /// assert_eq!(vstr::ngram_similarity("abc", "abc", 0), 0.0);
@@ -49,7 +49,7 @@ pub fn ngram_similarity(left: &str, right: &str, n: usize) -> f64 {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::levenshtein_distance("kitten", "sitting"), 3);
 /// assert_eq!(vstr::levenshtein_distance("你好", "您好"), 1);
@@ -88,7 +88,7 @@ pub fn levenshtein_distance(left: &str, right: &str) -> usize {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::levenshtein_similarity("", ""), 1.0);
 /// assert!((vstr::levenshtein_similarity("kitten", "sitting") - 4.0 / 7.0).abs() < f64::EPSILON);
@@ -115,7 +115,7 @@ pub fn levenshtein_similarity(left: &str, right: &str) -> f64 {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::sim_hash(""), 0);
 /// assert_eq!(vstr::sim_hash("Rust"), vstr::sim_hash("rust"));
@@ -153,7 +153,7 @@ pub fn sim_hash(input: &str) -> u64 {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::hamming_distance64(0b1010, 0b0011), 2);
 /// ```

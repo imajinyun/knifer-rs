@@ -6,7 +6,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::format("name={}, age={}", &[&"tom", &12]),

@@ -1,6 +1,6 @@
 #![cfg_attr(fuzzing, no_main)]
 
-use knifer_rs::vstr::{MatchKind, VStrMatch, VStrMatcher};
+use kniferrs::vstr::{MatchKind, VStrMatch, VStrMatcher};
 
 #[cfg(fuzzing)]
 use libfuzzer_sys::fuzz_target;

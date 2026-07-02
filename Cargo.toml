@@ -11,6 +11,9 @@ readme = "README.md"
 keywords = ["utility", "string", "safe-rust", "business"]
 categories = ["development-tools", "text-processing"]
 
+[lib]
+name = "kniferrs"
+
 [dependencies]
 aho-corasick = { version = "1", optional = true }
 memchr = { version = "2", optional = true }

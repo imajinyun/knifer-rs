@@ -13,7 +13,7 @@ use crate::vstr::{LongWordPolicy, WhitespaceMode, WrapOptions};
 /// ```
 /// # #[cfg(feature = "unicode-width")]
 /// # {
-/// use knifer_rs::vstr::{LongWordPolicy, WhitespaceMode, WrapOptions, wrap_width_with_options};
+/// use kniferrs::vstr::{LongWordPolicy, WhitespaceMode, WrapOptions, wrap_width_with_options};
 ///
 /// let options = WrapOptions::new(6)
 ///     .with_word_separators(&['/'])

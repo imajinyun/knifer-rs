@@ -1,66 +1,56 @@
-# knifer-rs ✨
+# ✨ knifer-rs
 
 `knifer-rs` is a Safe Rust utility toolkit for everyday business development.
 
-The project follows the same practical direction as `knifer-go`: keep public
-APIs grouped by focused `v*` facade modules, prefer standard-library behavior
-where it is already clear, and add reusable helpers only when they make common
-business code easier to read and test.
+Like `knifer-go`, it groups public APIs into focused `v*` facade modules, prefers
+standard-library behavior where it is already clear, and adds helpers only when
+they make common business code easier to read and test.
 
-Workflow automation is declared in root `aiflow.yaml`. The `.aiflow/` directory
-is local-only and is reserved for generated run evidence, caches, and temporary
-state.
+Workflow automation is declared in root `aiflow.yaml`; the `.aiflow/` directory
+is local-only for generated run evidence, caches, and temporary state.
 
-## Benchmark Direction 📊
+## 📊 Benchmark Direction
 
-`knifer-rs` is benchmarked against Rust helper and utility-function crates such
-as `anyhow`, `thiserror`, `serde_json`, `regex`, and `chrono`: small crates that
-ordinary business code can call directly. The goal is not to clone their APIs,
-but to match their engineering discipline:
+`knifer-rs` is benchmarked against small Rust helper crates such as `anyhow`,
+`thiserror`, `serde_json`, `regex`, and `chrono`. The goal is not to clone their
+APIs, but to match their engineering discipline: clear first-screen examples,
+small stable public APIs, documented edge-case behavior, strict
+fmt/test/clippy/rustdoc CI, an explicit MSRV and Safe Rust policy, and low
+repository noise.
 
-- clear first-screen README examples
-- stable and small public APIs
-- documented edge-case behavior
-- strict fmt/test/clippy/rustdoc CI
-- explicit MSRV and Safe Rust policy
-- low repository noise through `.gitignore`, `.editorconfig`, and
-  `.gitattributes`
+See `docs/vstr-complexity.md` for `vstr` complexity and allocation notes,
+`docs/dependency-policy.md` for dependency admission rules, and
+`docs/api-behavior-contract.md` for public API behavior evidence rules.
 
-Complexity and allocation notes for `vstr` live in `docs/vstr-complexity.md`.
-Dependency admission rules live in `docs/dependency-policy.md`. Public API
-behavior evidence rules live in `docs/api-behavior-contract.md`.
+## 🚦 Status
 
-## Status 🚦
-
-The crate is pre-1.0 and currently exposes three MVP facades:
-`knifer_rs::vstr` for valid UTF-8 strings, `knifer_rs::vbytes` for byte slices
-that may not be valid UTF-8, and `knifer_rs::vencoding` for BOM and UTF-8
-encoding boundaries. Public API changes are tracked in
-`docs/public-api-inventory.md`; `vstr` compatibility notes are tracked in
+Pre-1.0, with three MVP facades: `kniferrs::vstr` for valid UTF-8 strings,
+`kniferrs::vbytes` for byte slices that may not be valid UTF-8, and
+`kniferrs::vencoding` for BOM and UTF-8 boundaries. API changes are tracked in
+`docs/public-api-inventory.md`; `vstr` compatibility notes live in
 `docs/vstr-api-parity.md`.
 
-## Install 📦
+## 📦 Install
 
 ```toml
 [dependencies]
 knifer-rs = "0.1"
 ```
 
-The package is not published yet. Use a Git dependency while evaluating local
-MVP builds:
+Not published yet — use a Git dependency while evaluating local MVP builds:
 
 ```toml
 [dependencies]
 knifer-rs = { git = "https://github.com/imajinyun/knifer-rs" }
 ```
 
-## Quick Start ⚡
+## ⚡ Quick Start
 
-The default build has zero runtime dependencies and keeps the three public
-facades separate:
+The default build has zero runtime dependencies and keeps the three facades
+separate:
 
 ```rust
-use knifer_rs::{vbytes, vencoding, vstr};
+use kniferrs::{vbytes, vencoding, vstr};
 
 assert_eq!(vstr::trim("  hello  "), "hello");
 assert_eq!(vstr::sub("你好Rust", 0, 3), "你好R");
@@ -84,7 +74,7 @@ knifer-rs = {
 }
 ```
 
-## Feature Flags 🧩
+## 🧩 Feature Flags
 
 | Feature | Adds | Default |
 | --- | --- | --- |
@@ -96,10 +86,10 @@ knifer-rs = {
 | `unicode-segmentation` | grapheme, word, and sentence boundary helpers | disabled |
 | `unicode-width` | display-cell width, truncation, and wrap helpers | disabled |
 
-## Examples 🧰
+## 🧰 Examples
 
-The README keeps only the first-screen path. Focused examples live under
-`examples/` and are covered by `cargo test --examples`:
+Focused examples live under `examples/` and are covered by
+`cargo test --examples`:
 
 - `examples/vstr_daily.rs`: trimming, slicing, case conversion, wrapping,
   masking, and business text cleanup.
@@ -110,7 +100,7 @@ The README keeps only the first-screen path. Focused examples live under
   escaping, matcher behavior, and similarity helpers.
 - `examples/vstr_benchmark_smoke.rs`: fast benchmark smoke coverage for CI.
 
-## Project Layout 🧭
+## 🧭 Project Layout
 
 ```text
 src/
@@ -133,7 +123,7 @@ src/
       wrap/    display-width wrapping tokenization and render helpers
 ```
 
-## Development Checks ✅
+## ✅ Development Checks
 
 ```bash
 bash bin/check-release-ready.sh
@@ -277,14 +267,14 @@ The package contents check verifies the publish archive includes source,
 examples, benchmark entry points, and governance docs while excluding local
 `.aiflow/`, `target/`, fuzz runtime output, and temporary state.
 
-## Compatibility 🔒
+## 🔒 Compatibility
 
 - MSRV: Rust 1.85.
 - Edition: Rust 2024.
 - Safety: unsafe code is forbidden by Cargo lints and checked by the project
   contract script.
 - Dependencies: zero runtime dependencies in the default feature set; optional
-features add focused crates such as `regex`, `unicode-normalization`,
+  features add focused crates such as `regex`, `unicode-normalization`,
   `unicode-segmentation`, and `unicode-width`; `matcher-aho-corasick` adds
-  `aho-corasick` only for matcher internals, and `search-memchr` adds `memchr`
-  only for the `vbytes` literal search backend.
+  `aho-corasick` and `search-memchr` adds `memchr`, each only for its own
+  internals.

@@ -5,7 +5,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::truncate("你好Rust", 3), "你好R");
 /// ```
@@ -29,7 +29,7 @@ pub fn truncate(input: &str, max_chars: usize) -> &str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::take_chars("你好Rust", 3), "你好R");
 /// ```
@@ -45,7 +45,7 @@ pub fn take_chars(input: &str, count: usize) -> &str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::drop_chars("你好Rust", 2), "Rust");
 /// ```
@@ -70,7 +70,7 @@ pub fn drop_chars(input: &str, count: usize) -> &str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::truncate_with_suffix("你好Rust", 5, "..."), "你好...");
 /// assert_eq!(vstr::truncate_with_suffix("short", 10, "..."), "short");
@@ -104,7 +104,7 @@ pub fn truncate_with_suffix(input: &str, max_chars: usize, suffix: &str) -> Stri
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::abbreviate_middle("abcdefghijklmnopqrstuvwxyz", 10, "..."), "abcd...xyz");
 /// assert_eq!(vstr::abbreviate_middle("short", 10, "..."), "short");
@@ -143,7 +143,7 @@ pub fn abbreviate_middle(input: &str, max_chars: usize, marker: &str) -> String 
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::limit_words("hello rust utility toolkit", 2, "..."), "hello rust...");
 /// assert_eq!(vstr::limit_words("hello rust", 3, "..."), "hello rust");
@@ -175,7 +175,7 @@ pub fn limit_words(input: &str, max_words: usize, suffix: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::excerpt("hello rust utility toolkit", "utility", 14, "..."), "...st utility too...");
 /// assert_eq!(vstr::excerpt("hello rust", "go", 8, "..."), "hello...");
@@ -226,7 +226,7 @@ pub fn excerpt(input: &str, needle: &str, max_chars: usize, marker: &str) -> Str
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::mask("13800138000", 3, 4, '*'), "138****8000");
 /// assert_eq!(vstr::mask("short", 10, 10, '*'), "short");

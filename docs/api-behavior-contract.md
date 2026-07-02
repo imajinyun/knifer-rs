@@ -29,12 +29,12 @@ Required evidence:
 
 Current core stable areas:
 
-- `knifer_rs::vstr`: scalar-based string helpers, case conversion, replacement,
+- `kniferrs::vstr`: scalar-based string helpers, case conversion, replacement,
   literal search, escaping, Ant path matching, emoji helpers, similarity, and
   scalar text layout helpers
-- `knifer_rs::vbytes`: byte length, UTF-8 validation, byte slicing, ASCII trim,
+- `kniferrs::vbytes`: byte length, UTF-8 validation, byte slicing, ASCII trim,
   byte search, prefix/suffix stripping, and byte replacement
-- `knifer_rs::vencoding`: BOM detection, BOM stripping, UTF-8 validation, and
+- `kniferrs::vencoding`: BOM detection, BOM stripping, UTF-8 validation, and
   lossy UTF-8 decoding boundaries
 
 ### Optional Feature Facade

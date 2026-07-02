@@ -5,7 +5,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::normalize_whitespace("  hello\n\tRust  "), "hello Rust");
 /// ```
@@ -19,7 +19,7 @@ pub fn normalize_whitespace(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::remove_whitespace(" a\n b\t "), "ab");
 /// ```
@@ -33,7 +33,7 @@ pub fn remove_whitespace(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::normalize_newlines("a\r\nb\rc"), "a\nb\nc");
 /// ```
@@ -63,7 +63,7 @@ pub fn normalize_newlines(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::trim_lines("  a  \n\tb\t\n"), "a\nb\n");
 /// ```
@@ -81,7 +81,7 @@ pub fn trim_lines(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::trim_blank_lines("\n  \nhello\n\n"), "hello");
 /// ```

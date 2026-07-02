@@ -6,7 +6,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::lines("a\nb\n"), vec!["a", "b"]);
 /// ```
@@ -20,7 +20,7 @@ pub fn lines(input: &str) -> Vec<&str> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::non_blank_lines(" a \n\n b "), vec!["a", "b"]);
 /// ```
@@ -46,7 +46,7 @@ pub fn non_blank_lines(input: &str) -> Vec<&str> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::words("hello  Rust\n世界"), vec!["hello", "Rust", "世界"]);
 /// // Whitespace-based: punctuation stays attached and CJK stays as one token.
@@ -64,7 +64,7 @@ pub fn words(input: &str) -> Vec<&str> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::initials("rust string toolkit"), "RST");
 /// assert_eq!(vstr::initials("你好 rust"), "你R");
@@ -88,7 +88,7 @@ pub fn initials(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::chars("a你"), vec!['a', '你']);
 /// ```
@@ -106,7 +106,7 @@ pub fn chars(input: &str) -> Vec<char> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_palindrome("A man, a plan, a canal: Panama"));
 /// assert!(vstr::is_palindrome("上海自来水来自海上"));
@@ -135,7 +135,7 @@ pub fn is_palindrome(input: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::extract_digits("id=42, رقم=٣"), "42٣");
 /// ```
@@ -155,7 +155,7 @@ pub fn extract_digits(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::remove_ascii_punctuation("Hello, Rust! 你好，世界！"), "Hello Rust 你好，世界！");
 /// ```
@@ -177,7 +177,7 @@ pub fn remove_ascii_punctuation(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::word_count("hello  Rust\n世界"), 3);
 /// ```
@@ -194,7 +194,7 @@ pub fn word_count(input: &str) -> usize {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::line_count("a\nb\n"), 2);
 /// ```

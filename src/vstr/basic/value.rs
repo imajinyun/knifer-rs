@@ -6,7 +6,7 @@ use super::predicate::is_blank;
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::repeat("ab", 3), "ababab");
 /// assert_eq!(vstr::repeat("ab", 0), "");
@@ -26,7 +26,7 @@ pub fn repeat(input: &str, count: usize) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::rotate("abcdefg", 2), "fgabcde");
 /// assert_eq!(vstr::rotate("abcdefg", -2), "cdefgab");
@@ -67,7 +67,7 @@ pub fn rotate(input: &str, shift: isize) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::pad_left("42", 5, '0'), "00042");
 /// assert_eq!(vstr::pad_left("你好", 3, '*'), "*你好");
@@ -91,7 +91,7 @@ pub fn pad_left(input: &str, target_len: usize, pad: char) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::pad_right("42", 5, '0'), "42000");
 /// assert_eq!(vstr::pad_right("你好", 3, '*'), "你好*");
@@ -115,7 +115,7 @@ pub fn pad_right(input: &str, target_len: usize, pad: char) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::default_if_empty("", "fallback"), "fallback");
 /// assert_eq!(vstr::default_if_empty(" ", "fallback"), " ");
@@ -130,7 +130,7 @@ pub fn default_if_empty<'src>(input: &'src str, default: &'src str) -> &'src str
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::default_if_blank(" ", "fallback"), "fallback");
 /// assert_eq!(vstr::default_if_blank("value", "fallback"), "value");

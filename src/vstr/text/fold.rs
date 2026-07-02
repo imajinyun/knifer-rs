@@ -83,7 +83,7 @@ fn is_combining_mark(ch: char) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::deburr("déjà vu"), "deja vu");
 /// assert_eq!(vstr::deburr("Æther Œuvre ß"), "Aether Oeuvre ss");
@@ -114,7 +114,7 @@ pub fn deburr(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::remove_accents("Crème Brûlée"), "Creme Brulee");
 /// ```

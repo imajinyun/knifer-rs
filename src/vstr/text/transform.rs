@@ -3,7 +3,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::collapse_repeated_char("a---b----c", '-'), "a-b-c");
 /// ```
@@ -37,7 +37,7 @@ pub fn collapse_repeated_char(input: &str, ch: char) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::slugify("Hello, Rust World!"), "hello-rust-world");
 /// assert_eq!(vstr::slugify("Crème Brûlée"), "creme-brulee");
@@ -56,7 +56,7 @@ pub fn slugify(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::slugify_with_separator("Hello, Rust World!", '_'), "hello_rust_world");
 /// assert_eq!(vstr::slugify_with_separator("Déjà Vu", '_'), "deja_vu");
@@ -93,7 +93,7 @@ pub fn slugify_with_separator(input: &str, separator: char) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::indent("a\nb", "  "), "  a\n  b");
 /// ```
@@ -119,7 +119,7 @@ pub fn indent(input: &str, prefix: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::center("rust", 8, '-'), "--rust--");
 /// assert_eq!(vstr::center("rust", 9, '-'), "--rust---");
@@ -148,7 +148,7 @@ pub fn center(input: &str, width: usize, pad: char) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::dedent("    a\n      b"), "a\n  b");
 /// ```
@@ -183,7 +183,7 @@ pub fn dedent(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::surround("value", "[", "]"), "[value]");
 /// ```
@@ -203,7 +203,7 @@ pub fn surround(input: &str, left: &str, right: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::unsurround("[value]", "[", "]"), Some("value"));
 /// assert_eq!(vstr::unsurround("value]", "[", "]"), None);
@@ -227,7 +227,7 @@ pub fn unsurround<'src>(input: &'src str, left: &str, right: &str) -> Option<&'s
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::wrap_if_missing("path", "/"), "/path/");
 /// assert_eq!(vstr::wrap_if_missing("/path/", "/"), "/path/");

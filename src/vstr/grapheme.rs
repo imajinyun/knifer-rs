@@ -9,7 +9,7 @@ use unicode_segmentation::UnicodeSegmentation;
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::graphemes("e\u{301}🇨🇳"), vec!["e\u{301}", "🇨🇳"]);
 /// # }
@@ -26,7 +26,7 @@ pub fn graphemes(input: &str) -> Vec<&str> {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::grapheme_len("e\u{301}🇨🇳"), 2);
 /// # }
@@ -43,7 +43,7 @@ pub fn grapheme_len(input: &str) -> usize {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::take_graphemes("e\u{301}🇨🇳rust", 2), "e\u{301}🇨🇳");
 /// # }
@@ -71,7 +71,7 @@ pub fn take_graphemes(input: &str, count: usize) -> &str {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::truncate_graphemes("e\u{301}🇨🇳rust", 4, "..."), "e\u{301}...");
 /// assert_eq!(vstr::truncate_graphemes("short", 10, "..."), "short");
@@ -109,7 +109,7 @@ pub fn truncate_graphemes(input: &str, max_graphemes: usize, suffix: &str) -> St
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::unicode_words("The quick (\"brown\") fox can't jump 32.3 feet"),
@@ -129,7 +129,7 @@ pub fn unicode_words(input: &str) -> Vec<&str> {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::unicode_word_len("hello 世界 32.3"), 4);
 /// # }
@@ -146,7 +146,7 @@ pub fn unicode_word_len(input: &str) -> usize {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::unicode_word_indices("hi 世界"), vec![(0, "hi"), (3, "世"), (6, "界")]);
 /// # }
@@ -166,7 +166,7 @@ pub fn unicode_word_indices(input: &str) -> Vec<(usize, &str)> {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::split_word_bounds("Hi, 世界!"), vec!["Hi", ",", " ", "世", "界", "!"]);
 /// # }
@@ -183,7 +183,7 @@ pub fn split_word_bounds(input: &str) -> Vec<&str> {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::split_word_bound_indices("Hi, 世界!"),
@@ -207,7 +207,7 @@ pub fn split_word_bound_indices(input: &str) -> Vec<(usize, &str)> {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::unicode_sentences("Mr. Fox jumped. [...] The dog was too lazy."),
@@ -227,7 +227,7 @@ pub fn unicode_sentences(input: &str) -> Vec<&str> {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::unicode_sentence_len("One. Two? Three!"), 3);
 /// # }
@@ -247,7 +247,7 @@ pub fn unicode_sentence_len(input: &str) -> usize {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::split_sentence_bounds("Mr. Fox jumped. [...] The dog was too lazy."),
@@ -267,7 +267,7 @@ pub fn split_sentence_bounds(input: &str) -> Vec<&str> {
 /// ```
 /// # #[cfg(feature = "unicode-segmentation")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::split_sentence_bound_indices("Mr. Fox jumped. [...] The dog was too lazy."),

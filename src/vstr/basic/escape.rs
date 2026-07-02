@@ -6,7 +6,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::escape_regex("a+b*(c)"), r"a\+b\*\(c\)");
 /// ```
@@ -27,7 +27,7 @@ pub fn escape_regex(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::quote_meta("[rust]"), r"\[rust\]");
 /// ```

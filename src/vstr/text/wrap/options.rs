@@ -47,7 +47,7 @@ impl<'src> WrapOptions<'src> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::WrapOptions;
+    /// use kniferrs::vstr::WrapOptions;
     ///
     /// let options = WrapOptions::new(8);
     /// assert_eq!(options.width, 8);
@@ -69,7 +69,7 @@ impl<'src> WrapOptions<'src> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::WrapOptions;
+    /// use kniferrs::vstr::WrapOptions;
     ///
     /// let options = WrapOptions::new(10).with_indent("> ", "  ");
     /// assert_eq!(options.initial_indent, "> ");
@@ -90,7 +90,7 @@ impl<'src> WrapOptions<'src> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::{WhitespaceMode, WrapOptions};
+    /// use kniferrs::vstr::{WhitespaceMode, WrapOptions};
     ///
     /// let options = WrapOptions::new(10).with_whitespace_mode(WhitespaceMode::Preserve);
     /// assert_eq!(options.whitespace_mode, WhitespaceMode::Preserve);
@@ -106,7 +106,7 @@ impl<'src> WrapOptions<'src> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::{LongWordPolicy, WrapOptions};
+    /// use kniferrs::vstr::{LongWordPolicy, WrapOptions};
     ///
     /// let options = WrapOptions::new(10).with_long_word_policy(LongWordPolicy::Preserve);
     /// assert_eq!(options.long_word_policy, LongWordPolicy::Preserve);
@@ -123,7 +123,7 @@ impl<'src> WrapOptions<'src> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::WrapOptions;
+    /// use kniferrs::vstr::WrapOptions;
     ///
     /// let options = WrapOptions::new(8).with_word_separators(&['/', '-']);
     /// assert_eq!(options.word_separators, &['/', '-']);

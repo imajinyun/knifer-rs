@@ -3,7 +3,7 @@ use super::casefold::prefix_end_ignore_case;
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains("knifer-rs", "rs"));
 /// ```
@@ -17,7 +17,7 @@ pub fn contains(input: &str, needle: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_any("knifer-rs", ["go", "rs"]));
 /// assert!(!vstr::contains_any("knifer-rs", ["java", "py"]));
@@ -37,7 +37,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_all("knifer-rs", ["knife", "rs"]));
 /// assert!(!vstr::contains_all("knifer-rs", ["knife", "go"]));
@@ -57,7 +57,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_none("knifer-rs", ["go", "java"]));
 /// assert!(!vstr::contains_none("knifer-rs", ["go", "rs"]));
@@ -75,7 +75,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_ignore_case("Knifer-RS", "rs"));
 /// ```
@@ -89,7 +89,7 @@ pub fn contains_ignore_case(input: &str, needle: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_any_ignore_case("Knifer-RS", ["go", "RS"]));
 /// assert!(!vstr::contains_any_ignore_case("Knifer-RS", ["go", "java"]));
@@ -112,7 +112,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_all_ignore_case("Knifer-RS", ["knife", "RS"]));
 /// assert!(!vstr::contains_all_ignore_case("Knifer-RS", ["knife", "go"]));
@@ -137,7 +137,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::find_any("hello rust", ["go", "rust"]), Some(("rust", 6, 10)));
 /// assert_eq!(vstr::find_any("hello rust", ["", "go"]), None);
@@ -172,7 +172,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::count_matches("aaaa", "aa"), 2);
 /// assert_eq!(vstr::count_matches("你好你好", "你好"), 2);
@@ -193,7 +193,7 @@ pub fn count_matches(input: &str, needle: &str) -> usize {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::find_all("aaaa", "aa"), vec![(0, 2), (2, 4)]);
 /// assert_eq!(vstr::find_all("你好你好", "你好"), vec![(0, 6), (6, 12)]);
@@ -218,7 +218,7 @@ pub fn find_all(input: &str, needle: &str) -> Vec<(usize, usize)> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::find_all_ignore_case("Go go Rust", "go"), vec![(0, 2), (3, 5)]);
 /// assert_eq!(vstr::find_all_ignore_case("abc\u{212A}", "k"), vec![(3, 6)]);

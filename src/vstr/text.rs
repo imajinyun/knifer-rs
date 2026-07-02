@@ -3,7 +3,7 @@
 //! This module groups content truncation, line/word inspection, normalization,
 //! text transformation, and scalar-width wrapping. The `wrap` child module is
 //! split into public basic/options entry points and private token/render helpers
-//! while callers keep importing through `knifer_rs::vstr`. Display-cell layout
+//! while callers keep importing through `kniferrs::vstr`. Display-cell layout
 //! helpers live behind the `unicode-width` feature.
 
 mod content;

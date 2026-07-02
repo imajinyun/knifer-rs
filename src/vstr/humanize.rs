@@ -17,7 +17,7 @@ use std::time::Duration;
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::pluralize("cat", 1), "cat");
 /// assert_eq!(vstr::pluralize("cat", 2), "cats");
@@ -89,7 +89,7 @@ fn pluralize_word(word: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::ordinalize(1), "1st");
 /// assert_eq!(vstr::ordinalize(2), "2nd");
@@ -117,7 +117,7 @@ pub fn ordinalize(value: i64) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::number_format(1_234_567), "1,234,567");
 /// assert_eq!(vstr::number_format(-12_345), "-12,345");
@@ -149,7 +149,7 @@ pub fn number_format(value: i64) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::human_bytes(512), "512 B");
 /// assert_eq!(vstr::human_bytes(1024), "1 KiB");
@@ -194,7 +194,7 @@ pub fn human_bytes(bytes: u64) -> String {
 /// ```
 /// use std::time::Duration;
 ///
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::human_duration(Duration::from_secs(3_661)), "1h 1m 1s");
 /// assert_eq!(vstr::human_duration(Duration::from_secs(90)), "1m 30s");

@@ -6,7 +6,7 @@ impl<'needle> VStrMatcher<'needle> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::{VStrMatch, VStrMatcher};
+    /// use kniferrs::vstr::{VStrMatch, VStrMatcher};
     ///
     /// let matcher = VStrMatcher::new(["rust", "rs"]);
     /// assert_eq!(
@@ -32,7 +32,7 @@ impl<'needle> VStrMatcher<'needle> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::{MatchKind, VStrMatcher};
+    /// use kniferrs::vstr::{MatchKind, VStrMatcher};
     ///
     /// let matcher = VStrMatcher::with_kind(["a", "aa"], MatchKind::LeftmostLongest);
     /// assert_eq!(matcher.find("aaaa").unwrap().needle, "aa");
@@ -64,7 +64,7 @@ impl<'needle> VStrMatcher<'needle> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::VStrMatcher;
+    /// use kniferrs::vstr::VStrMatcher;
     ///
     /// assert!(VStrMatcher::new([""]).is_empty());
     /// ```
@@ -90,7 +90,7 @@ impl<'needle> VStrMatcher<'needle> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::VStrMatcher;
+    /// use kniferrs::vstr::VStrMatcher;
     ///
     /// let matcher = VStrMatcher::new(["go", "rust"]);
     /// assert_eq!(matcher.find("hello rust").unwrap().start, 6);
@@ -105,7 +105,7 @@ impl<'needle> VStrMatcher<'needle> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::VStrMatcher;
+    /// use kniferrs::vstr::VStrMatcher;
     ///
     /// let matcher = VStrMatcher::new(["aa", "a"]);
     /// assert_eq!(matcher.find_all("aaaa").len(), 2);
@@ -131,7 +131,7 @@ impl<'needle> VStrMatcher<'needle> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::VStrMatcher;
+    /// use kniferrs::vstr::VStrMatcher;
     ///
     /// let matcher = VStrMatcher::new(["aa"]);
     /// assert_eq!(matcher.find_overlapping("aaaa").len(), 3);
@@ -152,7 +152,7 @@ impl<'needle> VStrMatcher<'needle> {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vstr::VStrMatcher;
+    /// use kniferrs::vstr::VStrMatcher;
     ///
     /// let matcher = VStrMatcher::new(["hello", "world"]);
     /// assert_eq!(matcher.replace_all("hello rust world", ["hi", "team"]), "hi rust team");

@@ -46,7 +46,7 @@ impl Default for EmojiOptions<'_> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// let opts = vstr::with_emoji_matcher(|input| input.contains(":rocket:"));
 /// assert!(vstr::contains_emoji_with_options("ship :rocket:", &opts));
@@ -61,7 +61,7 @@ pub fn with_emoji_matcher<'src>(matcher: impl Fn(&str) -> bool + 'src) -> EmojiO
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// let opts = vstr::with_emoji_replacer(|input| input.replace(":rocket:", ""));
 /// assert_eq!(vstr::remove_emoji_with_options("ship :rocket:", &opts), "ship ");
@@ -81,7 +81,7 @@ pub fn with_emoji_replacer<'src>(replacer: impl Fn(&str) -> String + 'src) -> Em
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::contains_emoji("ship it 🚀"));
 /// assert!(!vstr::contains_emoji("knifer-rs"));
@@ -99,7 +99,7 @@ pub fn contains_emoji(input: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// let opts = vstr::with_emoji_matcher(|input| input.contains(":rocket:"));
 /// assert!(vstr::contains_emoji_with_options("ship :rocket:", &opts));
@@ -130,7 +130,7 @@ pub fn contains_emoji_with_options(input: &str, options: &EmojiOptions<'_>) -> b
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::remove_emoji("ship 🚀 now"), "ship  now");
 /// assert_eq!(vstr::remove_emoji("ok"), "ok");
@@ -148,7 +148,7 @@ pub fn remove_emoji(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// let opts = vstr::with_emoji_replacer(|input| input.replace(":rocket:", ""));
 /// assert_eq!(vstr::remove_emoji_with_options("ship :rocket:", &opts), "ship ");

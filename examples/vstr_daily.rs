@@ -1,6 +1,6 @@
 //! Daily `vstr` helpers for business string handling.
 
-use knifer_rs::vstr;
+use kniferrs::vstr;
 
 fn main() {
     assert_eq!(vstr::trim("  hello  "), "hello");

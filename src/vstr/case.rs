@@ -7,7 +7,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_snake_case("helloWorld ID"), "hello_world_id");
 /// ```
@@ -24,7 +24,7 @@ pub fn to_snake_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_underline_case("helloWorld ID"), "hello_world_id");
 /// ```
@@ -38,7 +38,7 @@ pub fn to_underline_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_kebab_case("helloWorld ID"), "hello-world-id");
 /// ```
@@ -52,7 +52,7 @@ pub fn to_kebab_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_dot_case("helloWorld ID"), "hello.world.id");
 /// ```
@@ -66,7 +66,7 @@ pub fn to_dot_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_path_case("helloWorld ID"), "hello/world/id");
 /// ```
@@ -80,7 +80,7 @@ pub fn to_path_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_screaming_snake_case("HTTPServerID"), "HTTP_SERVER_ID");
 /// ```
@@ -94,7 +94,7 @@ pub fn to_screaming_snake_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_screaming_kebab_case("HTTPServerID"), "HTTP-SERVER-ID");
 /// ```
@@ -108,7 +108,7 @@ pub fn to_screaming_kebab_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_train_case("helloWorld ID"), "Hello-World-Id");
 /// ```
@@ -128,7 +128,7 @@ pub fn to_train_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_cobol_case("helloWorld ID"), "HELLO-WORLD-ID");
 /// ```
@@ -142,7 +142,7 @@ pub fn to_cobol_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_title_case("hello_world-id"), "Hello World Id");
 /// ```
@@ -163,7 +163,7 @@ pub fn to_title_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_sentence_case("hello_world-ID"), "Hello world id");
 /// ```
@@ -177,7 +177,7 @@ pub fn to_sentence_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_camel_case("hello_world-id"), "helloWorldId");
 /// ```
@@ -223,7 +223,7 @@ pub fn to_camel_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::to_pascal_case("hello_world-id"), "HelloWorldId");
 /// ```
@@ -237,7 +237,7 @@ pub fn to_pascal_case(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::capitalize("rUST"), "Rust");
 /// assert_eq!(vstr::capitalize("你好"), "你好");
@@ -258,7 +258,7 @@ pub fn capitalize(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::uncapitalize("Rust"), "rust");
 /// assert_eq!(vstr::uncapitalize("HTTPServer"), "hTTPServer");
@@ -275,7 +275,7 @@ pub fn uncapitalize(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::swap_case("Rust 你好"), "rUST 你好");
 /// ```

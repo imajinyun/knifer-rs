@@ -11,7 +11,7 @@ use unicode_width::UnicodeWidthStr;
 /// ```
 /// # #[cfg(feature = "unicode-width")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::display_width("abc你好"), 7);
 /// # }
@@ -32,7 +32,7 @@ pub fn display_width(input: &str) -> usize {
 /// ```
 /// # #[cfg(feature = "unicode-width")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::take_width("a你好", 3), "a你");
 /// # }
@@ -59,7 +59,7 @@ pub fn take_width(input: &str, max_width: usize) -> &str {
 /// ```
 /// # #[cfg(feature = "unicode-width")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::truncate_width("你好Rust", 6, "..."), "你...");
 /// assert_eq!(vstr::truncate_width("short", 10, "..."), "short");

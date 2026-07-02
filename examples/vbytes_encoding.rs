@@ -1,7 +1,7 @@
 //! Byte and encoding facades for non-UTF-8 and BOM boundaries.
 
-use knifer_rs::vbytes;
-use knifer_rs::vencoding::{self, Bom};
+use kniferrs::vbytes;
+use kniferrs::vencoding::{self, Bom};
 
 fn main() {
     let bytes = [b'a', 0xff, b'b'];

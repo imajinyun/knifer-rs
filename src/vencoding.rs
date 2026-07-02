@@ -26,7 +26,7 @@ impl Bom {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vencoding::Bom;
+    /// use kniferrs::vencoding::Bom;
     ///
     /// assert_eq!(Bom::Utf8.byte_len(), 3);
     /// assert_eq!(Bom::Utf16Le.byte_len(), 2);
@@ -45,7 +45,7 @@ impl Bom {
     /// # Examples
     ///
     /// ```
-    /// use knifer_rs::vencoding::Bom;
+    /// use kniferrs::vencoding::Bom;
     ///
     /// assert_eq!(Bom::Utf16Be.encoding_name(), "UTF-16BE");
     /// ```
@@ -77,7 +77,7 @@ pub struct BomScan<'src> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vencoding::{self, Bom};
+/// use kniferrs::vencoding::{self, Bom};
 ///
 /// assert_eq!(vencoding::detect_bom(&[0xEF, 0xBB, 0xBF, b'a']), Some(Bom::Utf8));
 /// assert_eq!(vencoding::detect_bom(b"plain"), None);
@@ -114,7 +114,7 @@ pub const fn detect_bom(input: &[u8]) -> Option<Bom> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vencoding::{self, Bom};
+/// use kniferrs::vencoding::{self, Bom};
 ///
 /// let scan = vencoding::scan_bom(&[0xEF, 0xBB, 0xBF, b'a']);
 /// assert_eq!(scan.bom, Some(Bom::Utf8));
@@ -132,7 +132,7 @@ pub fn scan_bom(input: &[u8]) -> BomScan<'_> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vencoding;
+/// use kniferrs::vencoding;
 ///
 /// assert_eq!(vencoding::strip_bom(&[0xEF, 0xBB, 0xBF, b'a']), b"a");
 /// assert_eq!(vencoding::strip_bom(b"plain"), b"plain");
@@ -147,7 +147,7 @@ pub fn strip_bom(input: &[u8]) -> &[u8] {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vencoding;
+/// use kniferrs::vencoding;
 ///
 /// assert!(vencoding::is_utf8("hello".as_bytes()));
 /// assert!(!vencoding::is_utf8(&[0xff]));
@@ -166,7 +166,7 @@ pub const fn is_utf8(input: &[u8]) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vencoding;
+/// use kniferrs::vencoding;
 ///
 /// assert_eq!(vencoding::validate_utf8(b"hello").unwrap(), "hello");
 /// assert!(vencoding::validate_utf8(&[0xff]).is_err());
@@ -185,7 +185,7 @@ pub const fn validate_utf8(input: &[u8]) -> Result<&str, core::str::Utf8Error> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vencoding;
+/// use kniferrs::vencoding;
 ///
 /// assert_eq!(
 ///     vencoding::validate_utf8_without_bom(&[0xEF, 0xBB, 0xBF, b'a']).unwrap(),
@@ -204,7 +204,7 @@ pub fn validate_utf8_without_bom(input: &[u8]) -> Result<&str, core::str::Utf8Er
 ///
 /// ```
 /// use std::borrow::Cow;
-/// use knifer_rs::vencoding;
+/// use kniferrs::vencoding;
 ///
 /// assert!(matches!(vencoding::decode_utf8_lossy(b"hello"), Cow::Borrowed("hello")));
 /// assert_eq!(vencoding::decode_utf8_lossy(&[b'a', 0xff, b'b']), "a\u{FFFD}b");
@@ -219,7 +219,7 @@ pub fn decode_utf8_lossy(input: &[u8]) -> Cow<'_, str> {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vencoding;
+/// use kniferrs::vencoding;
 ///
 /// assert_eq!(
 ///     vencoding::decode_utf8_lossy_without_bom(&[0xEF, 0xBB, 0xBF, b'a', 0xff]),

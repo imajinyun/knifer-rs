@@ -5,7 +5,7 @@ use super::casefold::{prefix_end_ignore_case, suffix_start_ignore_case};
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::starts_with("knifer-rs", "knife"));
 /// ```
@@ -19,7 +19,7 @@ pub fn starts_with(input: &str, prefix: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::ends_with("knifer-rs", "rs"));
 /// ```
@@ -36,7 +36,7 @@ pub fn ends_with(input: &str, suffix: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::starts_with_ignore_case("Knifer-RS", "knife"));
 /// assert!(vstr::starts_with_ignore_case("\u{212A}nife", "k"));
@@ -54,7 +54,7 @@ pub fn starts_with_ignore_case(input: &str, prefix: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::ends_with_ignore_case("Knifer-RS", "RS"));
 /// assert!(vstr::ends_with_ignore_case("abc\u{212A}", "k"));
@@ -71,7 +71,7 @@ pub fn ends_with_ignore_case(input: &str, suffix: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::remove_prefix("knifer-rs", "knifer-"), "rs");
 /// assert_eq!(vstr::remove_prefix("knifer-rs", "go-"), "knifer-rs");
@@ -88,7 +88,7 @@ pub fn remove_prefix<'src>(input: &'src str, prefix: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::remove_suffix("knifer-rs", "-rs"), "knifer");
 /// assert_eq!(vstr::remove_suffix("knifer-rs", "-go"), "knifer-rs");
@@ -106,7 +106,7 @@ pub fn remove_suffix<'src>(input: &'src str, suffix: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::strip_prefix_ignore_case("Knifer-RS", "knife"), Some("r-RS"));
 /// assert_eq!(vstr::strip_prefix_ignore_case("Knifer-RS", "go"), None);
@@ -124,7 +124,7 @@ pub fn strip_prefix_ignore_case<'src>(input: &'src str, prefix: &str) -> Option<
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::strip_suffix_ignore_case("Knifer-RS", "rs"), Some("Knifer-"));
 /// assert_eq!(vstr::strip_suffix_ignore_case("Knifer-RS", "go"), None);
@@ -139,7 +139,7 @@ pub fn strip_suffix_ignore_case<'src>(input: &'src str, suffix: &str) -> Option<
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::add_prefix_if_not("path", "/"), "/path");
 /// assert_eq!(vstr::add_prefix_if_not("/path", "/"), "/path");
@@ -161,7 +161,7 @@ pub fn add_prefix_if_not(input: &str, prefix: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::add_suffix_if_not("path", "/"), "path/");
 /// assert_eq!(vstr::add_suffix_if_not("path/", "/"), "path/");
@@ -186,7 +186,7 @@ pub fn add_suffix_if_not(input: &str, suffix: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::add_prefix_if_not_ignore_case("Path", "/"), "/Path");
 /// assert_eq!(vstr::add_prefix_if_not_ignore_case("HTTP://x", "http://"), "HTTP://x");
@@ -211,7 +211,7 @@ pub fn add_prefix_if_not_ignore_case(input: &str, prefix: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::add_suffix_if_not_ignore_case("report", ".TXT"), "report.TXT");
 /// assert_eq!(vstr::add_suffix_if_not_ignore_case("report.TXT", ".txt"), "report.TXT");

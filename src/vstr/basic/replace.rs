@@ -7,7 +7,7 @@ use super::casefold::prefix_end_ignore_case;
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::replace_first("go go rust", "go", "rs"), "rs go rust");
 /// assert_eq!(vstr::replace_first("rust", "go", "rs"), "rust");
@@ -24,7 +24,7 @@ pub fn replace_first(input: &str, from: &str, to: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::replace_last("go go rust", "go", "rs"), "go rs rust");
 /// assert_eq!(vstr::replace_last("rust", "go", "rs"), "rust");
@@ -43,7 +43,7 @@ pub fn replace_last(input: &str, from: &str, to: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::replace_ignore_case("Go go Rust", "go", "rs"), "rs rs Rust");
 /// assert_eq!(vstr::replace_ignore_case("abc\u{212A}", "k", "K"), "abcK");
@@ -80,7 +80,7 @@ pub fn replace_ignore_case(input: &str, from: &str, to: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::replace_many("hello rust world", [("hello", "hi"), ("world", "team")]),

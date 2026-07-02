@@ -5,7 +5,7 @@
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::escape_html("<a href='x'>"), "&lt;a href=&#39;x&#39;&gt;");
 /// ```
@@ -33,7 +33,7 @@ pub fn escape_html(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::unescape_html("&lt;b&gt;Tom&amp;Jerry&lt;/b&gt;"), "<b>Tom&Jerry</b>");
 /// ```
@@ -55,7 +55,7 @@ pub fn unescape_html(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::escape_unicode("Rust你好"), "Rust\\u4F60\\u597D");
 /// assert_eq!(vstr::escape_unicode("🚀"), "\\uD83D\\uDE80");
@@ -84,7 +84,7 @@ pub fn escape_unicode(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::unescape_unicode("Rust\\u4F60\\u597D"), "Rust你好");
 /// assert_eq!(vstr::unescape_unicode("\\uD83D\\uDE80"), "🚀");

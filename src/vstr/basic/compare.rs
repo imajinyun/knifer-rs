@@ -10,7 +10,7 @@ use super::casefold::chars_equal_ignore_case;
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::equals_ignore_case("Knifer-RS", "knifer-rs"));
 /// assert!(vstr::equals_ignore_case("Σ", "ς"));
@@ -36,7 +36,7 @@ pub fn equals_ignore_case(left: &str, right: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::reverse("ab你好"), "好你ba");
 /// ```
@@ -53,7 +53,7 @@ pub fn reverse(input: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::common_prefix("knifer-rs", "knifer-go"), "knifer-");
 /// assert_eq!(vstr::common_prefix("你好世界", "你好朋友"), "你好");
@@ -79,7 +79,7 @@ pub fn common_prefix<'src>(left: &'src str, right: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::common_suffix("knifer-rs", "wrapper-rs"), "er-rs");
 /// assert_eq!(vstr::common_suffix("读写世界", "编写世界"), "写世界");
@@ -110,7 +110,7 @@ pub fn common_suffix<'src>(left: &'src str, right: &str) -> &'src str {
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::difference("i am a machine", "i am a robot"), "robot");
 /// assert_eq!(vstr::difference("", "abc"), "abc");

@@ -12,7 +12,7 @@ use super::super::measure::{display_width, take_width};
 /// ```
 /// # #[cfg(feature = "unicode-width")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::wrap_width("你好Rust world", 8), "你好Rust\nworld");
 /// # }
@@ -41,7 +41,7 @@ pub fn wrap_width(input: &str, width: usize) -> String {
 /// ```
 /// # #[cfg(feature = "unicode-width")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(
 ///     vstr::wrap_width_with_indent("你好Rust world", 10, "* ", "  "),

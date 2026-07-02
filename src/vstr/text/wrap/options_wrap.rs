@@ -10,7 +10,7 @@ use super::tokens::{collapse_wrap_tokens, preserve_wrap_tokens};
 /// # Examples
 ///
 /// ```
-/// use knifer_rs::vstr::{LongWordPolicy, WhitespaceMode, WrapOptions, wrap_with_options};
+/// use kniferrs::vstr::{LongWordPolicy, WhitespaceMode, WrapOptions, wrap_with_options};
 ///
 /// let options = WrapOptions::new(8)
 ///     .with_word_separators(&['/'])

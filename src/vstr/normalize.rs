@@ -17,7 +17,7 @@ use unicode_normalization::{
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::nfc("e\u{301}"), "\u{e9}");
 /// assert_eq!(vstr::nfc("\u{e9}"), "\u{e9}");
@@ -41,7 +41,7 @@ pub fn nfc(input: &str) -> String {
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::nfd("\u{e9}"), "e\u{301}");
 /// assert_eq!(vstr::nfd("e\u{301}"), "e\u{301}");
@@ -66,7 +66,7 @@ pub fn nfd(input: &str) -> String {
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::nfkc("\u{ff21}\u{ff22}\u{ff23}"), "ABC");
 /// assert_eq!(vstr::nfkc("\u{fb01}"), "fi");
@@ -90,7 +90,7 @@ pub fn nfkc(input: &str) -> String {
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert_eq!(vstr::nfkd("\u{ff21}"), "A");
 /// assert_eq!(vstr::nfkd("\u{e9}"), "e\u{301}");
@@ -114,7 +114,7 @@ pub fn nfkd(input: &str) -> String {
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_nfc("\u{e9}"));
 /// assert!(!vstr::is_nfc("e\u{301}"));
@@ -134,7 +134,7 @@ pub fn is_nfc(input: &str) -> bool {
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_nfd("e\u{301}"));
 /// assert!(!vstr::is_nfd("\u{e9}"));
@@ -154,7 +154,7 @@ pub fn is_nfd(input: &str) -> bool {
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_nfkc("ABC"));
 /// assert!(!vstr::is_nfkc("\u{ff21}\u{ff22}\u{ff23}"));
@@ -174,7 +174,7 @@ pub fn is_nfkc(input: &str) -> bool {
 /// ```
 /// # #[cfg(feature = "unicode-normalization")]
 /// # {
-/// use knifer_rs::vstr;
+/// use kniferrs::vstr;
 ///
 /// assert!(vstr::is_nfkd("e\u{301}"));
 /// assert!(!vstr::is_nfkd("\u{ff21}"));

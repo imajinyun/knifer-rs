@@ -1,6 +1,6 @@
 //! Scalar wrapping implementation family.
 //!
-//! Public entry points are re-exported through `knifer_rs::vstr`. Keep this
+//! Public entry points are re-exported through `kniferrs::vstr`. Keep this
 //! module as a thin index: `basic` owns simple wrapping, `options` owns policy
 //! types, `options_wrap` owns strategy rendering, and `tokens` stays private.
 

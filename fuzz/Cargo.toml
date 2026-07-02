@@ -8,7 +8,7 @@ publish = false
 cargo-fuzz = true
 
 [dependencies]
-knifer_rs = { package = "knifer-rs", path = ".." }
+kniferrs = { package = "knifer-rs", path = ".." }
 libfuzzer-sys = "0.4"
 
 [lints.rust]

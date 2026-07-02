@@ -29,7 +29,7 @@ bash bin/check-docs-rs-ready.sh
 ## API Rules
 
 - Keep public APIs safe Rust.
-- Preserve `knifer_rs::v*::*` facade ergonomics.
+- Preserve `kniferrs::v*::*` facade ergonomics.
 - Add doctest examples for public functions.
 - Add unit tests for edge cases and Rust-specific behavior.
 - Classify each new public API in `docs/api-behavior-contract.md` before
