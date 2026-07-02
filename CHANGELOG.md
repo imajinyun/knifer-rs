@@ -11,6 +11,12 @@ in the relevant parity documents.
 ### Added
 
 - Added the `vstr` facade for Safe Rust string and text utilities.
+- Added a dependency-free string-similarity metric suite to `vstr`:
+  `optimal_string_alignment` (restricted Damerau-Levenshtein),
+  `damerau_levenshtein_distance` (unrestricted), `jaro_similarity`,
+  `jaro_winkler_similarity`, and `sorensen_dice`, complementing the existing
+  Levenshtein, Jaccard, n-gram, and `SimHash` helpers. Values are cross-checked
+  against the `strsim` crate reference and are Unicode scalar-value aware.
 - Added Apache Commons `StringUtils`-style classics to `vstr`: `common_prefix`,
   `common_suffix`, `difference`, `rotate`, `wrap_if_missing`, and the ignore-case
   `add_prefix_if_not_ignore_case` / `add_suffix_if_not_ignore_case` helpers, with

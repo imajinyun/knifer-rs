@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 
 /// Returns the Jaccard similarity of two strings by Unicode scalar-value set.
 ///
@@ -106,6 +106,227 @@ pub fn levenshtein_similarity(left: &str, right: &str) -> f64 {
     1.0 - (usize_to_f64(distance) / usize_to_f64(max_len))
 }
 
+/// Returns the optimal string alignment distance between two strings.
+///
+/// This is the restricted Damerau-Levenshtein distance: it adds transposition
+/// of two adjacent characters to the insert, delete, and substitute edits, but
+/// no substring is edited more than once. It is Unicode scalar-value aware.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::optimal_string_alignment("ca", "abc"), 3);
+/// assert_eq!(vstr::optimal_string_alignment("ac", "ca"), 1);
+/// ```
+#[must_use]
+pub fn optimal_string_alignment(left: &str, right: &str) -> usize {
+    let left: Vec<char> = left.chars().collect();
+    let right: Vec<char> = right.chars().collect();
+
+    if left.is_empty() {
+        return right.len();
+    }
+    if right.is_empty() {
+        return left.len();
+    }
+
+    let rows = left.len() + 1;
+    let cols = right.len() + 1;
+    let mut distances = vec![0_usize; rows * cols];
+
+    for (col, value) in distances.iter_mut().take(cols).enumerate() {
+        *value = col;
+    }
+    for row in 1..rows {
+        distances[row * cols] = row;
+    }
+
+    for i in 1..rows {
+        for j in 1..cols {
+            let cost = usize::from(left[i - 1] != right[j - 1]);
+            let mut value = (distances[(i - 1) * cols + j] + 1)
+                .min(distances[i * cols + (j - 1)] + 1)
+                .min(distances[(i - 1) * cols + (j - 1)] + cost);
+
+            if i > 1 && j > 1 && left[i - 1] == right[j - 2] && left[i - 2] == right[j - 1] {
+                value = value.min(distances[(i - 2) * cols + (j - 2)] + 1);
+            }
+
+            distances[i * cols + j] = value;
+        }
+    }
+
+    distances[rows * cols - 1]
+}
+
+/// Returns the unrestricted Damerau-Levenshtein distance between two strings.
+///
+/// Unlike [`optimal_string_alignment`], this allows a substring to be edited
+/// more than once, matching the full Damerau-Levenshtein metric. It is Unicode
+/// scalar-value aware.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::damerau_levenshtein_distance("ca", "abc"), 2);
+/// assert_eq!(vstr::damerau_levenshtein_distance("kitten", "sitting"), 3);
+/// ```
+#[must_use]
+pub fn damerau_levenshtein_distance(left: &str, right: &str) -> usize {
+    let left: Vec<char> = left.chars().collect();
+    let right: Vec<char> = right.chars().collect();
+
+    if left.is_empty() {
+        return right.len();
+    }
+    if right.is_empty() {
+        return left.len();
+    }
+
+    let height = right.len() + 2;
+    let mut matrix = vec![0_usize; (left.len() + 2) * height];
+    let max_distance = left.len() + right.len();
+
+    matrix[0] = max_distance;
+    for i in 0..=left.len() {
+        matrix[(i + 1) * height] = max_distance;
+        matrix[(i + 1) * height + 1] = i;
+    }
+    for j in 0..=right.len() {
+        matrix[j + 1] = max_distance;
+        matrix[height + (j + 1)] = j;
+    }
+
+    let mut last_row: HashMap<char, usize> = HashMap::new();
+
+    for i in 1..=left.len() {
+        let mut last_match_col = 0;
+        for j in 1..=right.len() {
+            let last_match_row = *last_row.get(&right[j - 1]).unwrap_or(&0);
+            let cost = usize::from(left[i - 1] != right[j - 1]);
+
+            let substitution = matrix[i * height + j] + cost;
+            let insertion = matrix[(i + 1) * height + j] + 1;
+            let deletion = matrix[i * height + (j + 1)] + 1;
+            let transposition = matrix[last_match_row * height + last_match_col]
+                + (i - last_match_row - 1)
+                + 1
+                + (j - last_match_col - 1);
+
+            matrix[(i + 1) * height + (j + 1)] =
+                substitution.min(insertion).min(deletion).min(transposition);
+
+            if cost == 0 {
+                last_match_col = j;
+            }
+        }
+        last_row.insert(left[i - 1], i);
+    }
+
+    matrix[(left.len() + 1) * height + (right.len() + 1)]
+}
+
+/// Returns the Jaro similarity of two strings in `[0.0, 1.0]`.
+///
+/// The Jaro metric rewards matching characters within a sliding window and
+/// penalizes transpositions. Two empty inputs are considered identical and
+/// return `1.0`. It is Unicode scalar-value aware.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::jaro_similarity("", ""), 1.0);
+/// assert!((vstr::jaro_similarity("dwayne", "duane") - 0.822_222).abs() < 1e-5);
+/// ```
+#[must_use]
+pub fn jaro_similarity(left: &str, right: &str) -> f64 {
+    let left: Vec<char> = left.chars().collect();
+    let right: Vec<char> = right.chars().collect();
+    jaro_from_chars(&left, &right).0
+}
+
+/// Returns the Jaro-Winkler similarity of two strings in `[0.0, 1.0]`.
+///
+/// This boosts the [`jaro_similarity`] score for strings that share a common
+/// prefix (up to four characters), which suits human names well. It is Unicode
+/// scalar-value aware.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::jaro_winkler_similarity("", ""), 1.0);
+/// assert!((vstr::jaro_winkler_similarity("dwayne", "duane") - 0.840).abs() < 1e-3);
+/// ```
+#[must_use]
+pub fn jaro_winkler_similarity(left: &str, right: &str) -> f64 {
+    const SCALING: f64 = 0.1;
+
+    let left: Vec<char> = left.chars().collect();
+    let right: Vec<char> = right.chars().collect();
+    let (jaro, matches) = jaro_from_chars(&left, &right);
+
+    if matches == 0 {
+        return jaro;
+    }
+
+    let mut prefix = 0;
+    for (a, b) in left.iter().zip(right.iter()).take(4) {
+        if a == b {
+            prefix += 1;
+        } else {
+            break;
+        }
+    }
+
+    jaro + usize_to_f64(prefix) * SCALING * (1.0 - jaro)
+}
+
+/// Returns the Sørensen-Dice coefficient of two strings in `[0.0, 1.0]`.
+///
+/// The coefficient compares the multiset of adjacent character bigrams. Two
+/// empty inputs are considered identical and return `1.0`; a single-character
+/// input has no bigrams and returns `0.0` unless both sides are equal. It is
+/// Unicode scalar-value aware.
+///
+/// # Examples
+///
+/// ```
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::sorensen_dice("night", "night"), 1.0);
+/// assert!((vstr::sorensen_dice("night", "nacht") - 0.25).abs() < f64::EPSILON);
+/// ```
+#[must_use]
+pub fn sorensen_dice(left: &str, right: &str) -> f64 {
+    if left == right {
+        return 1.0;
+    }
+
+    let left_bigrams = bigram_counts(left);
+    let right_bigrams = bigram_counts(right);
+    if left_bigrams.is_empty() || right_bigrams.is_empty() {
+        return 0.0;
+    }
+
+    let mut intersection = 0_usize;
+    for (bigram, left_count) in &left_bigrams {
+        if let Some(right_count) = right_bigrams.get(bigram) {
+            intersection += (*left_count).min(*right_count);
+        }
+    }
+
+    let total: usize = left_bigrams.values().sum::<usize>() + right_bigrams.values().sum::<usize>();
+    2.0 * usize_to_f64(intersection) / usize_to_f64(total)
+}
+
 /// Returns a deterministic 64-bit `SimHash` for text.
 ///
 /// Whitespace-separated lower-cased fields are used as tokens. If the text has
@@ -186,6 +407,72 @@ fn jaccard<T: Ord>(left: &BTreeSet<T>, right: &BTreeSet<T>) -> f64 {
     let intersection = left.intersection(right).count();
     let union = left.union(right).count();
     usize_to_f64(intersection) / usize_to_f64(union)
+}
+
+/// Returns the Jaro similarity and the number of matching characters.
+fn jaro_from_chars(left: &[char], right: &[char]) -> (f64, usize) {
+    if left.is_empty() && right.is_empty() {
+        return (1.0, 0);
+    }
+    if left.is_empty() || right.is_empty() {
+        return (0.0, 0);
+    }
+
+    let search_range = (left.len().max(right.len()) / 2).saturating_sub(1);
+
+    let mut left_matched = vec![false; left.len()];
+    let mut right_matched = vec![false; right.len()];
+    let mut matches = 0_usize;
+
+    for (i, left_char) in left.iter().enumerate() {
+        let start = i.saturating_sub(search_range);
+        let end = (i + search_range + 1).min(right.len());
+        for j in start..end {
+            if !right_matched[j] && *left_char == right[j] {
+                left_matched[i] = true;
+                right_matched[j] = true;
+                matches += 1;
+                break;
+            }
+        }
+    }
+
+    if matches == 0 {
+        return (0.0, 0);
+    }
+
+    let mut transpositions = 0_usize;
+    let mut right_index = 0;
+    for (i, matched) in left_matched.iter().enumerate() {
+        if *matched {
+            while !right_matched[right_index] {
+                right_index += 1;
+            }
+            if left[i] != right[right_index] {
+                transpositions += 1;
+            }
+            right_index += 1;
+        }
+    }
+
+    let matches_f = usize_to_f64(matches);
+    let half_transpositions = usize_to_f64(transpositions / 2);
+    let jaro = (matches_f / usize_to_f64(left.len())
+        + matches_f / usize_to_f64(right.len())
+        + (matches_f - half_transpositions) / matches_f)
+        / 3.0;
+
+    (jaro, matches)
+}
+
+/// Returns the multiset of adjacent character bigrams keyed by the pair.
+fn bigram_counts(input: &str) -> HashMap<(char, char), usize> {
+    let chars: Vec<char> = input.chars().collect();
+    let mut counts = HashMap::new();
+    for window in chars.windows(2) {
+        *counts.entry((window[0], window[1])).or_insert(0) += 1;
+    }
+    counts
 }
 
 #[allow(clippy::cast_precision_loss)]

@@ -31,7 +31,9 @@ Core stable areas:
 
 - `kniferrs::vstr`: trim, blank/empty predicates, substring helpers, scalar
   text helpers, case conversion, replacement, literal search, escaping, Ant
-  path matching, emoji helpers, and similarity helpers.
+  path matching, emoji helpers, and similarity helpers (Levenshtein, Jaro,
+  Jaro-Winkler, Damerau, optimal string alignment, Sørensen-Dice, Jaccard,
+  n-gram, and `SimHash`).
 - `kniferrs::vbytes`: byte length, UTF-8 validation, byte slicing, ASCII trim,
   byte search, prefix/suffix stripping, byte replacement, lossy UTF-8 decoding
   (`chars`, `char_indices`), and byte line/field splitting (`lines`, `fields`).
@@ -167,6 +169,7 @@ kniferrs::vstr::contains_ignore_case = pub fn contains_ignore_case(input: &str, 
 kniferrs::vstr::contains_none = pub fn contains_none<'src, I>(input: &str, needles: I) -> bool where I: IntoIterator<Item = &'src str>
 kniferrs::vstr::contains_pattern = pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError>
 kniferrs::vstr::count_matches = pub fn count_matches(input: &str, needle: &str) -> usize
+kniferrs::vstr::damerau_levenshtein_distance = pub fn damerau_levenshtein_distance(left: &str, right: &str) -> usize
 kniferrs::vstr::deburr = pub fn deburr(input: &str) -> String
 kniferrs::vstr::dedent = pub fn dedent(input: &str) -> String
 kniferrs::vstr::default_if_blank = pub fn default_if_blank<'src>(input: &'src str, default: &'src str) -> &'src str
@@ -214,6 +217,8 @@ kniferrs::vstr::is_not_blank = pub fn is_not_blank(input: &str) -> bool
 kniferrs::vstr::is_not_empty = pub const fn is_not_empty(input: &str) -> bool
 kniferrs::vstr::is_palindrome = pub fn is_palindrome(input: &str) -> bool
 kniferrs::vstr::jaccard_similarity = pub fn jaccard_similarity(left: &str, right: &str) -> f64
+kniferrs::vstr::jaro_similarity = pub fn jaro_similarity(left: &str, right: &str) -> f64
+kniferrs::vstr::jaro_winkler_similarity = pub fn jaro_winkler_similarity(left: &str, right: &str) -> f64
 kniferrs::vstr::length = pub fn length(input: &str) -> usize
 kniferrs::vstr::levenshtein_distance = pub fn levenshtein_distance(left: &str, right: &str) -> usize
 kniferrs::vstr::levenshtein_similarity = pub fn levenshtein_similarity(left: &str, right: &str) -> f64
@@ -230,6 +235,7 @@ kniferrs::vstr::non_blank_lines = pub fn non_blank_lines(input: &str) -> Vec<&st
 kniferrs::vstr::normalize_newlines = pub fn normalize_newlines(input: &str) -> String
 kniferrs::vstr::normalize_whitespace = pub fn normalize_whitespace(input: &str) -> String
 kniferrs::vstr::number_format = pub fn number_format(value: i64) -> String
+kniferrs::vstr::optimal_string_alignment = pub fn optimal_string_alignment(left: &str, right: &str) -> usize
 kniferrs::vstr::ordinalize = pub fn ordinalize(value: i64) -> String
 kniferrs::vstr::pad_left = pub fn pad_left(input: &str, target_len: usize, pad: char) -> String
 kniferrs::vstr::pad_right = pub fn pad_right(input: &str, target_len: usize, pad: char) -> String
@@ -254,6 +260,7 @@ kniferrs::vstr::rune_len = pub fn rune_len(input: &str) -> usize
 kniferrs::vstr::sim_hash = pub fn sim_hash(input: &str) -> u64
 kniferrs::vstr::slugify = pub fn slugify(input: &str) -> String
 kniferrs::vstr::slugify_with_separator = pub fn slugify_with_separator(input: &str, separator: char) -> String
+kniferrs::vstr::sorensen_dice = pub fn sorensen_dice(left: &str, right: &str) -> f64
 kniferrs::vstr::split = pub fn split<'src>(input: &'src str, separator: &str) -> Vec<&'src str>
 kniferrs::vstr::split_once = pub fn split_once<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)>
 kniferrs::vstr::split_once_last = pub fn split_once_last<'src>(input: &'src str, separator: &str) -> Option<(&'src str, &'src str)>
@@ -435,7 +442,9 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `collapse_repeated_char`, `center`, `dedent`, `wrap_with_indent`,
 `non_blank_lines`, `initials`, `is_palindrome`, `extract_digits`,
 `remove_ascii_punctuation`, `surround`, `unsurround`, `word_count`,
-`ant_path_match_with_separator`, and `levenshtein_distance`.
+`ant_path_match_with_separator`, `levenshtein_distance`,
+`optimal_string_alignment`, `damerau_levenshtein_distance`, `jaro_similarity`,
+`jaro_winkler_similarity`, and `sorensen_dice`.
 
 Generic iterator APIs use forms such as `where I: IntoIterator`.
 

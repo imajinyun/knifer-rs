@@ -53,3 +53,61 @@ fn hamming_distance_counts_different_bits() {
     assert_eq!(hamming_distance64(0, 0), 0);
     assert_eq!(hamming_distance64(u64::MAX, 0), 64);
 }
+
+#[test]
+fn optimal_string_alignment_matches_strsim_reference() {
+    // Cross-checked against the `strsim` crate reference values.
+    assert_eq!(optimal_string_alignment("", ""), 0);
+    assert_eq!(optimal_string_alignment("", "abc"), 3);
+    assert_eq!(optimal_string_alignment("abc", ""), 3);
+    assert_eq!(optimal_string_alignment("ac", "ca"), 1);
+    assert_eq!(optimal_string_alignment("ca", "abc"), 3);
+    assert_eq!(optimal_string_alignment("kitten", "sitting"), 3);
+    assert_eq!(optimal_string_alignment("你好世界", "你好呀"), 2);
+}
+
+#[test]
+fn damerau_levenshtein_allows_repeated_transpositions() {
+    // OSA reports 3 for "ca" -> "abc"; unrestricted Damerau reports 2.
+    assert_eq!(damerau_levenshtein_distance("ca", "abc"), 2);
+    assert_eq!(damerau_levenshtein_distance("", ""), 0);
+    assert_eq!(damerau_levenshtein_distance("", "abc"), 3);
+    assert_eq!(damerau_levenshtein_distance("abc", ""), 3);
+    assert_eq!(damerau_levenshtein_distance("ac", "ca"), 1);
+    assert_eq!(damerau_levenshtein_distance("kitten", "sitting"), 3);
+    assert_eq!(damerau_levenshtein_distance("你好", "您好"), 1);
+}
+
+#[test]
+fn jaro_matches_strsim_reference() {
+    assert_approx_eq(jaro_similarity("", ""), 1.0);
+    assert_approx_eq(jaro_similarity("abc", ""), 0.0);
+    assert_approx_eq(jaro_similarity("abc", "abc"), 1.0);
+    assert!((jaro_similarity("dwayne", "duane") - 0.822_222_222_222_222).abs() < 1e-12);
+    assert!((jaro_similarity("martha", "marhta") - 0.944_444_444_444_444).abs() < 1e-12);
+    assert!((jaro_similarity("dixon", "dicksonx") - 0.766_666_666_666_666).abs() < 1e-12);
+}
+
+#[test]
+fn jaro_winkler_boosts_common_prefix() {
+    assert_approx_eq(jaro_winkler_similarity("", ""), 1.0);
+    assert_approx_eq(jaro_winkler_similarity("abc", "abc"), 1.0);
+    assert!((jaro_winkler_similarity("dwayne", "duane") - 0.840).abs() < 1e-3);
+    assert!((jaro_winkler_similarity("martha", "marhta") - 0.961_111).abs() < 1e-5);
+    // No common prefix: Jaro-Winkler equals Jaro.
+    assert_approx_eq(
+        jaro_winkler_similarity("aaa", "bbb"),
+        jaro_similarity("aaa", "bbb"),
+    );
+}
+
+#[test]
+fn sorensen_dice_compares_bigram_multisets() {
+    assert_approx_eq(sorensen_dice("", ""), 1.0);
+    assert_approx_eq(sorensen_dice("night", "night"), 1.0);
+    assert_approx_eq(sorensen_dice("night", "nacht"), 0.25);
+    assert_approx_eq(sorensen_dice("a", "a"), 1.0);
+    // Single characters have no bigrams and are unequal.
+    assert_approx_eq(sorensen_dice("a", "b"), 0.0);
+    assert_approx_eq(sorensen_dice("night", "day"), 0.0);
+}
