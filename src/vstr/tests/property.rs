@@ -182,6 +182,78 @@ fn fold_for_test(ch: char, case_sensitive: bool) -> char {
 }
 
 #[test]
+fn property_style_render_template_matches_manual_substitution() {
+    let mut rng = DeterministicRng::new(0x5eed_0009);
+    let vars = [
+        ("name", "Tom"),
+        ("count", "3"),
+        ("who", "🌍"),
+        ("greeting", "你好"),
+    ];
+    let literals = ['a', 'b', ' ', '-', '你', '🚀', '.', '\u{301}'];
+    let unknown_keys = ["x1", "zz", "未知", "missing"];
+
+    // Build a template and the manually substituted output side by side, then
+    // assert the renderer agrees exactly. Tokens are chosen so their brace usage
+    // never merges ambiguously (a lone `}` is covered by the unit tests).
+    for _ in 0..512 {
+        let token_count = rng.usize(10);
+        let mut template = String::new();
+        let mut expected = String::new();
+
+        for _ in 0..token_count {
+            match rng.usize(5) {
+                0 => {
+                    let ch = literals[rng.usize(literals.len())];
+                    template.push(ch);
+                    expected.push(ch);
+                }
+                1 => {
+                    let (key, value) = vars[rng.usize(vars.len())];
+                    template.push('{');
+                    template.push_str(key);
+                    template.push('}');
+                    expected.push_str(value);
+                }
+                2 => {
+                    let key = unknown_keys[rng.usize(unknown_keys.len())];
+                    template.push('{');
+                    template.push_str(key);
+                    template.push('}');
+                    expected.push('{');
+                    expected.push_str(key);
+                    expected.push('}');
+                }
+                3 => {
+                    template.push_str("{{");
+                    expected.push('{');
+                }
+                _ => {
+                    template.push_str("}}");
+                    expected.push('}');
+                }
+            }
+        }
+
+        let rendered = render_template(&template, vars);
+        assert_eq!(rendered, expected);
+        assert!(std::str::from_utf8(rendered.as_bytes()).is_ok());
+    }
+
+    // Arbitrary brace soup must never panic and always stay valid UTF-8.
+    let soup_alphabet = ['{', '}', 'a', 'n', 'm', 'e', ' ', '你', '🚀'];
+    for _ in 0..256 {
+        let len = rng.usize(20);
+        let mut input = String::new();
+        for _ in 0..len {
+            input.push(soup_alphabet[rng.usize(soup_alphabet.len())]);
+        }
+        let rendered = render_template(&input, vars);
+        assert!(std::str::from_utf8(rendered.as_bytes()).is_ok());
+    }
+}
+
+#[test]
 fn property_style_reusable_matcher_preserves_match_contracts() {
     let mut rng = DeterministicRng::new(0x5eed_0005);
     let candidates = ["", "a", "aa", "你", "你好", "🚀", "e", "\u{301}", "--", "_"];

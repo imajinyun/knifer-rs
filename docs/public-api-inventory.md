@@ -292,6 +292,7 @@ kniferrs::vstr::remove_prefix = pub fn remove_prefix<'src>(input: &'src str, pre
 kniferrs::vstr::remove_range = pub fn remove_range(input: &str, start: usize, end: usize) -> String
 kniferrs::vstr::remove_suffix = pub fn remove_suffix<'src>(input: &'src str, suffix: &str) -> &'src str
 kniferrs::vstr::remove_whitespace = pub fn remove_whitespace(input: &str) -> String
+kniferrs::vstr::render_template = pub fn render_template<'a, I>(template: &str, vars: I) -> String where I: IntoIterator<Item = (&'a str, &'a str)>
 kniferrs::vstr::repeat = pub fn repeat(input: &str, count: usize) -> String
 kniferrs::vstr::replace_first = pub fn replace_first(input: &str, from: &str, to: &str) -> String
 kniferrs::vstr::replace_ignore_case = pub fn replace_ignore_case(input: &str, from: &str, to: &str) -> String
@@ -545,7 +546,7 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `collapse_repeated_char`, `center`, `dedent`, `wrap_with_indent`,
 `non_blank_lines`, `initials`, `is_palindrome`, `extract_digits`,
 `remove_ascii_punctuation`, `surround`, `unsurround`, `strip_tags`,
-`word_count`, `fuzzy_match`, `fuzzy_score`, `fuzzy_indices`,
+`word_count`, `fuzzy_match`, `fuzzy_score`, `fuzzy_indices`, `render_template`,
 `ant_path_match_with_separator`, `levenshtein_distance`,
 `optimal_string_alignment`, `damerau_levenshtein_distance`, `jaro_similarity`,
 `jaro_winkler_similarity`, `sorensen_dice`, `pluralize`, `singularize`,

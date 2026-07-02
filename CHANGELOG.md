@@ -55,6 +55,13 @@ in the relevant parity documents.
   word-boundary, `camelCase`, and consecutive-run bonuses and gap penalties,
   using fzf "smart case" matching. Returned indices are ascending byte offsets
   on Unicode scalar boundaries.
+- Added a dependency-free runtime templating helper to `vstr`: `render_template`
+  expands `{name}` placeholders from key/value pairs (any
+  `IntoIterator<Item = (&str, &str)>`), where `{{`/`}}` emit literal braces, an
+  unknown `{name}` is kept verbatim (missing-key policy: preserve), and an
+  unterminated `{` is emitted literally. Values are inserted as-is, so callers
+  escape untrusted values (for example with `escape_html`) before rendering into
+  markup.
 - Added dependency-free ASCII folding to `vstr`: `deburr` and `remove_accents`
   map common Latin diacritics and ligatures to ASCII (for example `é` to `e` and
   `Æ` to `Ae`) while preserving non-Latin scripts. `slugify` now folds through

@@ -263,6 +263,38 @@ fn format_replaces_placeholders_in_order() {
 }
 
 #[test]
+fn render_template_expands_named_placeholders() {
+    assert_eq!(
+        render_template("Hi {name}, {count} new", [("name", "Tom"), ("count", "3")]),
+        "Hi Tom, 3 new"
+    );
+
+    // Escaped braces become literals; missing keys stay verbatim.
+    assert_eq!(
+        render_template("{{literal}} {missing}", [("name", "Tom")]),
+        "{literal} {missing}"
+    );
+
+    // First matching pair wins; unrelated pairs are ignored.
+    assert_eq!(
+        render_template("{k}", [("k", "first"), ("k", "second")]),
+        "first"
+    );
+
+    // Values are inserted as-is, including multi-byte content.
+    assert_eq!(
+        render_template("{greeting} {who}", [("greeting", "你好"), ("who", "🌍")]),
+        "你好 🌍"
+    );
+
+    // Unterminated braces and empty inputs never panic.
+    assert_eq!(render_template("a {unclosed", [("x", "y")]), "a {unclosed");
+    assert_eq!(render_template("{}", [("", "empty-key")]), "empty-key");
+    assert_eq!(render_template("plain", std::iter::empty()), "plain");
+    assert_eq!(render_template("", [("x", "y")]), "");
+}
+
+#[test]
 fn replace_helpers_support_first_last_and_case_insensitive_rewrites() {
     assert_eq!(replace_first("go go rust", "go", "rs"), "rs go rust");
     assert_eq!(replace_first("rust", "go", "rs"), "rust");
