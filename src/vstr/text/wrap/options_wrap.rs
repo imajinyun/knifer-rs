@@ -1,5 +1,8 @@
-use super::options::{LongWordPolicy, WhitespaceMode, WrapOptions};
-use super::tokens::{collapse_wrap_tokens, preserve_wrap_tokens};
+use super::options::{LongWordPolicy, WhitespaceMode, WrapAlgorithm, WrapOptions};
+use super::tokens::{CollapseWrapToken, collapse_wrap_tokens, preserve_wrap_tokens};
+
+/// Sentinel line-break cost meaning "unreachable" in the optimal-fit DP.
+const OPTIMAL_FIT_INFINITY: u128 = u128::MAX;
 
 /// Wraps text with explicit scalar layout options.
 ///
@@ -57,6 +60,17 @@ fn wrap_collapse_paragraph_with_options(
         return;
     }
 
+    match options.wrap_algorithm {
+        WrapAlgorithm::FirstFit => collapse_first_fit(&tokens, options, rendered),
+        WrapAlgorithm::OptimalFit => collapse_optimal_fit(&tokens, options, rendered),
+    }
+}
+
+fn collapse_first_fit(
+    tokens: &[CollapseWrapToken<'_>],
+    options: &WrapOptions<'_>,
+    rendered: &mut Vec<String>,
+) {
     let mut line_index = 0usize;
     let mut current = String::new();
     let mut current_len = 0usize;
@@ -90,6 +104,110 @@ fn wrap_collapse_paragraph_with_options(
     if !current.is_empty() {
         push_options_line(rendered, options, &mut line_index, &current);
     }
+}
+
+/// Chooses line breaks that minimize the sum of squared trailing slack across
+/// every line except the last, giving a more balanced paragraph than greedy
+/// first-fit. Multi-token lines must fit the active width; an over-long token
+/// always occupies its own line and follows the long-word policy at render time.
+fn collapse_optimal_fit(
+    tokens: &[CollapseWrapToken<'_>],
+    options: &WrapOptions<'_>,
+    rendered: &mut Vec<String>,
+) {
+    let token_count = tokens.len();
+    let lengths: Vec<usize> = tokens
+        .iter()
+        .map(|token| token.text.chars().count())
+        .collect();
+
+    // The only line that starts at token 0 is the first rendered line, so a line
+    // starting at token `i` uses the initial indent when `i == 0` and the
+    // subsequent indent otherwise.
+    let content_width = |start: usize| options_content_width(options, usize::from(start != 0));
+
+    // cost[i] is the minimum total penalty for wrapping tokens[i..], and
+    // next_break[i] is the exclusive end of the first line in that optimum.
+    let mut cost = vec![OPTIMAL_FIT_INFINITY; token_count + 1];
+    let mut next_break = vec![token_count; token_count + 1];
+    cost[token_count] = 0;
+
+    for start in (0..token_count).rev() {
+        let available = content_width(start);
+        let mut line_width = 0usize;
+        for end in (start + 1)..=token_count {
+            let index = end - 1;
+            if index > start && tokens[index].prefix_space {
+                line_width += 1;
+            }
+            line_width += lengths[index];
+
+            let single = end == start + 1;
+            if !single && line_width > available {
+                // Multi-token lines must fit; a longer prefix cannot shrink.
+                break;
+            }
+            if cost[end] == OPTIMAL_FIT_INFINITY {
+                continue;
+            }
+
+            let is_last = end == token_count;
+            let line_cost = if is_last {
+                0
+            } else {
+                let slack = u128::from(
+                    u64::try_from(available.saturating_sub(line_width)).unwrap_or(u64::MAX),
+                );
+                slack.saturating_mul(slack)
+            };
+            let total = line_cost.saturating_add(cost[end]);
+            if total < cost[start] {
+                cost[start] = total;
+                next_break[start] = end;
+            }
+        }
+    }
+
+    let mut line_index = 0usize;
+    let mut start = 0usize;
+    while start < token_count {
+        let end = next_break[start];
+        render_optimal_line(
+            tokens,
+            &lengths,
+            options,
+            rendered,
+            &mut line_index,
+            start,
+            end,
+        );
+        start = end;
+    }
+}
+
+fn render_optimal_line(
+    tokens: &[CollapseWrapToken<'_>],
+    lengths: &[usize],
+    options: &WrapOptions<'_>,
+    rendered: &mut Vec<String>,
+    line_index: &mut usize,
+    start: usize,
+    end: usize,
+) {
+    let active_width = options_content_width(options, *line_index);
+    if end - start == 1 && lengths[start] > active_width {
+        push_long_scalar_token(rendered, options, line_index, tokens[start].text);
+        return;
+    }
+
+    let mut line = String::new();
+    for (offset, token) in tokens[start..end].iter().enumerate() {
+        if offset > 0 && token.prefix_space {
+            line.push(' ');
+        }
+        line.push_str(token.text);
+    }
+    push_options_line(rendered, options, line_index, &line);
 }
 
 fn wrap_preserve_paragraph_with_options(

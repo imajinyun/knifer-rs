@@ -67,6 +67,10 @@ in the relevant parity documents.
 - Added `WrapOptions`, `WhitespaceMode`, and `LongWordPolicy` for configurable
   scalar wrapping without changing the existing `wrap` and `wrap_with_indent`
   behavior.
+- Added `WrapAlgorithm` for `wrap_with_options`: the default `FirstFit` keeps
+  the greedy behavior, while `OptimalFit` chooses collapsed-whitespace line
+  breaks that minimize the sum of squared trailing slack (last line and
+  over-long words excluded), producing more balanced paragraphs.
 - Added `VStrMatcher` for reusable literal multi-pattern matching with
   leftmost-first, leftmost-longest, overlap, and replacement semantics.
 - Added the optional `matcher-aho-corasick` backend for `VStrMatcher` internals

@@ -204,6 +204,81 @@ fn wrap_with_options_exposes_scalar_layout_policy() {
     assert_eq!(wrap_with_options("ignored", &WrapOptions::new(0)), "");
 }
 
+#[test]
+fn wrap_with_options_optimal_fit_balances_lines() {
+    // Greedy first-fit packs the first line full, leaving a ragged short line.
+    let greedy = WrapOptions::new(6);
+    assert_eq!(
+        wrap_with_options("aaa bb cc ddddd", &greedy),
+        "aaa bb\ncc\nddddd"
+    );
+
+    // Explicit first-fit matches the default.
+    assert_eq!(
+        wrap_with_options(
+            "aaa bb cc ddddd",
+            &WrapOptions::new(6).with_wrap_algorithm(WrapAlgorithm::FirstFit)
+        ),
+        "aaa bb\ncc\nddddd"
+    );
+
+    // Optimal-fit minimizes squared trailing slack, yielding balanced lines.
+    assert_eq!(
+        wrap_with_options(
+            "aaa bb cc ddddd",
+            &WrapOptions::new(6).with_wrap_algorithm(WrapAlgorithm::OptimalFit)
+        ),
+        "aaa\nbb cc\nddddd"
+    );
+}
+
+#[test]
+fn wrap_with_options_optimal_fit_handles_edges() {
+    let optimal = |input: &str, width: usize| {
+        wrap_with_options(
+            input,
+            &WrapOptions::new(width).with_wrap_algorithm(WrapAlgorithm::OptimalFit),
+        )
+    };
+
+    // Single short line stays on one line.
+    assert_eq!(optimal("hello rust", 20), "hello rust");
+
+    // Over-long words still break under the default long-word policy.
+    assert_eq!(optimal("superlongword", 5), "super\nlongw\nord");
+
+    // Over-long words are preserved when requested.
+    assert_eq!(
+        wrap_with_options(
+            "superlongword",
+            &WrapOptions::new(5)
+                .with_wrap_algorithm(WrapAlgorithm::OptimalFit)
+                .with_long_word_policy(LongWordPolicy::Preserve)
+        ),
+        "superlongword"
+    );
+
+    // Indentation shrinks the content budget on each line.
+    assert_eq!(
+        wrap_with_options(
+            "alpha beta gamma",
+            &WrapOptions::new(9)
+                .with_wrap_algorithm(WrapAlgorithm::OptimalFit)
+                .with_indent("> ", "..")
+        ),
+        "> alpha\n..beta\n..gamma"
+    );
+
+    // Width 0 short-circuits like the greedy path.
+    assert_eq!(
+        wrap_with_options(
+            "ignored",
+            &WrapOptions::new(0).with_wrap_algorithm(WrapAlgorithm::OptimalFit)
+        ),
+        ""
+    );
+}
+
 #[cfg(feature = "unicode-width")]
 #[test]
 fn wrap_width_with_options_exposes_display_layout_policy() {

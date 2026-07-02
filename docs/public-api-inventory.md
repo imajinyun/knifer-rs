@@ -141,12 +141,14 @@ kniferrs::vstr::VStrMatcher::new = pub fn new<I>(needles: I) -> Self where I: In
 kniferrs::vstr::VStrMatcher::replace_all = pub fn replace_all<'replacement, I>(&self, input: &str, replacements: I) -> String where I: IntoIterator<Item = &'replacement str>
 kniferrs::vstr::VStrMatcher::with_kind = pub fn with_kind<I>(needles: I, kind: MatchKind) -> Self where I: IntoIterator<Item = &'needle str>
 kniferrs::vstr::WhitespaceMode = pub enum WhitespaceMode
+kniferrs::vstr::WrapAlgorithm = pub enum WrapAlgorithm
 kniferrs::vstr::WrapOptions = pub struct WrapOptions<'src>
 kniferrs::vstr::WrapOptions::new = pub const fn new(width: usize) -> Self
 kniferrs::vstr::WrapOptions::with_indent = pub const fn with_indent(mut self, initial_indent: &'src str, subsequent_indent: &'src str) -> Self
 kniferrs::vstr::WrapOptions::with_long_word_policy = pub const fn with_long_word_policy(mut self, long_word_policy: LongWordPolicy) -> Self
 kniferrs::vstr::WrapOptions::with_whitespace_mode = pub const fn with_whitespace_mode(mut self, whitespace_mode: WhitespaceMode) -> Self
 kniferrs::vstr::WrapOptions::with_word_separators = pub const fn with_word_separators(mut self, word_separators: &'src [char]) -> Self
+kniferrs::vstr::WrapOptions::with_wrap_algorithm = pub const fn with_wrap_algorithm(mut self, wrap_algorithm: WrapAlgorithm) -> Self
 kniferrs::vstr::abbreviate_middle = pub fn abbreviate_middle(input: &str, max_chars: usize, marker: &str) -> String
 kniferrs::vstr::add_prefix_if_not = pub fn add_prefix_if_not(input: &str, prefix: &str) -> String
 kniferrs::vstr::add_prefix_if_not_ignore_case = pub fn add_prefix_if_not_ignore_case(input: &str, prefix: &str) -> String
@@ -455,7 +457,8 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `split_sentence_bound_indices`,
 `display_width`, `take_width`, `truncate_width`, `wrap_width`,
 `wrap_width_with_indent`, `wrap_width_with_options`,
-`WrapOptions`, `WhitespaceMode`, `LongWordPolicy`, `wrap_with_options`,
+`WrapOptions`, `WhitespaceMode`, `LongWordPolicy`, `WrapAlgorithm`,
+`wrap_with_options`,
 `to_screaming_snake_case`, `to_dot_case`, `to_path_case`, `to_train_case`,
 `to_cobol_case`, `to_sentence_case`, `capitalize`, `uncapitalize`,
 `swap_case`, `normalize_whitespace`, `remove_whitespace`, `between`,

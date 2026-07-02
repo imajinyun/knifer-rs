@@ -16,6 +16,20 @@ pub enum LongWordPolicy {
     Preserve,
 }
 
+/// Selects the line-breaking strategy used when wrapping a paragraph.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum WrapAlgorithm {
+    /// Greedy first-fit: put each word on the current line while it fits, then
+    /// break. Fast, single pass, and matches [`super::wrap`].
+    FirstFit,
+    /// Optimal-fit: choose line breaks that minimize the sum of squared
+    /// trailing slack across every line except the last, giving more balanced
+    /// (less ragged) paragraphs. Applies to collapsed-whitespace wrapping; the
+    /// last line is never penalized and over-long words follow the long-word
+    /// policy.
+    OptimalFit,
+}
+
 /// Options for strategy-based scalar wrapping.
 ///
 /// Width is measured in Unicode scalar values. Display-width wrapping is
@@ -33,6 +47,8 @@ pub struct WrapOptions<'src> {
     pub whitespace_mode: WhitespaceMode,
     /// Long-word handling policy.
     pub long_word_policy: LongWordPolicy,
+    /// Line-breaking strategy.
+    pub wrap_algorithm: WrapAlgorithm,
     /// Extra scalar separators where words may be wrapped without inserting a
     /// space. Separators are retained at the end of the preceding segment.
     pub word_separators: &'src [char],
@@ -41,8 +57,8 @@ pub struct WrapOptions<'src> {
 impl<'src> WrapOptions<'src> {
     /// Creates wrapping options with scalar width and default wrapping behavior.
     ///
-    /// Defaults match [`super::wrap`]: whitespace is collapsed and long words
-    /// are split by scalar value.
+    /// Defaults match [`super::wrap`]: whitespace is collapsed, long words are
+    /// split by scalar value, and greedy first-fit line breaking is used.
     ///
     /// # Examples
     ///
@@ -60,6 +76,7 @@ impl<'src> WrapOptions<'src> {
             subsequent_indent: "",
             whitespace_mode: WhitespaceMode::Collapse,
             long_word_policy: LongWordPolicy::Break,
+            wrap_algorithm: WrapAlgorithm::FirstFit,
             word_separators: &[],
         }
     }
@@ -114,6 +131,22 @@ impl<'src> WrapOptions<'src> {
     #[must_use]
     pub const fn with_long_word_policy(mut self, long_word_policy: LongWordPolicy) -> Self {
         self.long_word_policy = long_word_policy;
+        self
+    }
+
+    /// Sets the line-breaking strategy.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use kniferrs::vstr::{WrapAlgorithm, WrapOptions};
+    ///
+    /// let options = WrapOptions::new(10).with_wrap_algorithm(WrapAlgorithm::OptimalFit);
+    /// assert_eq!(options.wrap_algorithm, WrapAlgorithm::OptimalFit);
+    /// ```
+    #[must_use]
+    pub const fn with_wrap_algorithm(mut self, wrap_algorithm: WrapAlgorithm) -> Self {
+        self.wrap_algorithm = wrap_algorithm;
         self
     }
 
