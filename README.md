@@ -234,7 +234,9 @@ The manual GitHub Actions workflow exposes `run_release_api_semver` and
 `api_semver_baseline_ref` for the same release-grade API gate.
 
 Optional `pattern-regex` helpers are available for callers that want regex-backed
-matching while keeping the default feature set at zero runtime dependencies:
+matching while keeping the default feature set at zero runtime dependencies. The
+one-shot `vstr::find_pattern` family compiles per call, while `vstr::VRegex`
+compiles once and is reused across many inputs:
 
 ```toml
 [dependencies]

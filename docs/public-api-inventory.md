@@ -44,7 +44,9 @@ The optional feature facade is public only when its feature is enabled. These AP
 Optional feature areas:
 
 - `pattern-regex`: regex-backed `contains_pattern`, `find_pattern`,
-  `find_all_patterns`, `replace_pattern`, and `PatternError`.
+  `find_all_patterns`, `replace_pattern`, and `PatternError`, plus the reusable
+  compiled `VRegex` facade (`is_match`, `find`, `find_all`, `captures`,
+  `replace_all`) for matching one pattern against many inputs.
 - `unicode-segmentation`: grapheme, word, and sentence boundary helpers.
 - `unicode-normalization`: UAX #15 normalization forms `nfc`, `nfd`, `nfkc`,
   `nfkd` and quick-check predicates `is_nfc`, `is_nfd`, `is_nfkc`, `is_nfkd`.
@@ -102,6 +104,15 @@ knifer_rs::vstr::MatchKind = pub enum MatchKind
 knifer_rs::vstr::PatternError = pub struct PatternError
 knifer_rs::vstr::PatternError::message = pub fn message(&self) -> &str
 knifer_rs::vstr::PatternError::pattern = pub fn pattern(&self) -> &str
+knifer_rs::vstr::VRegex = pub struct VRegex
+knifer_rs::vstr::VRegex::as_str = pub fn as_str(&self) -> &str
+knifer_rs::vstr::VRegex::capture_count = pub fn capture_count(&self) -> usize
+knifer_rs::vstr::VRegex::captures = pub fn captures(&self, input: &str) -> Option<Vec<Option<(usize, usize)>>>
+knifer_rs::vstr::VRegex::find = pub fn find(&self, input: &str) -> Option<(usize, usize)>
+knifer_rs::vstr::VRegex::find_all = pub fn find_all(&self, input: &str) -> Vec<(usize, usize)>
+knifer_rs::vstr::VRegex::is_match = pub fn is_match(&self, input: &str) -> bool
+knifer_rs::vstr::VRegex::new = pub fn new(pattern: &str) -> Result<Self, PatternError>
+knifer_rs::vstr::VRegex::replace_all = pub fn replace_all(&self, input: &str, replacement: &str) -> String
 knifer_rs::vstr::VStrMatch = pub struct VStrMatch<'needle>
 knifer_rs::vstr::VStrMatcher = pub struct VStrMatcher<'needle>
 knifer_rs::vstr::VStrMatcher::find = pub fn find(&self, input: &str) -> Option<VStrMatch<'needle>>
@@ -319,6 +330,15 @@ snapshot keeps their release signature stable.
 knifer_rs::vstr::PatternError = pub struct PatternError
 knifer_rs::vstr::PatternError::message = pub fn message(&self) -> &str
 knifer_rs::vstr::PatternError::pattern = pub fn pattern(&self) -> &str
+knifer_rs::vstr::VRegex = pub struct VRegex
+knifer_rs::vstr::VRegex::as_str = pub fn as_str(&self) -> &str
+knifer_rs::vstr::VRegex::capture_count = pub fn capture_count(&self) -> usize
+knifer_rs::vstr::VRegex::captures = pub fn captures(&self, input: &str) -> Option<Vec<Option<(usize, usize)>>>
+knifer_rs::vstr::VRegex::find = pub fn find(&self, input: &str) -> Option<(usize, usize)>
+knifer_rs::vstr::VRegex::find_all = pub fn find_all(&self, input: &str) -> Vec<(usize, usize)>
+knifer_rs::vstr::VRegex::is_match = pub fn is_match(&self, input: &str) -> bool
+knifer_rs::vstr::VRegex::new = pub fn new(pattern: &str) -> Result<Self, PatternError>
+knifer_rs::vstr::VRegex::replace_all = pub fn replace_all(&self, input: &str, replacement: &str) -> String
 knifer_rs::vstr::contains_pattern = pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError>
 knifer_rs::vstr::display_width = pub fn display_width(input: &str) -> usize
 knifer_rs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, pattern: &str) -> Result<Vec<(usize, usize)>, PatternError>
@@ -380,7 +400,7 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
-`replace_pattern`, `graphemes`, `grapheme_len`, `take_graphemes`,
+`replace_pattern`, `VRegex`, `graphemes`, `grapheme_len`, `take_graphemes`,
 `truncate_graphemes`, `unicode_words`, `unicode_word_len`,
 `unicode_word_indices`, `split_word_bounds`, `split_word_bound_indices`,
 `unicode_sentences`, `unicode_sentence_len`, `split_sentence_bounds`,

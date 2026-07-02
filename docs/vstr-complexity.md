@@ -120,3 +120,10 @@ The `pattern-regex` feature enables regex-backed helpers such as
 They compile the caller-provided pattern for each call and return `PatternError`
 when the pattern is invalid. Matching complexity follows the Rust `regex`
 crate's documented guarantees.
+
+For repeated matching against many inputs, the `VRegex` facade compiles a
+pattern once with `VRegex::new` (the one-time compilation cost) and exposes
+`is_match`, `find`, `find_all`, `captures`, and `replace_all`. Each match call is
+linear in the input length and avoids re-paying the per-call compilation cost of
+the free helpers. The backing engine type stays private to keep the public API
+independent of the selected regex crate.

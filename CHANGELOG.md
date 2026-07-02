@@ -27,6 +27,10 @@ in the relevant parity documents.
   escaping, classification, Ant path matching, emoji, and similarity helpers.
 - Added optional regex-backed `vstr` pattern helpers behind the
   `pattern-regex` feature.
+- Added the reusable compiled `vstr::VRegex` facade behind the `pattern-regex`
+  feature: compile a pattern once with `VRegex::new`, then reuse `is_match`,
+  `find`, `find_all`, `captures`, and `replace_all` across many inputs. The
+  concrete regex engine type stays private to the crate.
 - Added optional Unicode segmentation helpers for grapheme, word, and sentence
   boundaries behind the `unicode-segmentation` feature.
 - Added optional Unicode normalization helpers `nfc`, `nfd`, `nfkc`, `nfkd`, and

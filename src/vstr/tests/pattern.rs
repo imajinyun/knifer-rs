@@ -61,3 +61,66 @@ fn pattern_regex_golden_cases_cover_unicode_empty_and_multibyte_ranges() {
         assert!(!err.message().is_empty());
     }
 }
+
+#[cfg(feature = "pattern-regex")]
+#[test]
+fn vregex_reuses_a_compiled_pattern_across_inputs() {
+    let digits = VRegex::new(r"\d+").unwrap();
+    assert_eq!(digits.as_str(), r"\d+");
+    assert_eq!(digits.capture_count(), 1);
+
+    assert!(digits.is_match("ticket-42"));
+    assert!(!digits.is_match("ticket"));
+    assert_eq!(digits.find("ticket-42"), Some((7, 9)));
+    assert_eq!(digits.find("ticket"), None);
+    assert_eq!(
+        digits.find_all("a1 b22 c333"),
+        vec![(1, 2), (4, 6), (8, 11)]
+    );
+    assert_eq!(
+        digits.replace_all("ticket-42 user-7", "#"),
+        "ticket-# user-#"
+    );
+}
+
+#[cfg(feature = "pattern-regex")]
+#[test]
+fn vregex_captures_report_group_byte_ranges_and_missing_groups() {
+    let date = VRegex::new(r"(\d{4})-(\d{2})-(\d{2})").unwrap();
+    assert_eq!(date.capture_count(), 4);
+    assert_eq!(
+        date.captures("2026-06-27"),
+        Some(vec![
+            Some((0, 10)),
+            Some((0, 4)),
+            Some((5, 7)),
+            Some((8, 10))
+        ])
+    );
+    assert_eq!(date.captures("not-a-date"), None);
+    assert_eq!(date.replace_all("2026-06-27", "$2/$3/$1"), "06/27/2026");
+
+    let optional = VRegex::new(r"(a)(b)?c").unwrap();
+    assert_eq!(
+        optional.captures("ac"),
+        Some(vec![Some((0, 2)), Some((0, 1)), None])
+    );
+}
+
+#[cfg(feature = "pattern-regex")]
+#[test]
+fn vregex_matches_unicode_empty_and_multibyte_inputs() {
+    let han = VRegex::new(r"\p{Han}+").unwrap();
+    assert_eq!(han.find("你好Rust"), Some((0, 6)));
+    assert_eq!(
+        han.replace_all("你好 Rust 世界", "[$0]"),
+        "[你好] Rust [世界]"
+    );
+
+    let empty = VRegex::new(r"").unwrap();
+    assert_eq!(empty.find_all("ab"), vec![(0, 0), (1, 1), (2, 2)]);
+    assert_eq!(empty.replace_all("ab", "|"), "|a|b|");
+
+    assert_eq!(VRegex::new("[").unwrap_err().pattern(), "[");
+    assert!(!VRegex::new("[").unwrap_err().message().is_empty());
+}
