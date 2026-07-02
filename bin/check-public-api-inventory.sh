@@ -164,6 +164,7 @@ default_api_files=(
   src/vstr/basic/compare.rs
   src/vstr/basic/escape.rs
   src/vstr/basic/format.rs
+  src/vstr/basic/manipulate.rs
   src/vstr/basic/measure.rs
   src/vstr/basic/mod.rs
   src/vstr/basic/predicate.rs

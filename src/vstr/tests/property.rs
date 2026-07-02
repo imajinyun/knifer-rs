@@ -28,6 +28,60 @@ fn property_style_substring_helpers_keep_scalar_boundaries() {
 }
 
 #[test]
+fn property_style_manipulation_helpers_stay_valid_utf8() {
+    let mut rng = DeterministicRng::new(0x5eed_0006);
+
+    for _ in 0..256 {
+        let input = rng.string(24);
+        let len = input.chars().count();
+        let a = rng.usize(len + 4);
+        let b = rng.usize(len + 4);
+        let payload = rng.string(4);
+
+        // insert never drops content and stays on scalar boundaries.
+        let inserted = insert(&input, a, &payload);
+        assert_eq!(inserted.chars().count(), len + payload.chars().count());
+
+        // overlay/remove_range clamp; the clamped span bounds the length change.
+        let (lo, hi) = if a <= b { (a, b) } else { (b, a) };
+        let removed_span = hi.min(len) - lo.min(len);
+        let overlaid = overlay(&input, &payload, a, b);
+        assert_eq!(
+            overlaid.chars().count(),
+            len - removed_span + payload.chars().count()
+        );
+        let removed = remove_range(&input, a, b);
+        assert_eq!(removed.chars().count(), len - removed_span);
+
+        // replace_range agrees with overlay whenever the range is valid.
+        if lo <= hi && hi <= len {
+            let replaced = replace_range(&input, lo, hi, &payload);
+            assert_eq!(
+                replaced.as_deref(),
+                Some(overlay(&input, &payload, lo, hi).as_str())
+            );
+        }
+
+        // chunk is a lossless, boundary-safe partition.
+        let size = rng.usize(5);
+        let pieces = chunk(&input, size);
+        if size == 0 || input.is_empty() {
+            assert!(pieces.is_empty());
+        } else {
+            assert_eq!(pieces.concat(), input);
+            assert!(pieces.iter().all(|piece| piece.chars().count() <= size));
+            assert_eq!(
+                pieces
+                    .iter()
+                    .map(|piece| piece.chars().count())
+                    .sum::<usize>(),
+                len
+            );
+        }
+    }
+}
+
+#[test]
 fn property_style_replacement_and_escaping_helpers_are_stable() {
     let mut rng = DeterministicRng::new(0x5eed_0002);
     let replacements = [("a", "A"), ("你", "N"), ("🚀", "R"), ("--", "-")];

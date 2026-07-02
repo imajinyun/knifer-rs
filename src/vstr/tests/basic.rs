@@ -201,6 +201,45 @@ fn index_family_returns_byte_positions() {
 }
 
 #[test]
+fn manipulation_helpers_are_scalar_safe() {
+    // insert clamps a large index to an append.
+    assert_eq!(insert("abcd", 2, "XY"), "abXYcd");
+    assert_eq!(insert("你好", 1, "-"), "你-好");
+    assert_eq!(insert("abc", 0, ">"), ">abc");
+    assert_eq!(insert("abc", 99, "!"), "abc!");
+    assert_eq!(insert("", 0, "x"), "x");
+
+    // overlay clamps and normalizes ranges (Commons parity).
+    assert_eq!(overlay("abcdef", "ZZ", 2, 4), "abZZef");
+    assert_eq!(overlay("abcdef", "ZZ", 4, 2), "abZZef");
+    assert_eq!(overlay("abc", "ZZ", 2, 99), "abZZ");
+    assert_eq!(overlay("你好世界", "-", 1, 3), "你-界");
+    assert_eq!(overlay("abc", "", 0, 3), "");
+
+    // remove_range is overlay with an empty replacement.
+    assert_eq!(remove_range("abcdef", 2, 4), "abef");
+    assert_eq!(remove_range("你好世界", 1, 3), "你界");
+    assert_eq!(remove_range("abc", 1, 99), "a");
+
+    // replace_range rejects invalid ranges instead of clamping.
+    assert_eq!(
+        replace_range("abcdef", 2, 4, "ZZ").as_deref(),
+        Some("abZZef")
+    );
+    assert_eq!(replace_range("abc", 1, 1, "-").as_deref(), Some("a-bc"));
+    assert_eq!(replace_range("abc", 3, 3, "!").as_deref(), Some("abc!"));
+    assert_eq!(replace_range("abc", 2, 1, "-"), None);
+    assert_eq!(replace_range("abc", 0, 99, "-"), None);
+
+    // chunk splits into borrowed scalar pieces.
+    assert_eq!(chunk("abcdefg", 3), vec!["abc", "def", "g"]);
+    assert_eq!(chunk("你好世界", 2), vec!["你好", "世界"]);
+    assert_eq!(chunk("abc", 5), vec!["abc"]);
+    assert!(chunk("abc", 0).is_empty());
+    assert!(chunk("", 3).is_empty());
+}
+
+#[test]
 fn equality_and_reverse_helpers_are_unicode_aware() {
     assert!(equals_ignore_case("Knifer-RS", "knifer-rs"));
     assert!(equals_ignore_case("Straße", "straße"));

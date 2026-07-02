@@ -32,9 +32,10 @@ Core stable areas:
 - `kniferrs::vstr`: trim, blank/empty predicates, substring helpers, scalar
   text helpers, case conversion, English word/identifier inflection
   (`pluralize`/`singularize`, `ordinalize`/`deordinalize`, `humanize`,
-  `titleize`, `camelize`), replacement, literal search (span and byte-index
-  lookups, including `ordinal_index_of`/`index_of_difference`), escaping, Ant
-  path matching, emoji helpers, and similarity helpers (Levenshtein, Jaro,
+  `titleize`, `camelize`), replacement, scalar-index manipulation (`insert`,
+  `overlay`, `remove_range`, `replace_range`, `chunk`), literal search (span and
+  byte-index lookups, including `ordinal_index_of`/`index_of_difference`),
+  escaping, Ant path matching, emoji helpers, and similarity helpers (Levenshtein, Jaro,
   Jaro-Winkler, Damerau, optimal string alignment, Sørensen-Dice, Jaccard,
   n-gram, and `SimHash`).
 - `kniferrs::vbytes`: byte length, UTF-8 validation, byte slicing, ASCII trim,
@@ -179,6 +180,7 @@ kniferrs::vstr::capitalize = pub fn capitalize(input: &str) -> String
 kniferrs::vstr::center = pub fn center(input: &str, width: usize, pad: char) -> String
 kniferrs::vstr::char_len = pub fn char_len(input: &str) -> usize
 kniferrs::vstr::chars = pub fn chars(input: &str) -> Vec<char>
+kniferrs::vstr::chunk = pub fn chunk(input: &str, size: usize) -> Vec<&str>
 kniferrs::vstr::collapse_repeated_char = pub fn collapse_repeated_char(input: &str, ch: char) -> String
 kniferrs::vstr::common_prefix = pub fn common_prefix<'src>(left: &'src str, right: &str) -> &'src str
 kniferrs::vstr::common_suffix = pub fn common_suffix<'src>(left: &'src str, right: &str) -> &'src str
@@ -231,6 +233,7 @@ kniferrs::vstr::index_of_any = pub fn index_of_any<'needle, I>(input: &str, need
 kniferrs::vstr::index_of_difference = pub fn index_of_difference(left: &str, right: &str) -> Option<usize>
 kniferrs::vstr::index_of_ignore_case = pub fn index_of_ignore_case(input: &str, needle: &str) -> Option<usize>
 kniferrs::vstr::initials = pub fn initials(input: &str) -> String
+kniferrs::vstr::insert = pub fn insert(input: &str, char_index: usize, text: &str) -> String
 kniferrs::vstr::is_all_blank = pub fn is_all_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 kniferrs::vstr::is_all_empty = pub fn is_all_empty<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 kniferrs::vstr::is_ascii = pub const fn is_ascii(ch: char) -> bool
@@ -272,6 +275,7 @@ kniferrs::vstr::number_format_with = pub fn number_format_with(value: i64, separ
 kniferrs::vstr::optimal_string_alignment = pub fn optimal_string_alignment(left: &str, right: &str) -> usize
 kniferrs::vstr::ordinal_index_of = pub fn ordinal_index_of(input: &str, needle: &str, ordinal: usize) -> Option<usize>
 kniferrs::vstr::ordinalize = pub fn ordinalize(value: i64) -> String
+kniferrs::vstr::overlay = pub fn overlay(input: &str, overlay: &str, start: usize, end: usize) -> String
 kniferrs::vstr::pad_left = pub fn pad_left(input: &str, target_len: usize, pad: char) -> String
 kniferrs::vstr::pad_right = pub fn pad_right(input: &str, target_len: usize, pad: char) -> String
 kniferrs::vstr::pluralize = pub fn pluralize(word: &str, count: i64) -> String
@@ -281,6 +285,7 @@ kniferrs::vstr::remove_ascii_punctuation = pub fn remove_ascii_punctuation(input
 kniferrs::vstr::remove_emoji = pub fn remove_emoji(input: &str) -> String
 kniferrs::vstr::remove_emoji_with_options = pub fn remove_emoji_with_options(input: &str, options: &EmojiOptions<'_>) -> String
 kniferrs::vstr::remove_prefix = pub fn remove_prefix<'src>(input: &'src str, prefix: &str) -> &'src str
+kniferrs::vstr::remove_range = pub fn remove_range(input: &str, start: usize, end: usize) -> String
 kniferrs::vstr::remove_suffix = pub fn remove_suffix<'src>(input: &'src str, suffix: &str) -> &'src str
 kniferrs::vstr::remove_whitespace = pub fn remove_whitespace(input: &str) -> String
 kniferrs::vstr::repeat = pub fn repeat(input: &str, count: usize) -> String
@@ -289,6 +294,7 @@ kniferrs::vstr::replace_ignore_case = pub fn replace_ignore_case(input: &str, fr
 kniferrs::vstr::replace_last = pub fn replace_last(input: &str, from: &str, to: &str) -> String
 kniferrs::vstr::replace_many = pub fn replace_many<'src, I>(input: &str, replacements: I) -> String where I: IntoIterator<Item = (&'src str, &'src str)>
 kniferrs::vstr::replace_pattern = pub fn replace_pattern(input: &str, pattern: &str, replacement: &str) -> Result<String, PatternError>
+kniferrs::vstr::replace_range = pub fn replace_range(input: &str, start: usize, end: usize, replacement: &str) -> Option<String>
 kniferrs::vstr::reverse = pub fn reverse(input: &str) -> String
 kniferrs::vstr::rotate = pub fn rotate(input: &str, shift: isize) -> String
 kniferrs::vstr::rune_len = pub fn rune_len(input: &str) -> usize
@@ -497,6 +503,7 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `contains_none`, `contains_any_ignore_case`, `find_any`, `count_matches`,
 `find_all`, `find_all_ignore_case`, `index_of`, `index_of_ignore_case`,
 `last_index_of`, `ordinal_index_of`, `index_of_any`, `index_of_difference`,
+`insert`, `overlay`, `remove_range`, `replace_range`, `chunk`,
 `replace_first`, `replace_last`,
 `replace_ignore_case`, `replace_many`, `escape_regex`, `quote_meta`,
 `split_once_last`, `strip_prefix_ignore_case`, `slugify_with_separator`,

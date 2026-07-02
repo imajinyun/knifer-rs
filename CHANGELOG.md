@@ -34,6 +34,12 @@ in the relevant parity documents.
   non-overlapping), `index_of_any` (earliest of a needle set), and
   `index_of_difference` (first diverging byte, Apache Commons parity). Results
   are byte indexes that always land on Unicode scalar boundaries.
+- Added a dependency-free scalar-index manipulation family to `vstr` in a
+  dedicated `manipulate` module: `insert` (lenient, clamps to append), `overlay`
+  and `remove_range` (Apache Commons `overlay` parity, clamped and range-
+  normalized), `replace_range` (strict, returns `None` on an invalid range), and
+  `chunk` (borrowed pieces of at most N scalars). All indexes count Unicode
+  scalar values, so results never split a multi-byte character.
 - Added dependency-free ASCII folding to `vstr`: `deburr` and `remove_accents`
   map common Latin diacritics and ligatures to ASCII (for example `é` to `e` and
   `Æ` to `Ae`) while preserving non-Latin scripts. `slugify` now folds through
