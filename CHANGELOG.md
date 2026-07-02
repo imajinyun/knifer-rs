@@ -40,6 +40,14 @@ in the relevant parity documents.
   normalized), `replace_range` (strict, returns `None` on an invalid range), and
   `chunk` (borrowed pieces of at most N scalars). All indexes count Unicode
   scalar values, so results never split a multi-byte character.
+- Deepened `vstr` HTML support (no new dependency): `unescape_html` now decodes
+  decimal (`&#NNN;`) and hexadecimal (`&#xNN;`/`&#XNN;`) numeric references plus
+  a curated named-entity table (`nbsp`, `copy`, `reg`, `trade`, typographic
+  dashes/quotes, symbols, fractions, and currency signs) in a single
+  left-to-right pass, preserving unknown names, bare ampersands, and invalid
+  scalar values verbatim. Added `strip_tags`, which removes `<...>` markup while
+  honoring quoted attribute values and `<!-- ... -->` comments and keeping an
+  unterminated `<` as literal text.
 - Added dependency-free ASCII folding to `vstr`: `deburr` and `remove_accents`
   map common Latin diacritics and ligatures to ASCII (for example `é` to `e` and
   `Æ` to `Ae`) while preserving non-Latin scripts. `slugify` now folds through

@@ -107,6 +107,34 @@ fn property_style_replacement_and_escaping_helpers_are_stable() {
 }
 
 #[test]
+fn property_style_html_helpers_round_trip_and_stay_valid() {
+    let mut rng = DeterministicRng::new(0x5eed_0007);
+
+    for _ in 0..256 {
+        let input = rng.string(32);
+
+        // escape_html output never contains raw markup and fully round-trips.
+        let escaped = escape_html(&input);
+        assert!(!escaped.contains('<'));
+        assert!(!escaped.contains('>'));
+        assert_eq!(unescape_html(&escaped), input);
+
+        // strip_tags leaves escaped text untouched (no raw `<`/`>` remain).
+        assert_eq!(strip_tags(&escaped), escaped);
+
+        // A well-formed wrapper around markup-free content is fully removed,
+        // and strip_tags never panics on arbitrary input.
+        let sanitized: String = input
+            .chars()
+            .filter(|ch| !matches!(ch, '<' | '>' | '"' | '\''))
+            .collect();
+        let wrapped = format!("<span class=\"c\">{sanitized}</span>");
+        assert_eq!(strip_tags(&wrapped), sanitized);
+        assert!(std::str::from_utf8(strip_tags(&input).as_bytes()).is_ok());
+    }
+}
+
+#[test]
 fn property_style_reusable_matcher_preserves_match_contracts() {
     let mut rng = DeterministicRng::new(0x5eed_0005);
     let candidates = ["", "a", "aa", "你", "你好", "🚀", "e", "\u{301}", "--", "_"];

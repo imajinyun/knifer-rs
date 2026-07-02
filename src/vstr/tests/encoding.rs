@@ -15,6 +15,46 @@ fn html_helpers_escape_and_unescape_common_entities() {
 }
 
 #[test]
+fn html_unescape_decodes_numeric_named_and_preserves_unknown() {
+    // Decimal and hexadecimal numeric references, including astral code points.
+    assert_eq!(unescape_html("caf&#233; &#x1F600;"), "café 😀");
+    assert_eq!(unescape_html("&#65;&#x42;&#67;"), "ABC");
+
+    // Curated named references beyond the escape set.
+    assert_eq!(unescape_html("2&nbsp;&mdash;&nbsp;3"), "2\u{a0}—\u{a0}3");
+    assert_eq!(unescape_html("&copy;&reg;&trade;"), "©®™");
+    assert_eq!(unescape_html("&frac12;&euro;&hellip;"), "½€…");
+
+    // Single left-to-right pass: an escaped ampersand is expanded once only.
+    assert_eq!(unescape_html("&amp;lt;"), "&lt;");
+
+    // Unknown names, bare ampersands, and invalid scalars are preserved.
+    assert_eq!(unescape_html("Tom & Jerry"), "Tom & Jerry");
+    assert_eq!(unescape_html("&unknown;"), "&unknown;");
+    assert_eq!(unescape_html("&#;"), "&#;");
+    assert_eq!(unescape_html("&#xD800;"), "&#xD800;");
+    assert_eq!(unescape_html("&amp"), "&amp");
+}
+
+#[test]
+fn strip_tags_removes_markup_and_respects_quotes_and_comments() {
+    assert_eq!(strip_tags("<b>Hello</b> <i>World</i>"), "Hello World");
+    assert_eq!(strip_tags(r#"<a title="x > y">link</a>"#), "link");
+    assert_eq!(strip_tags("<a title='a > b'>x</a>"), "x");
+    assert_eq!(strip_tags("keep <!-- x > y --> me"), "keep  me");
+
+    // Unterminated tags and comments are kept as literal text.
+    assert_eq!(strip_tags("1 < 2 and unclosed"), "1 < 2 and unclosed");
+    assert_eq!(
+        strip_tags("open <!-- never closed"),
+        "open <!-- never closed"
+    );
+
+    // Multi-byte content between tags is preserved on scalar boundaries.
+    assert_eq!(strip_tags("<p>café 你好</p>"), "café 你好");
+}
+
+#[test]
 fn unicode_escape_helpers_handle_bmp_and_surrogate_pairs() {
     assert_eq!(escape_unicode("Rust你好"), "Rust\\u4F60\\u597D");
     assert_eq!(escape_unicode("🚀"), "\\uD83D\\uDE80");

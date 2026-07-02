@@ -317,6 +317,7 @@ kniferrs::vstr::starts_with = pub fn starts_with(input: &str, prefix: &str) -> b
 kniferrs::vstr::starts_with_ignore_case = pub fn starts_with_ignore_case(input: &str, prefix: &str) -> bool
 kniferrs::vstr::strip_prefix_ignore_case = pub fn strip_prefix_ignore_case<'src>(input: &'src str, prefix: &str) -> Option<&'src str>
 kniferrs::vstr::strip_suffix_ignore_case = pub fn strip_suffix_ignore_case<'src>(input: &'src str, suffix: &str) -> Option<&'src str>
+kniferrs::vstr::strip_tags = pub fn strip_tags(input: &str) -> String
 kniferrs::vstr::sub = pub fn sub(input: &str, from_index: isize, to_index: isize) -> String
 kniferrs::vstr::sub_after = pub fn sub_after<'src>(input: &'src str, separator: &str, use_last_separator: bool) -> &'src str
 kniferrs::vstr::sub_before = pub fn sub_before<'src>(input: &'src str, separator: &str, use_last_separator: bool) -> &'src str
@@ -448,6 +449,21 @@ kniferrs::vstr::wrap_width_with_options = pub fn wrap_width_with_options(input: 
 
 Byte and encoding helpers stay separate from `kniferrs::vstr`.
 
+## `vstr` HTML API Shape
+
+`kniferrs::vstr` provides pragmatic, dependency-free HTML helpers rather than a
+full WHATWG parser. `escape_html` escapes the five characters `&`, `<`, `>`,
+`"`, and `'`. `unescape_html` decodes in a single left-to-right pass — so an
+escaped ampersand is expanded exactly once — over three reference forms: a
+curated named-entity table (`amp`, `lt`, `gt`, `quot`, `apos`, `nbsp`, `copy`,
+`reg`, `trade`, typographic dashes and quotes, common symbols and fractions,
+and currency signs), decimal `&#NNN;`, and hexadecimal `&#xNN;`/`&#XNN;`
+references. Unknown names, bare ampersands, and numeric references that are not
+valid Unicode scalar values (such as surrogates) are preserved verbatim.
+`strip_tags` removes every `<...>` span, honoring quoted attribute values and
+`<!-- ... -->` comments, and keeps an unterminated `<` as literal text; it does
+not decode entities or collapse whitespace.
+
 ## `vbytes` API Shape
 
 `kniferrs::vbytes` is implemented as a byte-slice facade for data that may not
@@ -511,7 +527,8 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `trim_blank_lines`, `abbreviate_middle`, `limit_words`, `excerpt`, `mask`,
 `collapse_repeated_char`, `center`, `dedent`, `wrap_with_indent`,
 `non_blank_lines`, `initials`, `is_palindrome`, `extract_digits`,
-`remove_ascii_punctuation`, `surround`, `unsurround`, `word_count`,
+`remove_ascii_punctuation`, `surround`, `unsurround`, `strip_tags`,
+`word_count`,
 `ant_path_match_with_separator`, `levenshtein_distance`,
 `optimal_string_alignment`, `damerau_levenshtein_distance`, `jaro_similarity`,
 `jaro_winkler_similarity`, `sorensen_dice`, `pluralize`, `singularize`,
