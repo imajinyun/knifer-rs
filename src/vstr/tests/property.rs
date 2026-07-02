@@ -347,3 +347,73 @@ fn property_style_unicode_width_helpers_respect_display_boundaries() {
         assert_unicode_width_properties(&input, max_width..=max_width);
     }
 }
+
+#[cfg(feature = "unicode-segmentation")]
+#[test]
+fn property_style_grapheme_variants_preserve_cluster_boundaries() {
+    let mut rng = DeterministicRng::new(0x5eed_000a);
+
+    // Build inputs from well-formed grapheme-cluster tokens. Standalone
+    // combining marks (as produced by the shared `rng.string`) form defective
+    // clusters whose count is not preserved under reordering, so the reverse /
+    // pad / mask cluster invariants only hold for well-formed input.
+    let tokens = [
+        "a",
+        "b",
+        "-",
+        " ",
+        ".",
+        "你",
+        "好",
+        "🚀",
+        "e\u{301}",
+        "🇨🇳",
+        "👍🏽",
+        "👩\u{200d}💻",
+    ];
+
+    for _ in 0..256 {
+        let token_count = rng.usize(12);
+        let mut input = String::new();
+        for _ in 0..token_count {
+            input.push_str(tokens[rng.usize(tokens.len())]);
+        }
+        let clusters = grapheme_len(&input);
+
+        // reverse_graphemes is an involution and preserves the cluster count.
+        let reversed = reverse_graphemes(&input);
+        assert_eq!(grapheme_len(&reversed), clusters);
+        assert_eq!(reverse_graphemes(&reversed), input);
+        assert!(std::str::from_utf8(reversed.as_bytes()).is_ok());
+
+        let target = rng.usize(clusters + 6);
+
+        // Padding reaches at least `target` clusters and keeps `input` on the
+        // matching edge without ever splitting a cluster.
+        let left = pad_left_graphemes(&input, target, '*');
+        assert_eq!(grapheme_len(&left), clusters.max(target));
+        assert!(left.ends_with(&input));
+        assert!(std::str::from_utf8(left.as_bytes()).is_ok());
+
+        let right = pad_right_graphemes(&input, target, '*');
+        assert_eq!(grapheme_len(&right), clusters.max(target));
+        assert!(right.starts_with(&input));
+
+        // Centering reaches `max(width, clusters)` and contains the input.
+        let centered = center_graphemes(&input, target, '-');
+        assert_eq!(grapheme_len(&centered), clusters.max(target));
+        assert!(centered.contains(input.as_str()));
+
+        // Masking preserves the cluster count and the leading visible run.
+        let visible_start = rng.usize(clusters + 2);
+        let visible_end = rng.usize(clusters + 2);
+        let masked = mask_graphemes(&input, visible_start, visible_end, '*');
+        assert_eq!(grapheme_len(&masked), clusters);
+        assert!(std::str::from_utf8(masked.as_bytes()).is_ok());
+        if visible_start + visible_end < clusters {
+            assert!(masked.starts_with(take_graphemes(&input, visible_start)));
+        } else {
+            assert_eq!(masked, input);
+        }
+    }
+}

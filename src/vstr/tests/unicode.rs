@@ -66,6 +66,37 @@ fn unicode_segmentation_helpers_preserve_grapheme_boundaries() {
 
 #[cfg(feature = "unicode-segmentation")]
 #[test]
+fn grapheme_correct_variants_mirror_char_apis_without_splitting_clusters() {
+    // reverse_graphemes keeps clusters intact where scalar reverse would not.
+    assert_eq!(reverse("e\u{301}b"), "b\u{301}e");
+    assert_eq!(reverse_graphemes("e\u{301}b"), "be\u{301}");
+    assert_eq!(reverse_graphemes("🇨🇳🇯🇵"), "🇯🇵🇨🇳");
+    assert_eq!(
+        reverse_graphemes("👨\u{200d}👩\u{200d}👧\u{200d}👦x"),
+        "x👨\u{200d}👩\u{200d}👧\u{200d}👦"
+    );
+    assert_eq!(reverse_graphemes(""), "");
+
+    // Padding counts grapheme clusters, so a combining pair only needs two pads.
+    assert_eq!(pad_left_graphemes("e\u{301}", 3, '*'), "**e\u{301}");
+    assert_eq!(pad_right_graphemes("e\u{301}", 3, '*'), "e\u{301}**");
+    assert_eq!(pad_left_graphemes("🇨🇳", 1, '*'), "🇨🇳");
+    assert_eq!(pad_right_graphemes("", 2, '-'), "--");
+
+    // Centering counts clusters; the extra pad lands on the right.
+    assert_eq!(center_graphemes("e\u{301}", 4, '-'), "-e\u{301}--");
+    assert_eq!(center_graphemes("🇨🇳", 3, '.'), ".🇨🇳.");
+    assert_eq!(center_graphemes("wide", 2, '-'), "wide");
+
+    // Masking never splits a flag or ZWJ cluster.
+    assert_eq!(mask_graphemes("🇨🇳🇯🇵🇰🇷🇺🇸", 1, 1, '*'), "🇨🇳**🇺🇸");
+    assert_eq!(mask_graphemes("e\u{301}llo", 1, 1, '*'), "e\u{301}**o");
+    assert_eq!(mask_graphemes("short", 10, 10, '*'), "short");
+    assert_eq!(mask_graphemes("ab", 1, 1, '*'), "ab");
+}
+
+#[cfg(feature = "unicode-segmentation")]
+#[test]
 fn unicode_segmentation_helpers_expose_word_boundaries() {
     let sentence = "The quick (\"brown\") fox can't jump 32.3 feet, 世界!";
     assert_eq!(

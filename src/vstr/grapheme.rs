@@ -97,6 +97,174 @@ pub fn truncate_graphemes(input: &str, max_graphemes: usize, suffix: &str) -> St
     output
 }
 
+/// Reverses `input` by Unicode grapheme clusters.
+///
+/// Unlike [`reverse`](crate::vstr::reverse), which reverses by Unicode scalar
+/// values, this keeps combining marks, flag sequences, and ZWJ emoji intact.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use kniferrs::vstr;
+///
+/// // Scalar reverse would separate the combining accent from its base letter.
+/// assert_eq!(vstr::reverse_graphemes("e\u{301}b"), "be\u{301}");
+/// assert_eq!(vstr::reverse_graphemes("🇨🇳🇯🇵"), "🇯🇵🇨🇳");
+/// # }
+/// ```
+#[must_use]
+pub fn reverse_graphemes(input: &str) -> String {
+    input.graphemes(true).rev().collect()
+}
+
+/// Pads `input` on the left until it reaches `target_len` grapheme clusters.
+///
+/// This is the grapheme-cluster counterpart of
+/// [`pad_left`](crate::vstr::pad_left), so combining marks and emoji sequences
+/// count as a single unit when measuring the current length.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use kniferrs::vstr;
+///
+/// // "e\u{301}" is one grapheme cluster, so only two pad chars are added.
+/// assert_eq!(vstr::pad_left_graphemes("e\u{301}", 3, '*'), "**e\u{301}");
+/// # }
+/// ```
+#[must_use]
+pub fn pad_left_graphemes(input: &str, target_len: usize, pad: char) -> String {
+    let input_len = grapheme_len(input);
+    if input_len >= target_len {
+        return input.to_owned();
+    }
+
+    let pad_count = target_len - input_len;
+    let mut output = String::with_capacity(input.len() + pad.len_utf8() * pad_count);
+    output.extend(std::iter::repeat_n(pad, pad_count));
+    output.push_str(input);
+    output
+}
+
+/// Pads `input` on the right until it reaches `target_len` grapheme clusters.
+///
+/// This is the grapheme-cluster counterpart of
+/// [`pad_right`](crate::vstr::pad_right).
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::pad_right_graphemes("e\u{301}", 3, '*'), "e\u{301}**");
+/// # }
+/// ```
+#[must_use]
+pub fn pad_right_graphemes(input: &str, target_len: usize, pad: char) -> String {
+    let input_len = grapheme_len(input);
+    if input_len >= target_len {
+        return input.to_owned();
+    }
+
+    let pad_count = target_len - input_len;
+    let mut output = String::with_capacity(input.len() + pad.len_utf8() * pad_count);
+    output.push_str(input);
+    output.extend(std::iter::repeat_n(pad, pad_count));
+    output
+}
+
+/// Centers `input` to `width` grapheme clusters using `pad`.
+///
+/// This is the grapheme-cluster counterpart of [`center`](crate::vstr::center).
+/// When an odd number of padding characters is required, the extra padding is
+/// added to the right side.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use kniferrs::vstr;
+///
+/// assert_eq!(vstr::center_graphemes("e\u{301}", 4, '-'), "-e\u{301}--");
+/// # }
+/// ```
+#[must_use]
+pub fn center_graphemes(input: &str, width: usize, pad: char) -> String {
+    let len = grapheme_len(input);
+    if len >= width {
+        return input.to_owned();
+    }
+
+    let padding = width - len;
+    let left = padding / 2;
+    let right = padding - left;
+    let mut output = String::with_capacity(input.len() + padding * pad.len_utf8());
+    output.extend(std::iter::repeat_n(pad, left));
+    output.push_str(input);
+    output.extend(std::iter::repeat_n(pad, right));
+    output
+}
+
+/// Masks the middle of `input`, keeping `visible_start` and `visible_end`
+/// leading and trailing grapheme clusters.
+///
+/// This is the grapheme-cluster counterpart of [`mask`](crate::vstr::mask), so
+/// combining marks, flag sequences, and ZWJ emoji are never split when counting
+/// the visible units or the masked run.
+///
+/// # Examples
+///
+/// ```
+/// # #[cfg(feature = "unicode-segmentation")]
+/// # {
+/// use kniferrs::vstr;
+///
+/// // Each flag is one grapheme cluster: keep the first and last, mask the rest.
+/// assert_eq!(vstr::mask_graphemes("🇨🇳🇯🇵🇰🇷🇺🇸", 1, 1, '*'), "🇨🇳**🇺🇸");
+/// assert_eq!(vstr::mask_graphemes("short", 10, 10, '*'), "short");
+/// # }
+/// ```
+#[must_use]
+pub fn mask_graphemes(input: &str, visible_start: usize, visible_end: usize, mask: char) -> String {
+    let len = grapheme_len(input);
+    if visible_start + visible_end >= len {
+        return input.to_owned();
+    }
+
+    let start = take_graphemes(input, visible_start);
+    let end = take_last_graphemes(input, visible_end);
+    let mask_count = len - visible_start - visible_end;
+    let mut output = String::with_capacity(input.len());
+    output.push_str(start);
+    output.extend(std::iter::repeat_n(mask, mask_count));
+    output.push_str(end);
+    output
+}
+
+/// Returns a borrowed suffix containing at most `count` grapheme clusters.
+fn take_last_graphemes(input: &str, count: usize) -> &str {
+    if count == 0 {
+        return "";
+    }
+
+    let total = grapheme_len(input);
+    if count >= total {
+        return input;
+    }
+
+    match input.grapheme_indices(true).nth(total - count) {
+        Some((index, _)) => &input[index..],
+        None => input,
+    }
+}
+
 /// Returns Unicode words from `input` using UAX #29 word boundaries.
 ///
 /// This helper is available only with the `unicode-segmentation` feature. It

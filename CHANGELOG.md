@@ -87,6 +87,12 @@ in the relevant parity documents.
   concrete regex engine type stays private to the crate.
 - Added optional Unicode segmentation helpers for grapheme, word, and sentence
   boundaries behind the `unicode-segmentation` feature.
+- Added grapheme-correct variants of the default char-based helpers behind the
+  `unicode-segmentation` feature: `reverse_graphemes`, `pad_left_graphemes`,
+  `pad_right_graphemes`, `center_graphemes`, and `mask_graphemes`. They mirror
+  `reverse`/`pad_left`/`pad_right`/`center`/`mask` but count and slice by
+  Unicode grapheme clusters, so combining marks, flag sequences, and ZWJ emoji
+  are never split. The default char-based helpers are unchanged.
 - Added optional Unicode normalization helpers `nfc`, `nfd`, `nfkc`, `nfkd`, and
   the quick-check predicates `is_nfc`, `is_nfd`, `is_nfkc`, `is_nfkd` behind the
   `unicode-normalization` feature, following Unicode Standard Annex #15.

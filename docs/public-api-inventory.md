@@ -56,7 +56,10 @@ Optional feature areas:
   compiled `VRegex` facade (`is_match`, `find`, `find_all`, `captures`,
   `captures_named`, `replace_all`, `split`, `splitn`) for matching one pattern
   against many inputs.
-- `unicode-segmentation`: grapheme, word, and sentence boundary helpers.
+- `unicode-segmentation`: grapheme, word, and sentence boundary helpers, plus
+  grapheme-correct variants of the default char-based helpers
+  (`reverse_graphemes`, `pad_left_graphemes`, `pad_right_graphemes`,
+  `center_graphemes`, `mask_graphemes`) that never split a cluster.
 - `unicode-normalization`: UAX #15 normalization forms `nfc`, `nfd`, `nfkc`,
   `nfkd` and quick-check predicates `is_nfc`, `is_nfd`, `is_nfkc`, `is_nfkd`.
 - `unicode-width`: display-cell width, width truncation, and width wrapping.
@@ -179,6 +182,7 @@ kniferrs::vstr::byte_len = pub const fn byte_len(input: &str) -> usize
 kniferrs::vstr::camelize = pub fn camelize(input: &str) -> String
 kniferrs::vstr::capitalize = pub fn capitalize(input: &str) -> String
 kniferrs::vstr::center = pub fn center(input: &str, width: usize, pad: char) -> String
+kniferrs::vstr::center_graphemes = pub fn center_graphemes(input: &str, width: usize, pad: char) -> String
 kniferrs::vstr::char_len = pub fn char_len(input: &str) -> usize
 kniferrs::vstr::chars = pub fn chars(input: &str) -> Vec<char>
 kniferrs::vstr::chunk = pub fn chunk(input: &str, size: usize) -> Vec<&str>
@@ -265,6 +269,7 @@ kniferrs::vstr::limit_words = pub fn limit_words(input: &str, max_words: usize, 
 kniferrs::vstr::line_count = pub fn line_count(input: &str) -> usize
 kniferrs::vstr::lines = pub fn lines(input: &str) -> Vec<&str>
 kniferrs::vstr::mask = pub fn mask(input: &str, visible_start: usize, visible_end: usize, mask: char) -> String
+kniferrs::vstr::mask_graphemes = pub fn mask_graphemes(input: &str, visible_start: usize, visible_end: usize, mask: char) -> String
 kniferrs::vstr::nfc = pub fn nfc(input: &str) -> String
 kniferrs::vstr::nfd = pub fn nfd(input: &str) -> String
 kniferrs::vstr::nfkc = pub fn nfkc(input: &str) -> String
@@ -281,7 +286,9 @@ kniferrs::vstr::ordinal_index_of = pub fn ordinal_index_of(input: &str, needle: 
 kniferrs::vstr::ordinalize = pub fn ordinalize(value: i64) -> String
 kniferrs::vstr::overlay = pub fn overlay(input: &str, overlay: &str, start: usize, end: usize) -> String
 kniferrs::vstr::pad_left = pub fn pad_left(input: &str, target_len: usize, pad: char) -> String
+kniferrs::vstr::pad_left_graphemes = pub fn pad_left_graphemes(input: &str, target_len: usize, pad: char) -> String
 kniferrs::vstr::pad_right = pub fn pad_right(input: &str, target_len: usize, pad: char) -> String
+kniferrs::vstr::pad_right_graphemes = pub fn pad_right_graphemes(input: &str, target_len: usize, pad: char) -> String
 kniferrs::vstr::pluralize = pub fn pluralize(word: &str, count: i64) -> String
 kniferrs::vstr::quote_meta = pub fn quote_meta(input: &str) -> String
 kniferrs::vstr::remove_accents = pub fn remove_accents(input: &str) -> String
@@ -301,6 +308,7 @@ kniferrs::vstr::replace_many = pub fn replace_many<'src, I>(input: &str, replace
 kniferrs::vstr::replace_pattern = pub fn replace_pattern(input: &str, pattern: &str, replacement: &str) -> Result<String, PatternError>
 kniferrs::vstr::replace_range = pub fn replace_range(input: &str, start: usize, end: usize, replacement: &str) -> Option<String>
 kniferrs::vstr::reverse = pub fn reverse(input: &str) -> String
+kniferrs::vstr::reverse_graphemes = pub fn reverse_graphemes(input: &str) -> String
 kniferrs::vstr::rotate = pub fn rotate(input: &str, shift: isize) -> String
 kniferrs::vstr::rune_len = pub fn rune_len(input: &str) -> usize
 kniferrs::vstr::sim_hash = pub fn sim_hash(input: &str) -> u64
@@ -414,6 +422,7 @@ kniferrs::vstr::VRegex::new = pub fn new(pattern: &str) -> Result<Self, PatternE
 kniferrs::vstr::VRegex::replace_all = pub fn replace_all(&self, input: &str, replacement: &str) -> String
 kniferrs::vstr::VRegex::split = pub fn split<'input>(&self, input: &'input str) -> Vec<&'input str>
 kniferrs::vstr::VRegex::splitn = pub fn splitn<'input>(&self, input: &'input str, limit: usize) -> Vec<&'input str>
+kniferrs::vstr::center_graphemes = pub fn center_graphemes(input: &str, width: usize, pad: char) -> String
 kniferrs::vstr::contains_pattern = pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError>
 kniferrs::vstr::display_width = pub fn display_width(input: &str) -> usize
 kniferrs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, pattern: &str) -> Result<Vec<(usize, usize)>, PatternError>
@@ -424,11 +433,15 @@ kniferrs::vstr::is_nfc = pub fn is_nfc(input: &str) -> bool
 kniferrs::vstr::is_nfd = pub fn is_nfd(input: &str) -> bool
 kniferrs::vstr::is_nfkc = pub fn is_nfkc(input: &str) -> bool
 kniferrs::vstr::is_nfkd = pub fn is_nfkd(input: &str) -> bool
+kniferrs::vstr::mask_graphemes = pub fn mask_graphemes(input: &str, visible_start: usize, visible_end: usize, mask: char) -> String
 kniferrs::vstr::nfc = pub fn nfc(input: &str) -> String
 kniferrs::vstr::nfd = pub fn nfd(input: &str) -> String
 kniferrs::vstr::nfkc = pub fn nfkc(input: &str) -> String
 kniferrs::vstr::nfkd = pub fn nfkd(input: &str) -> String
+kniferrs::vstr::pad_left_graphemes = pub fn pad_left_graphemes(input: &str, target_len: usize, pad: char) -> String
+kniferrs::vstr::pad_right_graphemes = pub fn pad_right_graphemes(input: &str, target_len: usize, pad: char) -> String
 kniferrs::vstr::replace_pattern = pub fn replace_pattern(input: &str, pattern: &str, replacement: &str) -> Result<String, PatternError>
+kniferrs::vstr::reverse_graphemes = pub fn reverse_graphemes(input: &str) -> String
 kniferrs::vstr::slugify_ascii = pub fn slugify_ascii(input: &str) -> String
 kniferrs::vstr::slugify_ascii_with_separator = pub fn slugify_ascii_with_separator(input: &str, separator: char) -> String
 kniferrs::vstr::split_sentence_bound_indices = pub fn split_sentence_bound_indices(input: &str) -> Vec<(usize, &str)>
@@ -523,7 +536,9 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,
 `replace_pattern`, `VRegex`, `graphemes`, `grapheme_len`, `take_graphemes`,
-`truncate_graphemes`, `unicode_words`, `unicode_word_len`,
+`truncate_graphemes`, `reverse_graphemes`, `pad_left_graphemes`,
+`pad_right_graphemes`, `center_graphemes`, `mask_graphemes`,
+`unicode_words`, `unicode_word_len`,
 `unicode_word_indices`, `split_word_bounds`, `split_word_bound_indices`,
 `unicode_sentences`, `unicode_sentence_len`, `split_sentence_bounds`,
 `split_sentence_bound_indices`,
