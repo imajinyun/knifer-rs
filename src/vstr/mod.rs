@@ -18,6 +18,8 @@
 //!   scalar layout policy.
 //! - `matcher` contains the reusable multi-pattern literal matcher facade and
 //!   optional backend adapter.
+//! - `fuzzy` contains fzf-style fuzzy subsequence matching and scoring
+//!   (`fuzzy_match`, `fuzzy_score`, `fuzzy_indices`).
 //! - `normalize` contains optional Unicode normalization form helpers (NFC,
 //!   NFD, NFKC, NFKD) behind the `unicode-normalization` feature.
 //! - `transliterate` contains optional full ASCII transliteration helpers
@@ -31,6 +33,7 @@ mod case;
 mod classify;
 mod emoji;
 mod encoding;
+mod fuzzy;
 #[cfg(feature = "unicode-segmentation")]
 mod grapheme;
 mod humanize;
@@ -53,6 +56,7 @@ pub use case::*;
 pub use classify::*;
 pub use emoji::*;
 pub use encoding::*;
+pub use fuzzy::*;
 #[cfg(feature = "unicode-segmentation")]
 pub use grapheme::*;
 pub use humanize::*;

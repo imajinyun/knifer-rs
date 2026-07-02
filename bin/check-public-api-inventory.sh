@@ -178,6 +178,7 @@ default_api_files=(
   src/vstr/classify.rs
   src/vstr/emoji.rs
   src/vstr/encoding.rs
+  src/vstr/fuzzy.rs
   src/vstr/humanize.rs
   src/vstr/inflection.rs
   src/vstr/matcher.rs

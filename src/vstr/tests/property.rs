@@ -135,6 +135,53 @@ fn property_style_html_helpers_round_trip_and_stay_valid() {
 }
 
 #[test]
+fn property_style_fuzzy_helpers_stay_consistent() {
+    let mut rng = DeterministicRng::new(0x5eed_0008);
+
+    for _ in 0..256 {
+        let text = rng.string(28);
+        // Draw a short pattern from the text so matches occur often, and mix in
+        // arbitrary noise so non-matches are exercised too.
+        let mut pattern: String = text.chars().step_by(3).take(4).collect();
+        if rng.usize(4) == 0 {
+            pattern.push('\u{1F680}');
+        }
+
+        let matched = fuzzy_match(&text, &pattern);
+        let scored = fuzzy_score(&text, &pattern);
+        let located = fuzzy_indices(&text, &pattern);
+
+        // The three helpers always agree on whether there is a match.
+        assert_eq!(matched, scored.is_some());
+        assert_eq!(scored, located.as_ref().map(|(score, _)| *score));
+
+        if let Some((_, indices)) = located {
+            // One byte offset per pattern character, strictly ascending, each on
+            // a scalar boundary within the text.
+            assert_eq!(indices.len(), pattern.chars().count());
+            assert!(indices.windows(2).all(|pair| pair[0] < pair[1]));
+            let case_sensitive = pattern.chars().any(char::is_uppercase);
+            for (index, needle) in indices.iter().zip(pattern.chars()) {
+                assert!(text.is_char_boundary(*index));
+                let found = text[*index..].chars().next().unwrap();
+                assert_eq!(
+                    fold_for_test(found, case_sensitive),
+                    fold_for_test(needle, case_sensitive)
+                );
+            }
+        }
+    }
+}
+
+fn fold_for_test(ch: char, case_sensitive: bool) -> char {
+    if case_sensitive {
+        ch
+    } else {
+        ch.to_lowercase().next().unwrap_or(ch)
+    }
+}
+
+#[test]
 fn property_style_reusable_matcher_preserves_match_contracts() {
     let mut rng = DeterministicRng::new(0x5eed_0005);
     let candidates = ["", "a", "aa", "你", "你好", "🚀", "e", "\u{301}", "--", "_"];

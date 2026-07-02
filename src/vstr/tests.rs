@@ -3,6 +3,7 @@ mod case;
 mod classify;
 mod emoji;
 mod encoding;
+mod fuzzy;
 mod humanize;
 mod inflection;
 mod matcher;

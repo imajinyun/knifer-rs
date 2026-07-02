@@ -48,6 +48,13 @@ in the relevant parity documents.
   scalar values verbatim. Added `strip_tags`, which removes `<...>` markup while
   honoring quoted attribute values and `<!-- ... -->` comments and keeping an
   unterminated `<` as literal text.
+- Added a dependency-free fzf-style fuzzy matcher to `vstr` in a dedicated
+  `fuzzy` module: `fuzzy_match` (subsequence yes/no), `fuzzy_score` (ranking
+  score, `None` on no match), and `fuzzy_indices` (score plus matched byte
+  offsets for highlighting). Scoring follows fzf's `FuzzyMatchV1` model with
+  word-boundary, `camelCase`, and consecutive-run bonuses and gap penalties,
+  using fzf "smart case" matching. Returned indices are ascending byte offsets
+  on Unicode scalar boundaries.
 - Added dependency-free ASCII folding to `vstr`: `deburr` and `remove_accents`
   map common Latin diacritics and ligatures to ASCII (for example `é` to `e` and
   `Æ` to `Ae`) while preserving non-Latin scripts. `slugify` now folds through

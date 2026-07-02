@@ -37,7 +37,8 @@ Core stable areas:
   byte-index lookups, including `ordinal_index_of`/`index_of_difference`),
   escaping, Ant path matching, emoji helpers, and similarity helpers (Levenshtein, Jaro,
   Jaro-Winkler, Damerau, optimal string alignment, Sørensen-Dice, Jaccard,
-  n-gram, and `SimHash`).
+  n-gram, and `SimHash`), plus fzf-style fuzzy matching (`fuzzy_match`,
+  `fuzzy_score`, `fuzzy_indices`).
 - `kniferrs::vbytes`: byte length, UTF-8 validation, byte slicing, ASCII trim,
   byte search, prefix/suffix stripping, byte replacement, lossy UTF-8 decoding
   (`chars`, `char_indices`), and byte line/field splitting (`lines`, `fields`).
@@ -218,6 +219,9 @@ kniferrs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, patter
 kniferrs::vstr::find_any = pub fn find_any<'needle, I>(input: &str, needles: I) -> Option<(&'needle str, usize, usize)> where I: IntoIterator<Item = &'needle str>
 kniferrs::vstr::find_pattern = pub fn find_pattern(input: &str, pattern: &str) -> Result<Option<(usize, usize)>, PatternError>
 kniferrs::vstr::format = pub fn format(template: &str, args: &[&dyn std::fmt::Display]) -> String
+kniferrs::vstr::fuzzy_indices = pub fn fuzzy_indices(text: &str, pattern: &str) -> Option<(i32, Vec<usize>)>
+kniferrs::vstr::fuzzy_match = pub fn fuzzy_match(text: &str, pattern: &str) -> bool
+kniferrs::vstr::fuzzy_score = pub fn fuzzy_score(text: &str, pattern: &str) -> Option<i32>
 kniferrs::vstr::grapheme_len = pub fn grapheme_len(input: &str) -> usize
 kniferrs::vstr::graphemes = pub fn graphemes(input: &str) -> Vec<&str>
 kniferrs::vstr::hamming_distance64 = pub const fn hamming_distance64(left: u64, right: u64) -> u32
@@ -464,6 +468,19 @@ valid Unicode scalar values (such as surrogates) are preserved verbatim.
 `<!-- ... -->` comments, and keeps an unterminated `<` as literal text; it does
 not decode entities or collapse whitespace.
 
+## `vstr` Fuzzy API Shape
+
+`kniferrs::vstr` provides fzf-style fuzzy subsequence matching in the default
+build: `fuzzy_match` (yes/no), `fuzzy_score` (ranking score, `None` when no
+match), and `fuzzy_indices` (score plus matched byte offsets for highlighting).
+The scoring model follows fzf's `FuzzyMatchV1` — a forward/backward greedy
+subsequence scan plus a scoring pass that rewards word-boundary, `camelCase`,
+and consecutive-run matches and penalizes gaps. Matching uses fzf "smart case"
+(case-insensitive unless the pattern contains an uppercase character). Scores
+are relative ranking values, not a normalized similarity, and are not a stable
+cross-version contract beyond the documented ordering bonuses; returned indices
+are ascending byte offsets on Unicode scalar boundaries.
+
 ## `vbytes` API Shape
 
 `kniferrs::vbytes` is implemented as a byte-slice facade for data that may not
@@ -528,7 +545,7 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `collapse_repeated_char`, `center`, `dedent`, `wrap_with_indent`,
 `non_blank_lines`, `initials`, `is_palindrome`, `extract_digits`,
 `remove_ascii_punctuation`, `surround`, `unsurround`, `strip_tags`,
-`word_count`,
+`word_count`, `fuzzy_match`, `fuzzy_score`, `fuzzy_indices`,
 `ant_path_match_with_separator`, `levenshtein_distance`,
 `optimal_string_alignment`, `damerau_levenshtein_distance`, `jaro_similarity`,
 `jaro_winkler_similarity`, `sorensen_dice`, `pluralize`, `singularize`,
