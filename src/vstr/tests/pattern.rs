@@ -109,6 +109,58 @@ fn vregex_captures_report_group_byte_ranges_and_missing_groups() {
 
 #[cfg(feature = "pattern-regex")]
 #[test]
+fn vregex_captures_named_reports_named_groups_in_declaration_order() {
+    let date = VRegex::new(r"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})").unwrap();
+    assert_eq!(
+        date.captures_named("2026-06-27"),
+        Some(vec![
+            ("year".to_owned(), (0, 4)),
+            ("month".to_owned(), (5, 7)),
+            ("day".to_owned(), (8, 10)),
+        ])
+    );
+    assert_eq!(date.captures_named("not-a-date"), None);
+
+    // Unnamed groups are omitted; only named groups that matched appear.
+    let mixed = VRegex::new(r"(\d+)(?P<unit>[a-z]+)").unwrap();
+    assert_eq!(
+        mixed.captures_named("42px"),
+        Some(vec![("unit".to_owned(), (2, 4))])
+    );
+
+    // A named group that did not participate is skipped.
+    let optional = VRegex::new(r"(?P<lead>a)(?P<mid>b)?c").unwrap();
+    assert_eq!(
+        optional.captures_named("ac"),
+        Some(vec![("lead".to_owned(), (0, 1))])
+    );
+}
+
+#[cfg(feature = "pattern-regex")]
+#[test]
+fn vregex_split_and_splitn_borrow_from_input() {
+    let spaces = VRegex::new(r"\s+").unwrap();
+    assert_eq!(spaces.split("a  b\tc"), vec!["a", "b", "c"]);
+
+    // Leading/trailing matches yield empty slices, matching the regex crate.
+    let comma = VRegex::new(",").unwrap();
+    assert_eq!(comma.split(",a,,b,"), vec!["", "a", "", "b", ""]);
+
+    assert_eq!(comma.splitn("a,b,c,d", 2), vec!["a", "b,c,d"]);
+    assert_eq!(comma.splitn("a,b,c,d", 1), vec!["a,b,c,d"]);
+    assert_eq!(comma.splitn("a,b,c,d", 0), Vec::<&str>::new());
+
+    // Empty pattern splits between every character.
+    let empty = VRegex::new(r"").unwrap();
+    assert_eq!(empty.split("ab"), vec!["", "a", "b", ""]);
+
+    // Multibyte input keeps byte-correct slices.
+    let han = VRegex::new(r"\p{Han}+").unwrap();
+    assert_eq!(han.split("a你好b世界c"), vec!["a", "b", "c"]);
+}
+
+#[cfg(feature = "pattern-regex")]
+#[test]
 fn vregex_matches_unicode_empty_and_multibyte_inputs() {
     let han = VRegex::new(r"\p{Han}+").unwrap();
     assert_eq!(han.find("你好Rust"), Some((0, 6)));

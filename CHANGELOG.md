@@ -48,7 +48,9 @@ in the relevant parity documents.
   `pattern-regex` feature.
 - Added the reusable compiled `vstr::VRegex` facade behind the `pattern-regex`
   feature: compile a pattern once with `VRegex::new`, then reuse `is_match`,
-  `find`, `find_all`, `captures`, and `replace_all` across many inputs. The
+  `find`, `find_all`, `captures`, `captures_named`, `replace_all`, `split`, and
+  `splitn` across many inputs. `captures_named` returns named groups in
+  declaration order, and `split`/`splitn` borrow slices from the input. The
   concrete regex engine type stays private to the crate.
 - Added optional Unicode segmentation helpers for grapheme, word, and sentence
   boundaries behind the `unicode-segmentation` feature.

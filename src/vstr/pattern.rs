@@ -253,6 +253,93 @@ impl VRegex {
         })
     }
 
+    /// Returns the named capture groups of the first match as `(name, range)`
+    /// pairs, in pattern declaration order.
+    ///
+    /// Only named groups (`(?P<name>...)`) that participated in the match are
+    /// included; unnamed groups and named groups that did not participate are
+    /// omitted. Ranges are byte offsets into `input`. Returns `None` when the
+    /// pattern does not match at all.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[cfg(feature = "pattern-regex")]
+    /// # {
+    /// use kniferrs::vstr::VRegex;
+    ///
+    /// let date = VRegex::new(r"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})").unwrap();
+    /// assert_eq!(
+    ///     date.captures_named("2026-06-27"),
+    ///     Some(vec![
+    ///         ("year".to_owned(), (0, 4)),
+    ///         ("month".to_owned(), (5, 7)),
+    ///         ("day".to_owned(), (8, 10)),
+    ///     ])
+    /// );
+    /// assert_eq!(date.captures_named("not-a-date"), None);
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn captures_named(&self, input: &str) -> Option<Vec<(String, (usize, usize))>> {
+        let caps = self.regex.captures(input)?;
+        let named = self
+            .regex
+            .capture_names()
+            .flatten()
+            .filter_map(|name| {
+                caps.name(name)
+                    .map(|matched| (name.to_owned(), (matched.start(), matched.end())))
+            })
+            .collect();
+        Some(named)
+    }
+
+    /// Splits `input` around non-overlapping matches of the pattern.
+    ///
+    /// The returned slices borrow from `input` and follow the Rust `regex`
+    /// crate's `split` semantics: a leading or trailing match yields an empty
+    /// slice, and an empty pattern splits between every character.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[cfg(feature = "pattern-regex")]
+    /// # {
+    /// use kniferrs::vstr::VRegex;
+    ///
+    /// let spaces = VRegex::new(r"\s+").unwrap();
+    /// assert_eq!(spaces.split("a  b\tc"), vec!["a", "b", "c"]);
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn split<'input>(&self, input: &'input str) -> Vec<&'input str> {
+        self.regex.split(input).collect()
+    }
+
+    /// Splits `input` around matches of the pattern, returning at most `limit`
+    /// slices.
+    ///
+    /// When `limit` slices have been produced, the final slice contains the
+    /// unsplit remainder of `input`. A `limit` of `0` returns an empty vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[cfg(feature = "pattern-regex")]
+    /// # {
+    /// use kniferrs::vstr::VRegex;
+    ///
+    /// let comma = VRegex::new(",").unwrap();
+    /// assert_eq!(comma.splitn("a,b,c,d", 2), vec!["a", "b,c,d"]);
+    /// assert_eq!(comma.splitn("a,b,c,d", 0), Vec::<&str>::new());
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn splitn<'input>(&self, input: &'input str, limit: usize) -> Vec<&'input str> {
+        self.regex.splitn(input, limit).collect()
+    }
+
     /// Replaces every non-overlapping match with `replacement`, returning a new
     /// string.
     ///

@@ -51,7 +51,8 @@ Optional feature areas:
 - `pattern-regex`: regex-backed `contains_pattern`, `find_pattern`,
   `find_all_patterns`, `replace_pattern`, and `PatternError`, plus the reusable
   compiled `VRegex` facade (`is_match`, `find`, `find_all`, `captures`,
-  `replace_all`) for matching one pattern against many inputs.
+  `captures_named`, `replace_all`, `split`, `splitn`) for matching one pattern
+  against many inputs.
 - `unicode-segmentation`: grapheme, word, and sentence boundary helpers.
 - `unicode-normalization`: UAX #15 normalization forms `nfc`, `nfd`, `nfkc`,
   `nfkd` and quick-check predicates `is_nfc`, `is_nfd`, `is_nfkc`, `is_nfkd`.
@@ -120,11 +121,14 @@ kniferrs::vstr::VRegex = pub struct VRegex
 kniferrs::vstr::VRegex::as_str = pub fn as_str(&self) -> &str
 kniferrs::vstr::VRegex::capture_count = pub fn capture_count(&self) -> usize
 kniferrs::vstr::VRegex::captures = pub fn captures(&self, input: &str) -> Option<Vec<Option<(usize, usize)>>>
+kniferrs::vstr::VRegex::captures_named = pub fn captures_named(&self, input: &str) -> Option<Vec<(String,(usize, usize))>>
 kniferrs::vstr::VRegex::find = pub fn find(&self, input: &str) -> Option<(usize, usize)>
 kniferrs::vstr::VRegex::find_all = pub fn find_all(&self, input: &str) -> Vec<(usize, usize)>
 kniferrs::vstr::VRegex::is_match = pub fn is_match(&self, input: &str) -> bool
 kniferrs::vstr::VRegex::new = pub fn new(pattern: &str) -> Result<Self, PatternError>
 kniferrs::vstr::VRegex::replace_all = pub fn replace_all(&self, input: &str, replacement: &str) -> String
+kniferrs::vstr::VRegex::split = pub fn split<'input>(&self, input: &'input str) -> Vec<&'input str>
+kniferrs::vstr::VRegex::splitn = pub fn splitn<'input>(&self, input: &'input str, limit: usize) -> Vec<&'input str>
 kniferrs::vstr::VStrMatch = pub struct VStrMatch<'needle>
 kniferrs::vstr::VStrMatcher = pub struct VStrMatcher<'needle>
 kniferrs::vstr::VStrMatcher::find = pub fn find(&self, input: &str) -> Option<VStrMatch<'needle>>
@@ -362,11 +366,14 @@ kniferrs::vstr::VRegex = pub struct VRegex
 kniferrs::vstr::VRegex::as_str = pub fn as_str(&self) -> &str
 kniferrs::vstr::VRegex::capture_count = pub fn capture_count(&self) -> usize
 kniferrs::vstr::VRegex::captures = pub fn captures(&self, input: &str) -> Option<Vec<Option<(usize, usize)>>>
+kniferrs::vstr::VRegex::captures_named = pub fn captures_named(&self, input: &str) -> Option<Vec<(String,(usize, usize))>>
 kniferrs::vstr::VRegex::find = pub fn find(&self, input: &str) -> Option<(usize, usize)>
 kniferrs::vstr::VRegex::find_all = pub fn find_all(&self, input: &str) -> Vec<(usize, usize)>
 kniferrs::vstr::VRegex::is_match = pub fn is_match(&self, input: &str) -> bool
 kniferrs::vstr::VRegex::new = pub fn new(pattern: &str) -> Result<Self, PatternError>
 kniferrs::vstr::VRegex::replace_all = pub fn replace_all(&self, input: &str, replacement: &str) -> String
+kniferrs::vstr::VRegex::split = pub fn split<'input>(&self, input: &'input str) -> Vec<&'input str>
+kniferrs::vstr::VRegex::splitn = pub fn splitn<'input>(&self, input: &'input str, limit: usize) -> Vec<&'input str>
 kniferrs::vstr::contains_pattern = pub fn contains_pattern(input: &str, pattern: &str) -> Result<bool, PatternError>
 kniferrs::vstr::display_width = pub fn display_width(input: &str) -> usize
 kniferrs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, pattern: &str) -> Result<Vec<(usize, usize)>, PatternError>

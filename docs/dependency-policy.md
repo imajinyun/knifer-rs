@@ -39,8 +39,8 @@ standard library is intentionally lower level.
   `contains_pattern`, `find_pattern`, `find_all_patterns`, and
   `replace_pattern`.
 - A reusable compiled facade `VRegex` may expose `is_match`, `find`, `find_all`,
-  `captures`, and `replace_all`, but the concrete engine type must stay private
-  and out of every public signature.
+  `captures`, `captures_named`, `replace_all`, `split`, and `splitn`, but the
+  concrete engine type must stay private and out of every public signature.
 - Invalid pattern handling must use a crate-local error type such as
   `PatternError`; APIs that compile a user pattern should return `Result`.
 - Complexity notes must state that regex-backed matching follows the selected
