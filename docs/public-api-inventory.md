@@ -60,6 +60,9 @@ Optional feature areas:
 - `transliterate`: full ASCII transliteration `transliterate` for non-Latin
   scripts, plus `slugify_ascii` and `slugify_ascii_with_separator` for ASCII
   slugs from any script (the default `slugify` keeps diacritic folding only).
+- `encoding`: WHATWG legacy encoding conversion in `vencoding` — `encoding_name`,
+  `decode` (lossy, BOM-sniffing), `decode_strict` (rejects malformed input), and
+  `encode`, with the crate-local `EncodingError` and `EncodingErrorKind`.
 
 ### Experimental-But-Public Facade
 
@@ -99,9 +102,17 @@ kniferrs::vencoding::Bom = pub enum Bom
 kniferrs::vencoding::Bom::byte_len = pub const fn byte_len(self) -> usize
 kniferrs::vencoding::Bom::encoding_name = pub const fn encoding_name(self) -> &'static str
 kniferrs::vencoding::BomScan = pub struct BomScan<'src>
+kniferrs::vencoding::EncodingError = pub struct EncodingError
+kniferrs::vencoding::EncodingError::kind = pub const fn kind(&self) -> EncodingErrorKind
+kniferrs::vencoding::EncodingError::label = pub fn label(&self) -> &str
+kniferrs::vencoding::EncodingErrorKind = pub enum EncodingErrorKind
+kniferrs::vencoding::decode = pub fn decode<'src>(input: &'src [u8], label: &str) -> Result<Cow<'src, str>, EncodingError>
+kniferrs::vencoding::decode_strict = pub fn decode_strict<'src>(input: &'src [u8], label: &str) -> Result<Cow<'src, str>, EncodingError>
 kniferrs::vencoding::decode_utf8_lossy = pub fn decode_utf8_lossy(input: &[u8]) -> Cow<'_, str>
 kniferrs::vencoding::decode_utf8_lossy_without_bom = pub fn decode_utf8_lossy_without_bom(input: &[u8]) -> Cow<'_, str>
 kniferrs::vencoding::detect_bom = pub const fn detect_bom(input: &[u8]) -> Option<Bom>
+kniferrs::vencoding::encode = pub fn encode<'src>(input: &'src str, label: &str) -> Result<Cow<'src, [u8]>, EncodingError>
+kniferrs::vencoding::encoding_name = pub fn encoding_name(label: &str) -> Option<&'static str>
 kniferrs::vencoding::is_utf8 = pub const fn is_utf8(input: &[u8]) -> bool
 kniferrs::vencoding::scan_bom = pub fn scan_bom(input: &[u8]) -> BomScan<'_>
 kniferrs::vencoding::strip_bom = pub fn strip_bom(input: &[u8]) -> &[u8]
@@ -361,6 +372,14 @@ only when the matching optional feature is enabled, while the all-features
 snapshot keeps their release signature stable.
 
 <!-- public-api-optional-signatures:start -->
+kniferrs::vencoding::EncodingError = pub struct EncodingError
+kniferrs::vencoding::EncodingError::kind = pub const fn kind(&self) -> EncodingErrorKind
+kniferrs::vencoding::EncodingError::label = pub fn label(&self) -> &str
+kniferrs::vencoding::EncodingErrorKind = pub enum EncodingErrorKind
+kniferrs::vencoding::decode = pub fn decode<'src>(input: &'src [u8], label: &str) -> Result<Cow<'src, str>, EncodingError>
+kniferrs::vencoding::decode_strict = pub fn decode_strict<'src>(input: &'src [u8], label: &str) -> Result<Cow<'src, str>, EncodingError>
+kniferrs::vencoding::encode = pub fn encode<'src>(input: &'src str, label: &str) -> Result<Cow<'src, [u8]>, EncodingError>
+kniferrs::vencoding::encoding_name = pub fn encoding_name(label: &str) -> Option<&'static str>
 kniferrs::vstr::PatternError = pub struct PatternError
 kniferrs::vstr::PatternError::message = pub fn message(&self) -> &str
 kniferrs::vstr::PatternError::pattern = pub fn pattern(&self) -> &str
@@ -435,8 +454,12 @@ requiring valid UTF-8, which is the key difference from the `vstr` equivalents.
 ## `vencoding` API Shape
 
 `kniferrs::vencoding` is implemented as an encoding-boundary facade for BOM
-sniffing, UTF-8 validation, and lossy UTF-8 decoding. The MVP does not perform
-general transcoding or add a default dependency on `encoding_rs`.
+sniffing, UTF-8 validation, and lossy UTF-8 decoding. The default build does not
+perform general transcoding or add a dependency on `encoding_rs`. When the
+optional `encoding` feature is enabled, the `conversion` submodule adds
+WHATWG-labeled `decode`, `decode_strict`, `encode`, and `encoding_name` helpers
+over `encoding_rs`, surfacing failures through the crate-local `EncodingError`
+and `EncodingErrorKind` types instead of the backend's error shapes.
 
 ## Current Function Groups
 
@@ -447,6 +470,8 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `vbytes::lines`, `vbytes::fields`, `vencoding`, `vencoding::Bom`,
 `vencoding::detect_bom`, `vencoding::strip_bom`, `vencoding::validate_utf8`,
 `vencoding::decode_utf8_lossy`,
+`vencoding::encoding_name`, `vencoding::decode`, `vencoding::decode_strict`,
+`vencoding::encode`, `vencoding::EncodingError`, `vencoding::EncodingErrorKind`,
 `EmojiOptions`, `EmojiOptions::with_matcher`,
 `MatchKind`, `VStrMatch`, `VStrMatcher`, `find_overlapping`,
 `PatternError`, `contains_pattern`, `find_pattern`, `find_all_patterns`,

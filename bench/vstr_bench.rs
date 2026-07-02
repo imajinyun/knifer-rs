@@ -534,6 +534,9 @@ fn benchmark_baseline_source() -> String {
 fn active_feature_set() -> String {
     let mut features = Vec::new();
 
+    if cfg!(feature = "encoding") {
+        features.push("encoding");
+    }
     if cfg!(feature = "matcher-aho-corasick") {
         features.push("matcher-aho-corasick");
     }

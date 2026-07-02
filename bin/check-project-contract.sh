@@ -34,7 +34,8 @@ require_file README.md
 require_file docs/api-behavior-contract.md
 require_file docs/dependency-policy.md
 require_file src/vbytes.rs
-require_file src/vencoding.rs
+require_file src/vencoding/mod.rs
+require_file src/vencoding/conversion.rs
 require_file src/vstr/basic/mod.rs
 require_file src/vstr/basic/affix.rs
 require_file src/vstr/basic/casefold.rs
@@ -709,14 +710,21 @@ require_text src/vbytes.rs '#[cfg(feature = "search-memchr")]'
 require_text src/vbytes.rs 'fn raw_find'
 require_text src/vbytes.rs 'vbytes_core_helpers_use_byte_semantics'
 require_text src/vbytes.rs 'vbytes_literal_search_matches_naive_oracle'
-require_text src/vencoding.rs 'Encoding helpers for byte-oriented text boundaries'
-require_text src/vencoding.rs 'pub enum Bom'
-require_text src/vencoding.rs 'pub const fn detect_bom'
-require_text src/vencoding.rs 'pub fn scan_bom'
-require_text src/vencoding.rs 'pub fn strip_bom'
-require_text src/vencoding.rs 'pub const fn validate_utf8'
-require_text src/vencoding.rs 'pub fn decode_utf8_lossy'
-require_text src/vencoding.rs 'vencoding_detects_bom_prefixes_with_overlapping_order'
+require_text src/vencoding/mod.rs 'Encoding helpers for byte-oriented text boundaries'
+require_text src/vencoding/mod.rs 'pub enum Bom'
+require_text src/vencoding/mod.rs 'pub const fn detect_bom'
+require_text src/vencoding/mod.rs 'pub fn scan_bom'
+require_text src/vencoding/mod.rs 'pub fn strip_bom'
+require_text src/vencoding/mod.rs 'pub const fn validate_utf8'
+require_text src/vencoding/mod.rs 'pub fn decode_utf8_lossy'
+require_text src/vencoding/mod.rs 'vencoding_detects_bom_prefixes_with_overlapping_order'
+require_text src/vencoding/conversion.rs 'pub struct EncodingError'
+require_text src/vencoding/conversion.rs 'pub enum EncodingErrorKind'
+require_text src/vencoding/conversion.rs 'pub fn encoding_name'
+require_text src/vencoding/conversion.rs 'pub fn decode'
+require_text src/vencoding/conversion.rs 'pub fn decode_strict'
+require_text src/vencoding/conversion.rs 'pub fn encode'
+require_text src/vencoding/conversion.rs 'vencoding_round_trips_representable_text'
 require_text docs/dependency-policy.md '`vencoding` Admission Contract'
 require_text docs/dependency-policy.md '`encoding` feature'
 require_text docs/dependency-policy.md 'fallback decoding APIs'

@@ -88,6 +88,13 @@ in the relevant parity documents.
   test that runs in both feature builds).
 - Added the `vencoding` facade for BOM detection, BOM stripping, UTF-8
   validation, and lossy UTF-8 decoding boundaries.
+- Added optional WHATWG legacy encoding conversion to `vencoding` behind the
+  `encoding` feature: `encoding_name` resolves labels, `decode` decodes lossily
+  with BOM sniffing, `decode_strict` rejects malformed input, and `encode`
+  writes legacy bytes (HTML numeric references for unmappable characters), with
+  `EncodingError` / `EncodingErrorKind` keeping `encoding_rs` off the public API
+  and parity plus round-trip fixtures for GBK, Shift_JIS, windows-1252, and
+  ISO-8859-1. The default build stays zero-runtime-dependency.
 - Documented the `words` / `word_count` whitespace-tokenization contract (CJK and
   punctuation stay attached, whitespace-free scripts stay as one token) versus the
   feature-gated UAX #29 `unicode_words` / `unicode_word_len`, pinned by golden

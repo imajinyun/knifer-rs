@@ -17,6 +17,7 @@ name = "kniferrs"
 [dependencies]
 aho-corasick = { version = "1", optional = true }
 deunicode = { version = "1", optional = true }
+encoding_rs = { version = "0.8", optional = true }
 memchr = { version = "2", optional = true }
 regex = { version = "1", optional = true }
 unicode-normalization = { version = "0.1", optional = true }
@@ -25,6 +26,7 @@ unicode-width = { version = "0.2", optional = true }
 
 [features]
 default = []
+encoding = ["dep:encoding_rs"]
 matcher-aho-corasick = ["dep:aho-corasick"]
 pattern-regex = ["dep:regex"]
 search-memchr = ["dep:memchr"]

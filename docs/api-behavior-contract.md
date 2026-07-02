@@ -61,6 +61,7 @@ Current optional feature areas:
 - `transliterate`
 - `matcher-aho-corasick`
 - `search-memchr`
+- `encoding`
 
 ### Experimental-But-Public Facade
 
@@ -100,6 +101,7 @@ Current experimental-but-public areas:
 | transliteration helpers | Optional Feature Facade | all-features tests, default feature absence, CJK/Cyrillic/accent fixtures, dependency policy |
 | matcher backend | Experimental-But-Public Facade | parity tests, overlap tests, replacement tests, fuzz smoke |
 | vbytes search backend | Optional Feature Facade | naive-oracle parity tests in default and `search-memchr` builds, dependency policy |
+| legacy encoding conversion | Optional Feature Facade | all-features tests, default feature absence, GBK/Shift_JIS/windows-1252/ISO-8859-1 parity and round-trip fixtures, dependency policy |
 
 ## Change Rules
 

@@ -79,6 +79,7 @@ knifer-rs = {
 | Feature | Adds | Default |
 | --- | --- | --- |
 | `default` | Safe Rust helpers for `vstr`, `vbytes`, and `vencoding` | enabled |
+| `encoding` | WHATWG legacy encoding decode/encode `vencoding::decode`/`encode` (GBK, Shift_JIS, windows-1252, ...) | disabled |
 | `matcher-aho-corasick` | optional automaton backend for `VStrMatcher` internals | disabled |
 | `pattern-regex` | regex-backed pattern helpers such as `vstr::find_pattern` | disabled |
 | `search-memchr` | SIMD-accelerated literal byte search backend for `vbytes` | disabled |
@@ -287,5 +288,6 @@ examples, benchmark entry points, and governance docs while excluding local
 - Dependencies: zero runtime dependencies in the default feature set; optional
   features add focused crates such as `regex`, `unicode-normalization`,
   `unicode-segmentation`, and `unicode-width`; `matcher-aho-corasick` adds
-  `aho-corasick`, `search-memchr` adds `memchr`, and `transliterate` adds
-  `deunicode`, each only for its own internals.
+  `aho-corasick`, `search-memchr` adds `memchr`, `transliterate` adds
+  `deunicode`, and `encoding` adds `encoding_rs`, each only for its own
+  internals.

@@ -121,5 +121,20 @@ standard library is intentionally lower level.
 `vencoding` Admission Contract:
 
 - `vstr` must not become a byte-string or encoding-conversion facade.
-- If an `encoding` feature is introduced, fallback decoding APIs, BOM handling,
-  and lossy behavior belong under a future `vencoding` facade.
+- Legacy encoding conversion is gated behind the `encoding` feature and lives in
+  the `vencoding` facade, never in `vstr`.
+- The default build must not depend on `encoding_rs`; BOM handling and UTF-8
+  validation stay pure standard library.
+- The `encoding` feature enables WHATWG-labeled helpers `encoding_name`,
+  `decode`, `decode_strict`, and `encode` over `encoding_rs`. These
+  fallback decoding APIs cover legacy code pages: `decode` is lossy
+  (`U+FFFD` replacement with BOM sniffing), `decode_strict` rejects malformed
+  input, and `encode` emits HTML numeric references for unmappable characters.
+- Invalid labels and malformed strict input must surface through the crate-local
+  `EncodingError` / `EncodingErrorKind` types, never the underlying
+  `encoding_rs` error shapes.
+- `encoding_rs` is admitted because it is the canonical WHATWG Encoding Standard
+  implementation, is Safe-Rust-compatible for our usage, and has an MSRV far
+  below the crate policy with only `cfg-if` as a transitive dependency.
+- Parity and round-trip fixtures must cover GBK, Shift_JIS, windows-1252, and
+  ISO-8859-1 in both the default and `encoding` builds.

@@ -1,9 +1,25 @@
 //! Encoding helpers for byte-oriented text boundaries.
 //!
 //! This facade handles BOM sniffing and UTF-8 validation without turning
-//! [`crate::vstr`] into an encoding-conversion module.
+//! [`crate::vstr`] into an encoding-conversion module. When the optional
+//! `encoding` feature is enabled, the `conversion` submodule adds
+//! WHATWG-labeled decode/encode helpers over legacy encodings such as GBK,
+//! `Shift_JIS`, and windows-1252.
+//!
+//! Module navigation:
+//!
+//! - The core BOM and UTF-8 helpers in this file are part of the default
+//!   zero-dependency facade.
+//! - `conversion` contains optional legacy encoding decode/encode helpers behind
+//!   the `encoding` feature.
 
 use std::borrow::Cow;
+
+#[cfg(feature = "encoding")]
+mod conversion;
+
+#[cfg(feature = "encoding")]
+pub use conversion::*;
 
 /// A byte order mark recognized at the start of a byte slice.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
