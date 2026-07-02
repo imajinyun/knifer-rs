@@ -10,6 +10,9 @@
 //! - `basic` contains everyday scalar-based helpers such as trimming,
 //!   substring, searching, replacement, and literal escaping.
 //! - `humanize` contains locale-neutral count, size, and duration formatting.
+//! - `inflection` contains English word and identifier inflection helpers
+//!   (`pluralize`/`singularize`, `ordinalize`/`deordinalize`, `humanize`,
+//!   `titleize`, `camelize`).
 //! - `text` contains higher-level text cleanup, wrapping, truncation,
 //!   masking, inspection helpers, and a split `text/wrap` file family for
 //!   scalar layout policy.
@@ -29,6 +32,7 @@ mod encoding;
 #[cfg(feature = "unicode-segmentation")]
 mod grapheme;
 mod humanize;
+mod inflection;
 mod matcher;
 #[cfg(feature = "unicode-normalization")]
 mod normalize;
@@ -48,6 +52,7 @@ pub use encoding::*;
 #[cfg(feature = "unicode-segmentation")]
 pub use grapheme::*;
 pub use humanize::*;
+pub use inflection::*;
 pub use matcher::*;
 #[cfg(feature = "unicode-normalization")]
 pub use normalize::*;

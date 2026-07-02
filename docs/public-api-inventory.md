@@ -30,7 +30,9 @@ fixtures, fuzz smoke, and project contract checks.
 Core stable areas:
 
 - `kniferrs::vstr`: trim, blank/empty predicates, substring helpers, scalar
-  text helpers, case conversion, replacement, literal search, escaping, Ant
+  text helpers, case conversion, English word/identifier inflection
+  (`pluralize`/`singularize`, `ordinalize`/`deordinalize`, `humanize`,
+  `titleize`, `camelize`), replacement, literal search, escaping, Ant
   path matching, emoji helpers, and similarity helpers (Levenshtein, Jaro,
   Jaro-Winkler, Damerau, optimal string alignment, Sørensen-Dice, Jaccard,
   n-gram, and `SimHash`).
@@ -151,6 +153,7 @@ kniferrs::vstr::before = pub fn before<'src>(input: &'src str, separator: &str) 
 kniferrs::vstr::before_last = pub fn before_last<'src>(input: &'src str, separator: &str) -> &'src str
 kniferrs::vstr::between = pub fn between<'src>(input: &'src str, start: &str, end: &str) -> Option<&'src str>
 kniferrs::vstr::byte_len = pub const fn byte_len(input: &str) -> usize
+kniferrs::vstr::camelize = pub fn camelize(input: &str) -> String
 kniferrs::vstr::capitalize = pub fn capitalize(input: &str) -> String
 kniferrs::vstr::center = pub fn center(input: &str, width: usize, pad: char) -> String
 kniferrs::vstr::char_len = pub fn char_len(input: &str) -> usize
@@ -174,6 +177,7 @@ kniferrs::vstr::deburr = pub fn deburr(input: &str) -> String
 kniferrs::vstr::dedent = pub fn dedent(input: &str) -> String
 kniferrs::vstr::default_if_blank = pub fn default_if_blank<'src>(input: &'src str, default: &'src str) -> &'src str
 kniferrs::vstr::default_if_empty = pub fn default_if_empty<'src>(input: &'src str, default: &'src str) -> &'src str
+kniferrs::vstr::deordinalize = pub fn deordinalize(input: &str) -> String
 kniferrs::vstr::difference = pub fn difference<'src>(left: &str, right: &'src str) -> &'src str
 kniferrs::vstr::display_width = pub fn display_width(input: &str) -> usize
 kniferrs::vstr::drop_chars = pub fn drop_chars(input: &str, count: usize) -> &str
@@ -198,6 +202,7 @@ kniferrs::vstr::has_blank = pub fn has_blank<'src, I>(values: I) -> bool where I
 kniferrs::vstr::has_empty = pub fn has_empty<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 kniferrs::vstr::human_bytes = pub fn human_bytes(bytes: u64) -> String
 kniferrs::vstr::human_duration = pub fn human_duration(duration: Duration) -> String
+kniferrs::vstr::humanize = pub fn humanize(input: &str) -> String
 kniferrs::vstr::indent = pub fn indent(input: &str, prefix: &str) -> String
 kniferrs::vstr::initials = pub fn initials(input: &str) -> String
 kniferrs::vstr::is_all_blank = pub fn is_all_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
@@ -258,6 +263,7 @@ kniferrs::vstr::reverse = pub fn reverse(input: &str) -> String
 kniferrs::vstr::rotate = pub fn rotate(input: &str, shift: isize) -> String
 kniferrs::vstr::rune_len = pub fn rune_len(input: &str) -> usize
 kniferrs::vstr::sim_hash = pub fn sim_hash(input: &str) -> u64
+kniferrs::vstr::singularize = pub fn singularize(word: &str) -> String
 kniferrs::vstr::slugify = pub fn slugify(input: &str) -> String
 kniferrs::vstr::slugify_with_separator = pub fn slugify_with_separator(input: &str, separator: char) -> String
 kniferrs::vstr::sorensen_dice = pub fn sorensen_dice(left: &str, right: &str) -> f64
@@ -281,6 +287,7 @@ kniferrs::vstr::swap_case = pub fn swap_case(input: &str) -> String
 kniferrs::vstr::take_chars = pub fn take_chars(input: &str, count: usize) -> &str
 kniferrs::vstr::take_graphemes = pub fn take_graphemes(input: &str, count: usize) -> &str
 kniferrs::vstr::take_width = pub fn take_width(input: &str, max_width: usize) -> &str
+kniferrs::vstr::titleize = pub fn titleize(input: &str) -> String
 kniferrs::vstr::to_camel_case = pub fn to_camel_case(input: &str) -> String
 kniferrs::vstr::to_cobol_case = pub fn to_cobol_case(input: &str) -> String
 kniferrs::vstr::to_dot_case = pub fn to_dot_case(input: &str) -> String
@@ -444,7 +451,8 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `remove_ascii_punctuation`, `surround`, `unsurround`, `word_count`,
 `ant_path_match_with_separator`, `levenshtein_distance`,
 `optimal_string_alignment`, `damerau_levenshtein_distance`, `jaro_similarity`,
-`jaro_winkler_similarity`, and `sorensen_dice`.
+`jaro_winkler_similarity`, `sorensen_dice`, `pluralize`, `singularize`,
+`ordinalize`, `deordinalize`, `humanize`, `titleize`, and `camelize`.
 
 Generic iterator APIs use forms such as `where I: IntoIterator`.
 

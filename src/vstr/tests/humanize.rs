@@ -1,43 +1,6 @@
 use crate::vstr::*;
 
 #[test]
-fn pluralize_follows_regular_and_irregular_english_rules() {
-    assert_eq!(pluralize("cat", 1), "cat");
-    assert_eq!(pluralize("cat", -1), "cat");
-    assert_eq!(pluralize("cat", 0), "cats");
-    assert_eq!(pluralize("cat", 2), "cats");
-    assert_eq!(pluralize("bus", 3), "buses");
-    assert_eq!(pluralize("box", 2), "boxes");
-    assert_eq!(pluralize("dish", 2), "dishes");
-    assert_eq!(pluralize("church", 2), "churches");
-    assert_eq!(pluralize("city", 5), "cities");
-    assert_eq!(pluralize("day", 2), "days");
-    assert_eq!(pluralize("person", 4), "people");
-    assert_eq!(pluralize("child", 2), "children");
-    assert_eq!(pluralize("mouse", 2), "mice");
-    assert_eq!(pluralize("", 2), "");
-}
-
-#[test]
-fn ordinalize_uses_standard_english_suffix_rules() {
-    assert_eq!(ordinalize(0), "0th");
-    assert_eq!(ordinalize(1), "1st");
-    assert_eq!(ordinalize(2), "2nd");
-    assert_eq!(ordinalize(3), "3rd");
-    assert_eq!(ordinalize(4), "4th");
-    assert_eq!(ordinalize(11), "11th");
-    assert_eq!(ordinalize(12), "12th");
-    assert_eq!(ordinalize(13), "13th");
-    assert_eq!(ordinalize(21), "21st");
-    assert_eq!(ordinalize(22), "22nd");
-    assert_eq!(ordinalize(23), "23rd");
-    assert_eq!(ordinalize(111), "111th");
-    assert_eq!(ordinalize(101), "101st");
-    assert_eq!(ordinalize(-1), "-1st");
-    assert_eq!(ordinalize(-13), "-13th");
-}
-
-#[test]
 fn number_format_groups_thousands_without_locale_data() {
     assert_eq!(number_format(0), "0");
     assert_eq!(number_format(1), "1");

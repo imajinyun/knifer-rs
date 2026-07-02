@@ -175,6 +175,7 @@ default_api_files=(
   src/vstr/emoji.rs
   src/vstr/encoding.rs
   src/vstr/humanize.rs
+  src/vstr/inflection.rs
   src/vstr/matcher.rs
   src/vstr/matcher/search.rs
   src/vstr/matcher/types.rs

@@ -17,6 +17,14 @@ in the relevant parity documents.
   `jaro_winkler_similarity`, and `sorensen_dice`, complementing the existing
   Levenshtein, Jaccard, n-gram, and `SimHash` helpers. Values are cross-checked
   against the `strsim` crate reference and are Unicode scalar-value aware.
+- Added a dependency-free English inflection family to `vstr` in a dedicated
+  `inflection` module: `singularize` (inverse of `pluralize`), `deordinalize`
+  (inverse of `ordinalize`), `humanize` (identifier to sentence, dropping a
+  trailing `_id`), `titleize` (identifier to Title Case), and `camelize`
+  (identifier to `PascalCase` class name), with `pluralize`/`singularize` and
+  `ordinalize`/`deordinalize` round-trip fixtures. The existing `pluralize` and
+  `ordinalize` helpers moved into this module (re-exported, so paths are
+  unchanged).
 - Added Apache Commons `StringUtils`-style classics to `vstr`: `common_prefix`,
   `common_suffix`, `difference`, `rotate`, `wrap_if_missing`, and the ignore-case
   `add_prefix_if_not_ignore_case` / `add_suffix_if_not_ignore_case` helpers, with
