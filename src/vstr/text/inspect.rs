@@ -35,12 +35,21 @@ pub fn non_blank_lines(input: &str) -> Vec<&str> {
 
 /// Returns Unicode-whitespace separated words.
 ///
+/// This is the dependency-free tokenizer: it splits on Unicode whitespace only
+/// (via [`str::split_whitespace`]) and never breaks inside a whitespace-free
+/// run. Punctuation stays attached to the surrounding word, and scripts without
+/// spaces (such as CJK) are returned as a single token. For UAX #29
+/// word-boundary tokenization that splits punctuation and CJK, use the
+/// feature-gated [`unicode_words`](crate::vstr::unicode_words).
+///
 /// # Examples
 ///
 /// ```
 /// use knifer_rs::vstr;
 ///
 /// assert_eq!(vstr::words("hello  Rust\n世界"), vec!["hello", "Rust", "世界"]);
+/// // Whitespace-based: punctuation stays attached and CJK stays as one token.
+/// assert_eq!(vstr::words("Rust-go, 世界!"), vec!["Rust-go,", "世界!"]);
 /// ```
 #[must_use]
 pub fn words(input: &str) -> Vec<&str> {
@@ -158,6 +167,11 @@ pub fn remove_ascii_punctuation(input: &str) -> String {
 }
 
 /// Counts Unicode-whitespace separated words.
+///
+/// Uses the same whitespace-only tokenization as [`words`], so it counts
+/// whitespace-free runs, not UAX #29 word boundaries. For a boundary-aware
+/// count, use the feature-gated
+/// [`unicode_word_len`](crate::vstr::unicode_word_len).
 ///
 /// # Examples
 ///

@@ -53,6 +53,10 @@ in the relevant parity documents.
   `fields` split byte data without requiring valid UTF-8.
 - Added the `vencoding` facade for BOM detection, BOM stripping, UTF-8
   validation, and lossy UTF-8 decoding boundaries.
+- Documented the `words` / `word_count` whitespace-tokenization contract (CJK and
+  punctuation stay attached, whitespace-free scripts stay as one token) versus the
+  feature-gated UAX #29 `unicode_words` / `unicode_word_len`, pinned by golden
+  tests over CJK, emoji, and mixed punctuation input.
 - Added executable golden coverage for knifer-go parity, Unicode boundaries,
   wrap/truncation behavior, regex-backed patterns, matcher behavior, and
   case conversion acronym/number/separator/non-ASCII matrix cases.

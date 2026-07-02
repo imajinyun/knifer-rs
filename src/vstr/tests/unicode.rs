@@ -96,6 +96,56 @@ fn unicode_segmentation_helpers_expose_word_boundaries() {
     );
 }
 
+#[test]
+fn whitespace_tokenizer_contract_covers_cjk_emoji_and_punctuation() {
+    // `words` / `word_count` split on Unicode whitespace only. Punctuation stays
+    // attached and whitespace-free scripts such as CJK stay as a single token.
+    assert_eq!(words(""), Vec::<&str>::new());
+    assert_eq!(word_count(""), 0);
+    assert_eq!(
+        words("  hello  Rust\n世界  "),
+        vec!["hello", "Rust", "世界"]
+    );
+    assert_eq!(word_count("  hello  Rust\n世界  "), 3);
+    assert_eq!(words("Rust-go, 世界!"), vec!["Rust-go,", "世界!"]);
+    assert_eq!(word_count("Rust-go, 世界!"), 2);
+    assert_eq!(words("can't stop"), vec!["can't", "stop"]);
+    assert_eq!(words("emoji 👩‍💻 here"), vec!["emoji", "👩‍💻", "here"]);
+    assert_eq!(word_count("emoji 👩‍💻 here"), 3);
+}
+
+#[cfg(feature = "unicode-segmentation")]
+#[test]
+fn tokenizer_contract_contrasts_whitespace_and_uax29_word_boundaries() {
+    // Same inputs, two contracts: whitespace tokenization (`words`) vs UAX #29
+    // word boundaries (`unicode_words`). This pins the documented difference.
+    let cases: [(&str, Vec<&str>, Vec<&str>); 4] = [
+        (
+            "Rust-go, 世界!",
+            vec!["Rust-go,", "世界!"],
+            vec!["Rust", "go", "世", "界"],
+        ),
+        (
+            "jump 32.3 feet",
+            vec!["jump", "32.3", "feet"],
+            vec!["jump", "32.3", "feet"],
+        ),
+        ("你好世界", vec!["你好世界"], vec!["你", "好", "世", "界"]),
+        ("can't stop.", vec!["can't", "stop."], vec!["can't", "stop"]),
+    ];
+
+    for (input, whitespace_tokens, uax29_tokens) in cases {
+        assert_eq!(words(input), whitespace_tokens, "words: {input}");
+        assert_eq!(word_count(input), whitespace_tokens.len(), "count: {input}");
+        assert_eq!(unicode_words(input), uax29_tokens, "unicode_words: {input}");
+        assert_eq!(
+            unicode_word_len(input),
+            uax29_tokens.len(),
+            "unicode_word_len: {input}"
+        );
+    }
+}
+
 #[cfg(feature = "unicode-segmentation")]
 #[test]
 fn unicode_segmentation_helpers_expose_sentence_boundaries() {
