@@ -48,6 +48,9 @@ in the relevant parity documents.
 - Added the `vbytes` facade for byte slices that may not be valid UTF-8,
   covering byte length, UTF-8 checks, byte slicing, ASCII trimming, literal
   search, prefix/suffix stripping, and replacement.
+- Added `bstr`-style lax-UTF-8 traversal to `vbytes`: `chars` and `char_indices`
+  decode with the Unicode maximal-subpart replacement rule, while `lines` and
+  `fields` split byte data without requiring valid UTF-8.
 - Added the `vencoding` facade for BOM detection, BOM stripping, UTF-8
   validation, and lossy UTF-8 decoding boundaries.
 - Added executable golden coverage for knifer-go parity, Unicode boundaries,

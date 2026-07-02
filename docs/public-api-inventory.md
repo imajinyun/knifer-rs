@@ -33,7 +33,8 @@ Core stable areas:
   text helpers, case conversion, replacement, literal search, escaping, Ant
   path matching, emoji helpers, and similarity helpers.
 - `knifer_rs::vbytes`: byte length, UTF-8 validation, byte slicing, ASCII trim,
-  byte search, prefix/suffix stripping, and byte replacement.
+  byte search, prefix/suffix stripping, byte replacement, lossy UTF-8 decoding
+  (`chars`, `char_indices`), and byte line/field splitting (`lines`, `fields`).
 - `knifer_rs::vencoding`: BOM detection, BOM stripping, UTF-8 validation, and
   lossy UTF-8 decoding boundaries.
 
@@ -68,11 +69,15 @@ and the all-features inventory; it is not a private implementation detail.
 <!-- public-api-signatures:start -->
 knifer_rs::vbytes = pub mod vbytes
 knifer_rs::vbytes::byte_len = pub const fn byte_len(input: &[u8]) -> usize
+knifer_rs::vbytes::char_indices = pub fn char_indices(input: &[u8]) -> Vec<(usize, usize, char)>
+knifer_rs::vbytes::chars = pub fn chars(input: &[u8]) -> Vec<char>
 knifer_rs::vbytes::contains = pub fn contains(input: &[u8], needle: &[u8]) -> bool
+knifer_rs::vbytes::fields = pub fn fields(input: &[u8]) -> Vec<&[u8]>
 knifer_rs::vbytes::find = pub fn find(input: &[u8], needle: &[u8]) -> Option<(usize, usize)>
 knifer_rs::vbytes::find_all = pub fn find_all(input: &[u8], needle: &[u8]) -> Vec<(usize, usize)>
 knifer_rs::vbytes::is_empty = pub const fn is_empty(input: &[u8]) -> bool
 knifer_rs::vbytes::is_utf8 = pub const fn is_utf8(input: &[u8]) -> bool
+knifer_rs::vbytes::lines = pub fn lines(input: &[u8]) -> Vec<&[u8]>
 knifer_rs::vbytes::replace_all = pub fn replace_all(input: &[u8], from: &[u8], to: &[u8]) -> Vec<u8>
 knifer_rs::vbytes::strip_prefix = pub fn strip_prefix<'src>(input: &'src [u8], prefix: &[u8]) -> Option<&'src [u8]>
 knifer_rs::vbytes::strip_suffix = pub fn strip_suffix<'src>(input: &'src [u8], suffix: &[u8]) -> Option<&'src [u8]>
@@ -383,6 +388,15 @@ be valid UTF-8. All byte ranges are byte offsets. Byte-oriented helpers should
 not reinterpret invalid UTF-8 as `&str`; use `to_str` only when explicit UTF-8
 validation is desired.
 
+For `bstr`-style lax-UTF-8 traversal, `chars` and `char_indices` decode using
+the Unicode "substitution of maximal subparts" rule (matching
+`String::from_utf8_lossy`), so each maximal invalid subsequence becomes one
+`U+FFFD` while `char_indices` still reports the original byte range. `lines`
+follows `str::lines` semantics on bytes (`\n` split, optional trailing `\r`
+stripped, no terminators in the output) and `fields` splits on ASCII-whitespace
+runs without emitting empty fields. All four preserve invalid bytes rather than
+requiring valid UTF-8, which is the key difference from the `vstr` equivalents.
+
 ## `vencoding` API Shape
 
 `knifer_rs::vencoding` is implemented as an encoding-boundary facade for BOM
@@ -394,7 +408,8 @@ general transcoding or add a default dependency on `encoding_rs`.
 Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `vbytes::to_str`, `vbytes::sub`, `vbytes::trim_ascii`, `vbytes::find`,
 `vbytes::find_all`, `vbytes::strip_prefix`, `vbytes::strip_suffix`,
-`vbytes::replace_all`, `vencoding`, `vencoding::Bom`,
+`vbytes::replace_all`, `vbytes::chars`, `vbytes::char_indices`,
+`vbytes::lines`, `vbytes::fields`, `vencoding`, `vencoding::Bom`,
 `vencoding::detect_bom`, `vencoding::strip_bom`, `vencoding::validate_utf8`,
 `vencoding::decode_utf8_lossy`,
 `EmojiOptions`, `EmojiOptions::with_matcher`,

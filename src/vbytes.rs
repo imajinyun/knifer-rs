@@ -289,6 +289,136 @@ pub fn replace_all(input: &[u8], from: &[u8], to: &[u8]) -> Vec<u8> {
     output
 }
 
+/// Decodes `input` as UTF-8, replacing invalid sequences with the Unicode
+/// replacement character `U+FFFD`.
+///
+/// Invalid bytes are replaced following the Unicode "substitution of maximal
+/// subparts" rule, so this matches [`String::from_utf8_lossy`] and yields one
+/// replacement char per maximal invalid subsequence.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::chars(b"ab"), vec!['a', 'b']);
+/// assert_eq!(vbytes::chars(&[b'a', 0xff, b'b']), vec!['a', '\u{fffd}', 'b']);
+/// ```
+#[must_use]
+pub fn chars(input: &[u8]) -> Vec<char> {
+    let mut output = Vec::new();
+    for chunk in input.utf8_chunks() {
+        output.extend(chunk.valid().chars());
+        if !chunk.invalid().is_empty() {
+            output.push(char::REPLACEMENT_CHARACTER);
+        }
+    }
+    output
+}
+
+/// Decodes `input` as UTF-8 into `(start, end, char)` triples using byte
+/// offsets.
+///
+/// `start` is inclusive and `end` is exclusive. Invalid sequences follow the
+/// Unicode "substitution of maximal subparts" rule: each maximal invalid
+/// subsequence yields a single `U+FFFD` whose range spans all of its bytes.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(
+///     vbytes::char_indices("é".as_bytes()),
+///     vec![(0, 2, 'é')]
+/// );
+/// assert_eq!(
+///     vbytes::char_indices(&[b'a', 0xff, 0xfe, b'b']),
+///     vec![(0, 1, 'a'), (1, 2, '\u{fffd}'), (2, 3, '\u{fffd}'), (3, 4, 'b')]
+/// );
+/// ```
+#[must_use]
+pub fn char_indices(input: &[u8]) -> Vec<(usize, usize, char)> {
+    let mut output = Vec::new();
+    let mut offset = 0usize;
+    for chunk in input.utf8_chunks() {
+        let valid = chunk.valid();
+        for (relative, ch) in valid.char_indices() {
+            let start = offset + relative;
+            output.push((start, start + ch.len_utf8(), ch));
+        }
+        offset += valid.len();
+
+        let invalid = chunk.invalid();
+        if !invalid.is_empty() {
+            output.push((offset, offset + invalid.len(), char::REPLACEMENT_CHARACTER));
+            offset += invalid.len();
+        }
+    }
+    output
+}
+
+/// Splits `input` into lines using [`str::lines`] semantics on bytes.
+///
+/// Lines are split at `\n`, and a single trailing `\r` before the `\n` is
+/// removed. The final line terminator is optional and terminators are not
+/// included in the returned slices. Empty input yields no lines.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(vbytes::lines(b"a\nb\n"), vec![&b"a"[..], &b"b"[..]]);
+/// assert_eq!(vbytes::lines(b"a\r\nb"), vec![&b"a"[..], &b"b"[..]]);
+/// assert!(vbytes::lines(b"").is_empty());
+/// ```
+#[must_use]
+pub fn lines(input: &[u8]) -> Vec<&[u8]> {
+    let mut output = Vec::new();
+    let mut start = 0usize;
+    for (index, byte) in input.iter().enumerate() {
+        if *byte != b'\n' {
+            continue;
+        }
+        let mut end = index;
+        if end > start && input[end - 1] == b'\r' {
+            end -= 1;
+        }
+        output.push(&input[start..end]);
+        start = index + 1;
+    }
+    if start < input.len() {
+        output.push(&input[start..]);
+    }
+    output
+}
+
+/// Splits `input` into fields separated by runs of ASCII whitespace.
+///
+/// Leading, trailing, and repeated ASCII whitespace never produce empty fields,
+/// mirroring [`str::split_whitespace`] but on raw bytes so invalid UTF-8 is
+/// preserved.
+///
+/// # Examples
+///
+/// ```
+/// use knifer_rs::vbytes;
+///
+/// assert_eq!(
+///     vbytes::fields(b"  a\tb \n c "),
+///     vec![&b"a"[..], &b"b"[..], &b"c"[..]]
+/// );
+/// assert!(vbytes::fields(b" \t\n").is_empty());
+/// ```
+#[must_use]
+pub fn fields(input: &[u8]) -> Vec<&[u8]> {
+    input
+        .split(u8::is_ascii_whitespace)
+        .filter(|field| !field.is_empty())
+        .collect()
+}
+
 fn normalize_index(index: isize, len: usize) -> usize {
     if index < 0 {
         len.saturating_sub(index.unsigned_abs())
@@ -347,5 +477,54 @@ mod tests {
         assert_eq!(replace_all(b"aaaa", b"aa", b"b"), b"bb");
         assert_eq!(replace_all(b"abc", b"", b"x"), b"abc");
         assert_eq!(replace_all(&[0xff, b'a', 0xff], &[0xff], b"?"), b"?a?");
+    }
+
+    #[test]
+    fn vbytes_lossy_decoding_uses_maximal_subpart_replacement() {
+        assert_eq!(chars(b"ab"), vec!['a', 'b']);
+        assert_eq!(chars("héllo".as_bytes()), vec!['h', 'é', 'l', 'l', 'o']);
+        assert_eq!(chars(&[b'a', 0xff, b'b']), vec!['a', '\u{fffd}', 'b']);
+        // Two separate invalid bytes yield two replacement chars, matching
+        // String::from_utf8_lossy maximal-subpart behavior.
+        assert_eq!(
+            chars(&[b'a', 0xff, 0xfe, b'b']),
+            vec!['a', '\u{fffd}', '\u{fffd}', 'b']
+        );
+        assert_eq!(
+            String::from_utf8_lossy(&[b'a', 0xff, 0xfe, b'b'])
+                .chars()
+                .collect::<Vec<_>>(),
+            chars(&[b'a', 0xff, 0xfe, b'b'])
+        );
+
+        assert_eq!(char_indices("é".as_bytes()), vec![(0, 2, 'é')]);
+        assert_eq!(
+            char_indices(&[b'a', 0xff, 0xfe, b'b']),
+            vec![
+                (0, 1, 'a'),
+                (1, 2, '\u{fffd}'),
+                (2, 3, '\u{fffd}'),
+                (3, 4, 'b')
+            ]
+        );
+        assert!(chars(b"").is_empty());
+        assert!(char_indices(b"").is_empty());
+    }
+
+    #[test]
+    fn vbytes_lines_and_fields_preserve_invalid_bytes() {
+        assert_eq!(lines(b"a\nb\n"), vec![&b"a"[..], &b"b"[..]]);
+        assert_eq!(lines(b"a\r\nb"), vec![&b"a"[..], &b"b"[..]]);
+        assert_eq!(lines(b"a\n\nb"), vec![&b"a"[..], &b""[..], &b"b"[..]]);
+        assert_eq!(lines(&[0xff, b'\n', 0xfe]), vec![&[0xff][..], &[0xfe][..]]);
+        assert!(lines(b"").is_empty());
+
+        assert_eq!(
+            fields(b"  a\tb \n c "),
+            vec![&b"a"[..], &b"b"[..], &b"c"[..]]
+        );
+        assert_eq!(fields(&[0xff, b' ', 0xfe]), vec![&[0xff][..], &[0xfe][..]]);
+        assert!(fields(b" \t\n").is_empty());
+        assert!(fields(b"").is_empty());
     }
 }
