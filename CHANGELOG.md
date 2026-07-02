@@ -36,6 +36,11 @@ in the relevant parity documents.
 - Added a dependency-free humanize family to `vstr`: `pluralize`, `ordinalize`,
   `number_format`, `human_bytes` (binary IEC units), and `human_duration`, using
   integer-only arithmetic for deterministic output.
+- Expanded `vstr` number humanization: `number_format_with` (configurable
+  thousands separator), `number_format_float` (grouped integer part plus a fixed
+  number of decimals, non-finite pass-through, no negative zero), and
+  `human_count` (compact short-scale `K`/`M`/`B`/`T` with deterministic
+  integer round-half-up and unit rollover).
 - Added empty/blank predicates, trimming, splitting, substring, padding,
   defaulting, contains, prefix/suffix, length, formatting, case conversion,
   escaping, classification, Ant path matching, emoji, and similarity helpers.

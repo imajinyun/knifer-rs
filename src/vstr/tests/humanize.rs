@@ -15,6 +15,52 @@ fn number_format_groups_thousands_without_locale_data() {
 }
 
 #[test]
+fn number_format_with_uses_a_configurable_separator() {
+    assert_eq!(number_format_with(0, '.'), "0");
+    assert_eq!(number_format_with(123, '.'), "123");
+    assert_eq!(number_format_with(1_234_567, '.'), "1.234.567");
+    assert_eq!(number_format_with(1_234_567, ' '), "1 234 567");
+    assert_eq!(number_format_with(-12_345, '_'), "-12_345");
+}
+
+#[test]
+fn number_format_float_groups_and_fixes_decimals() {
+    assert_eq!(number_format_float(0.0, 2), "0.00");
+    assert_eq!(number_format_float(1_234.5, 2), "1,234.50");
+    assert_eq!(number_format_float(1_234_567.891, 2), "1,234,567.89");
+    assert_eq!(number_format_float(-1_234.567, 1), "-1,234.6");
+    assert_eq!(number_format_float(1_000.0, 0), "1,000");
+    assert_eq!(number_format_float(999.999, 2), "1,000.00");
+    // Rounded-to-zero magnitude never keeps a negative sign.
+    assert_eq!(number_format_float(-0.0, 2), "0.00");
+    assert_eq!(number_format_float(-0.004, 2), "0.00");
+    // Non-finite inputs pass through unchanged.
+    assert_eq!(number_format_float(f64::INFINITY, 2), "inf");
+    assert_eq!(number_format_float(f64::NEG_INFINITY, 2), "-inf");
+    assert_eq!(number_format_float(f64::NAN, 2), "NaN");
+}
+
+#[test]
+fn human_count_uses_compact_short_scale_units() {
+    assert_eq!(human_count(0), "0");
+    assert_eq!(human_count(999), "999");
+    assert_eq!(human_count(1_000), "1K");
+    assert_eq!(human_count(1_200), "1.2K");
+    assert_eq!(human_count(1_500), "1.5K");
+    assert_eq!(human_count(12_345), "12.3K");
+    assert_eq!(human_count(3_400_000), "3.4M");
+    assert_eq!(human_count(5_600_000_000), "5.6B");
+    assert_eq!(human_count(7_800_000_000_000), "7.8T");
+    assert_eq!(human_count(-1_500), "-1.5K");
+    // Rounding that reaches the next unit rolls over.
+    assert_eq!(human_count(999_999), "1M");
+    assert_eq!(human_count(999_500), "999.5K");
+    assert_eq!(human_count(999_950), "1M");
+    // Very large values saturate at the top unit.
+    assert_eq!(human_count(i64::MAX), "9223372T");
+}
+
+#[test]
 fn human_bytes_scales_with_binary_iec_units() {
     assert_eq!(human_bytes(0), "0 B");
     assert_eq!(human_bytes(512), "512 B");

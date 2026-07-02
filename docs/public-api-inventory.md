@@ -201,6 +201,7 @@ kniferrs::vstr::hamming_distance64 = pub const fn hamming_distance64(left: u64, 
 kniferrs::vstr::has_blank = pub fn has_blank<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 kniferrs::vstr::has_empty = pub fn has_empty<'src, I>(values: I) -> bool where I: IntoIterator<Item = &'src str>
 kniferrs::vstr::human_bytes = pub fn human_bytes(bytes: u64) -> String
+kniferrs::vstr::human_count = pub fn human_count(value: i64) -> String
 kniferrs::vstr::human_duration = pub fn human_duration(duration: Duration) -> String
 kniferrs::vstr::humanize = pub fn humanize(input: &str) -> String
 kniferrs::vstr::indent = pub fn indent(input: &str, prefix: &str) -> String
@@ -240,6 +241,8 @@ kniferrs::vstr::non_blank_lines = pub fn non_blank_lines(input: &str) -> Vec<&st
 kniferrs::vstr::normalize_newlines = pub fn normalize_newlines(input: &str) -> String
 kniferrs::vstr::normalize_whitespace = pub fn normalize_whitespace(input: &str) -> String
 kniferrs::vstr::number_format = pub fn number_format(value: i64) -> String
+kniferrs::vstr::number_format_float = pub fn number_format_float(value: f64, decimals: usize) -> String
+kniferrs::vstr::number_format_with = pub fn number_format_with(value: i64, separator: char) -> String
 kniferrs::vstr::optimal_string_alignment = pub fn optimal_string_alignment(left: &str, right: &str) -> usize
 kniferrs::vstr::ordinalize = pub fn ordinalize(value: i64) -> String
 kniferrs::vstr::pad_left = pub fn pad_left(input: &str, target_len: usize, pad: char) -> String
@@ -452,7 +455,8 @@ Core names currently include `vbytes`, `vbytes::byte_len`, `vbytes::is_utf8`,
 `ant_path_match_with_separator`, `levenshtein_distance`,
 `optimal_string_alignment`, `damerau_levenshtein_distance`, `jaro_similarity`,
 `jaro_winkler_similarity`, `sorensen_dice`, `pluralize`, `singularize`,
-`ordinalize`, `deordinalize`, `humanize`, `titleize`, and `camelize`.
+`ordinalize`, `deordinalize`, `humanize`, `titleize`, `camelize`,
+`number_format_with`, `number_format_float`, and `human_count`.
 
 Generic iterator APIs use forms such as `where I: IntoIterator`.
 
