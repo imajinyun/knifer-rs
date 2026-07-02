@@ -29,6 +29,9 @@ in the relevant parity documents.
   `pattern-regex` feature.
 - Added optional Unicode segmentation helpers for grapheme, word, and sentence
   boundaries behind the `unicode-segmentation` feature.
+- Added optional Unicode normalization helpers `nfc`, `nfd`, `nfkc`, `nfkd`, and
+  the quick-check predicates `is_nfc`, `is_nfd`, `is_nfkc`, `is_nfkd` behind the
+  `unicode-normalization` feature, following Unicode Standard Annex #15.
 - Added optional display-width helpers for CJK, combining marks, and emoji ZWJ
   text behind the `unicode-width` feature.
 - Added `WrapOptions`, `WhitespaceMode`, and `LongWordPolicy` for configurable

@@ -91,6 +91,7 @@ knifer-rs = {
 | `default` | Safe Rust helpers for `vstr`, `vbytes`, and `vencoding` | enabled |
 | `matcher-aho-corasick` | optional automaton backend for `VStrMatcher` internals | disabled |
 | `pattern-regex` | regex-backed pattern helpers such as `vstr::find_pattern` | disabled |
+| `unicode-normalization` | UAX #15 normalization forms `vstr::nfc`/`nfd`/`nfkc`/`nfkd` | disabled |
 | `unicode-segmentation` | grapheme, word, and sentence boundary helpers | disabled |
 | `unicode-width` | display-cell width, truncation, and wrap helpers | disabled |
 
@@ -249,6 +250,14 @@ and human-facing text without changing scalar-based helpers such as
 knifer-rs = { version = "0.1", features = ["unicode-segmentation"] }
 ```
 
+Optional `unicode-normalization` helpers add UAX #15 normalization forms so
+visually identical text compares equal, without changing scalar-based helpers:
+
+```toml
+[dependencies]
+knifer-rs = { version = "0.1", features = ["unicode-normalization"] }
+```
+
 Optional `unicode-width` helpers add terminal display-cell measurement and
 wrapping/truncation for CJK, combining marks, and emoji ZWJ text:
 
@@ -272,6 +281,6 @@ examples, benchmark entry points, and governance docs while excluding local
 - Safety: unsafe code is forbidden by Cargo lints and checked by the project
   contract script.
 - Dependencies: zero runtime dependencies in the default feature set; optional
-features add focused crates such as `regex`, `unicode-segmentation`, and
-  `unicode-width`; `matcher-aho-corasick` adds `aho-corasick` only for matcher
-  internals.
+features add focused crates such as `regex`, `unicode-normalization`,
+  `unicode-segmentation`, and `unicode-width`; `matcher-aho-corasick` adds
+  `aho-corasick` only for matcher internals.

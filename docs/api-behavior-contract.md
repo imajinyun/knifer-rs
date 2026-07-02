@@ -55,6 +55,7 @@ Required evidence:
 Current optional feature areas:
 
 - `pattern-regex`
+- `unicode-normalization`
 - `unicode-segmentation`
 - `unicode-width`
 - `matcher-aho-corasick`
@@ -92,6 +93,7 @@ Current experimental-but-public areas:
 | `vencoding` | Core Stable Facade | unit tests for BOM variants, invalid UTF-8, and lossy decoding |
 | regex-backed pattern helpers | Optional Feature Facade | all-features tests, default feature absence, dependency policy |
 | Unicode segmentation helpers | Optional Feature Facade | all-features tests, Unicode boundary fixtures, dependency policy |
+| Unicode normalization helpers | Optional Feature Facade | all-features tests, UAX #15 NFC/NFD/NFKC/NFKD golden fixtures, dependency policy |
 | Unicode width helpers | Optional Feature Facade | all-features tests, mixed-width fixtures, dependency policy |
 | matcher backend | Experimental-But-Public Facade | parity tests, overlap tests, replacement tests, fuzz smoke |
 

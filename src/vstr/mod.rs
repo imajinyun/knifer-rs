@@ -15,6 +15,8 @@
 //!   scalar layout policy.
 //! - `matcher` contains the reusable multi-pattern literal matcher facade and
 //!   optional backend adapter.
+//! - `normalize` contains optional Unicode normalization form helpers (NFC,
+//!   NFD, NFKC, NFKD) behind the `unicode-normalization` feature.
 //! - `width` contains optional display-cell measurement and wrapping helpers
 //!   behind the `unicode-width` feature, including a split `width/wrap` file
 //!   family for display-cell layout policy.
@@ -28,6 +30,8 @@ mod encoding;
 mod grapheme;
 mod humanize;
 mod matcher;
+#[cfg(feature = "unicode-normalization")]
+mod normalize;
 mod path;
 #[cfg(feature = "pattern-regex")]
 mod pattern;
@@ -45,6 +49,8 @@ pub use encoding::*;
 pub use grapheme::*;
 pub use humanize::*;
 pub use matcher::*;
+#[cfg(feature = "unicode-normalization")]
+pub use normalize::*;
 pub use path::*;
 #[cfg(feature = "pattern-regex")]
 pub use pattern::*;

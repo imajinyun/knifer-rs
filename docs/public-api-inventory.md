@@ -46,6 +46,8 @@ Optional feature areas:
 - `pattern-regex`: regex-backed `contains_pattern`, `find_pattern`,
   `find_all_patterns`, `replace_pattern`, and `PatternError`.
 - `unicode-segmentation`: grapheme, word, and sentence boundary helpers.
+- `unicode-normalization`: UAX #15 normalization forms `nfc`, `nfd`, `nfkc`,
+  `nfkd` and quick-check predicates `is_nfc`, `is_nfd`, `is_nfkc`, `is_nfkd`.
 - `unicode-width`: display-cell width, width truncation, and width wrapping.
 
 ### Experimental-But-Public Facade
@@ -188,6 +190,10 @@ knifer_rs::vstr::is_digit = pub fn is_digit(ch: char) -> bool
 knifer_rs::vstr::is_empty = pub const fn is_empty(input: &str) -> bool
 knifer_rs::vstr::is_letter = pub fn is_letter(ch: char) -> bool
 knifer_rs::vstr::is_letter_or_digit = pub fn is_letter_or_digit(ch: char) -> bool
+knifer_rs::vstr::is_nfc = pub fn is_nfc(input: &str) -> bool
+knifer_rs::vstr::is_nfd = pub fn is_nfd(input: &str) -> bool
+knifer_rs::vstr::is_nfkc = pub fn is_nfkc(input: &str) -> bool
+knifer_rs::vstr::is_nfkd = pub fn is_nfkd(input: &str) -> bool
 knifer_rs::vstr::is_not_blank = pub fn is_not_blank(input: &str) -> bool
 knifer_rs::vstr::is_not_empty = pub const fn is_not_empty(input: &str) -> bool
 knifer_rs::vstr::is_palindrome = pub fn is_palindrome(input: &str) -> bool
@@ -199,6 +205,10 @@ knifer_rs::vstr::limit_words = pub fn limit_words(input: &str, max_words: usize,
 knifer_rs::vstr::line_count = pub fn line_count(input: &str) -> usize
 knifer_rs::vstr::lines = pub fn lines(input: &str) -> Vec<&str>
 knifer_rs::vstr::mask = pub fn mask(input: &str, visible_start: usize, visible_end: usize, mask: char) -> String
+knifer_rs::vstr::nfc = pub fn nfc(input: &str) -> String
+knifer_rs::vstr::nfd = pub fn nfd(input: &str) -> String
+knifer_rs::vstr::nfkc = pub fn nfkc(input: &str) -> String
+knifer_rs::vstr::nfkd = pub fn nfkd(input: &str) -> String
 knifer_rs::vstr::ngram_similarity = pub fn ngram_similarity(left: &str, right: &str, n: usize) -> f64
 knifer_rs::vstr::non_blank_lines = pub fn non_blank_lines(input: &str) -> Vec<&str>
 knifer_rs::vstr::normalize_newlines = pub fn normalize_newlines(input: &str) -> String
@@ -297,6 +307,7 @@ knifer_rs::vstr::wrap_with_options = pub fn wrap_with_options(input: &str, optio
 ## Optional Feature Inventory
 
 - `pattern-regex`
+- `unicode-normalization`
 - `unicode-segmentation`
 - `unicode-width`
 
@@ -314,6 +325,14 @@ knifer_rs::vstr::find_all_patterns = pub fn find_all_patterns(input: &str, patte
 knifer_rs::vstr::find_pattern = pub fn find_pattern(input: &str, pattern: &str) -> Result<Option<(usize, usize)>, PatternError>
 knifer_rs::vstr::grapheme_len = pub fn grapheme_len(input: &str) -> usize
 knifer_rs::vstr::graphemes = pub fn graphemes(input: &str) -> Vec<&str>
+knifer_rs::vstr::is_nfc = pub fn is_nfc(input: &str) -> bool
+knifer_rs::vstr::is_nfd = pub fn is_nfd(input: &str) -> bool
+knifer_rs::vstr::is_nfkc = pub fn is_nfkc(input: &str) -> bool
+knifer_rs::vstr::is_nfkd = pub fn is_nfkd(input: &str) -> bool
+knifer_rs::vstr::nfc = pub fn nfc(input: &str) -> String
+knifer_rs::vstr::nfd = pub fn nfd(input: &str) -> String
+knifer_rs::vstr::nfkc = pub fn nfkc(input: &str) -> String
+knifer_rs::vstr::nfkd = pub fn nfkd(input: &str) -> String
 knifer_rs::vstr::replace_pattern = pub fn replace_pattern(input: &str, pattern: &str, replacement: &str) -> Result<String, PatternError>
 knifer_rs::vstr::split_sentence_bound_indices = pub fn split_sentence_bound_indices(input: &str) -> Vec<(usize, &str)>
 knifer_rs::vstr::split_sentence_bounds = pub fn split_sentence_bounds(input: &str) -> Vec<&str>

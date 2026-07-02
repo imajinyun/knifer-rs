@@ -250,3 +250,63 @@ fn unicode_width_helpers_follow_display_cell_boundaries() {
     );
     assert_eq!(wrap_width_with_indent("ignored", 0, "> ", "  "), "");
 }
+
+#[cfg(feature = "unicode-normalization")]
+#[test]
+fn unicode_normalization_forms_follow_uax15_golden_cases() {
+    // Canonical: precomposed <-> base + combining mark.
+    let precomposed = "\u{e9}"; // é
+    let decomposed = "e\u{301}"; // e + combining acute
+    assert_eq!(nfc(decomposed), precomposed);
+    assert_eq!(nfc(precomposed), precomposed);
+    assert_eq!(nfd(precomposed), decomposed);
+    assert_eq!(nfd(decomposed), decomposed);
+
+    // NFC and NFD are idempotent and inverse under the canonical mapping.
+    assert_eq!(nfc(&nfd(precomposed)), precomposed);
+    assert_eq!(nfd(&nfc(decomposed)), decomposed);
+
+    // Compatibility: full-width Latin and ligatures fold under NFKC/NFKD.
+    assert_eq!(nfkc("\u{ff21}\u{ff22}\u{ff23}"), "ABC");
+    assert_eq!(nfkd("\u{ff21}\u{ff22}\u{ff23}"), "ABC");
+    assert_eq!(nfkc("\u{fb01}"), "fi");
+    assert_eq!(nfkd("\u{fb01}"), "fi");
+
+    // Compatibility composition still recomposes canonical accents.
+    assert_eq!(nfkc(decomposed), precomposed);
+    assert_eq!(nfkd(precomposed), decomposed);
+
+    // Empty and ASCII inputs are unchanged across every form.
+    for form in [nfc, nfd, nfkc, nfkd] {
+        assert_eq!(form(""), "");
+        assert_eq!(form("ascii"), "ascii");
+    }
+}
+
+#[cfg(feature = "unicode-normalization")]
+#[test]
+fn unicode_normalization_quick_checks_match_transform_output() {
+    let precomposed = "\u{e9}";
+    let decomposed = "e\u{301}";
+    let fullwidth = "\u{ff21}";
+
+    assert!(is_nfc(precomposed));
+    assert!(!is_nfc(decomposed));
+    assert!(is_nfd(decomposed));
+    assert!(!is_nfd(precomposed));
+
+    assert!(is_nfkc("ABC"));
+    assert!(!is_nfkc(fullwidth));
+    assert!(is_nfkd(decomposed));
+    assert!(!is_nfkd(fullwidth));
+
+    // Quick checks agree with the transform helpers on already-normalized input.
+    assert_eq!(is_nfc(precomposed), nfc(precomposed) == precomposed);
+    assert_eq!(is_nfd(decomposed), nfd(decomposed) == decomposed);
+    assert_eq!(is_nfkc("ABC"), nfkc("ABC") == "ABC");
+    assert_eq!(is_nfkd(decomposed), nfkd(decomposed) == decomposed);
+
+    // ASCII and empty are normalized under all four forms.
+    assert!(is_nfc("") && is_nfd("") && is_nfkc("") && is_nfkd(""));
+    assert!(is_nfc("ascii") && is_nfd("ascii") && is_nfkc("ascii") && is_nfkd("ascii"));
+}

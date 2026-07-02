@@ -19,6 +19,7 @@ utility crate without pulling in a dependency graph.
 Current reserved optional feature names:
 
 - `pattern-regex`
+- `unicode-normalization`
 - `unicode-segmentation`
 - `unicode-width`
 - `matcher-aho-corasick`
@@ -50,6 +51,18 @@ standard library is intentionally lower level.
   `unicode_word_indices`, `split_word_bounds`, `unicode_sentences`, and
   `split_sentence_bounds` so callers can see the boundary model at the call
   site.
+
+`unicode-normalization` Admission Contract:
+
+- The default build must not depend on `unicode-normalization`.
+- Normalization helpers must be feature-gated and expose the four Unicode
+  normalization forms as `nfc`, `nfd`, `nfkc`, and `nfkd`, plus quick-check
+  predicates `is_nfc`, `is_nfd`, `is_nfkc`, and `is_nfkd`.
+- Scalar helpers such as `chars`, `take_chars`, and `truncate_with_suffix` must
+  keep their current semantics; normalization must be an explicit opt-in step,
+  never applied implicitly by default helpers.
+- Behavior must follow Unicode Standard Annex #15 (UAX #15), and golden tests
+  must cover canonical (NFC/NFD) and compatibility (NFKC/NFKD) cases.
 
 `unicode-width` Admission Contract:
 
